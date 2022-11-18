@@ -55,28 +55,24 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Test for Coverage
-      run: dotnet test --logger "trx;" --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
-        
-    - name: Add Coverage PR Comment
-      uses: marocchino/sticky-pull-request-comment@v2
-      if: github.event_name == 'pull_request'
-      with:
-        path: code-coverage-results.md
+      run: dotnet test --logger "trx;LogFileName=test-results.trx"
 
     - name: Report Tests
       id: report-tests
       uses: dorny/test-reporter@v1
       with:
         name: .Net Tests
-        path: "coverage/**.trx"
+        path: "**/test-results.trx"
         reporter: dotnet-trx
         
     - name: Add Test Result PR Comment
       uses: marocchino/sticky-pull-request-comment@v2
       if: github.event_name == 'pull_request'
       with:
+        hide_and_recreate: true
+        hide_classify: "OUTDATED"
         message: Tests run with ${{ steps.report-tests.outputs.passed }} passed and ${{ steps.report-tests.outputs.failed }} failed in ${{ steps.report-tests.outputs.time }}ms.
-        
+   
   analysis:
     name: Build and analyze
     runs-on: windows-latest
