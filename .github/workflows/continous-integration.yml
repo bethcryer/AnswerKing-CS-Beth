@@ -3,6 +3,7 @@ name: Stage One
 on:
   push:
   pull_request:
+    types: [opened, reopened]
     branches:
       - develop
       - main
