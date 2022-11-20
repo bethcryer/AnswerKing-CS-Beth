@@ -15,7 +15,7 @@ public class ProductTests
         var id = 0;
         var productName = "Product Name";
         var productDescription = "Product Description";
-        var categories = new List<Category> { this.GetCategory() };
+        var categories = new List<CategoryId> { new(1) };
         var price = 142;
         var retired = false;
         var createdOn = DateTime.Now;
@@ -40,7 +40,7 @@ public class ProductTests
         var id = 1;
         var productName = null as string;
         var productDescription = "Product Description";
-        var categories = new List<Category> { this.GetCategory() };
+        var categories = new List<CategoryId> { new(1) };
         var price = 142;
         var retired = false;
 
@@ -62,7 +62,7 @@ public class ProductTests
         var id = 1;
         var productName = "";
         var productDescription = "Product Description";
-        var categories = new List<Category> { this.GetCategory() };
+        var categories = new List<CategoryId> { new(1) };
         var price = 142;
         var retired = false;
 
@@ -84,7 +84,7 @@ public class ProductTests
         var id = 1;
         var productName = "Product Name";
         var productDescription = null as string;
-        var categories = new List<Category> { this.GetCategory() };
+        var categories = new List<CategoryId> { new(1) };
         var price = 142;
         var retired = false;
 
@@ -106,7 +106,7 @@ public class ProductTests
         var id = 1;
         var productName = "Product Name";
         var productDescription = "";
-        var categories = new List<Category> { this.GetCategory() };
+        var categories = new List<CategoryId> { new(1) };
         var price = 142;
         var retired = false;
 
@@ -128,7 +128,7 @@ public class ProductTests
         var id = 1;
         var productName = "Product Name";
         var productDescription = "Product Description";
-        var categories = new List<Category> { this.GetCategory() };
+        var categories = new List<CategoryId> { new(1) };
         var price = -1;
         var retired = false;
 
@@ -142,14 +142,4 @@ public class ProductTests
             retired)
         );
     }
-
-    #region Helpers
-
-    private Category GetCategory() => new Category(
-        1,
-        "name",
-        "description"
-    );
-
-    #endregion Helpers
 }

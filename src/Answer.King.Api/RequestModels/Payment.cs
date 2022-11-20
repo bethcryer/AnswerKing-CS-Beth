@@ -1,6 +1,6 @@
 ﻿namespace Answer.King.Api.RequestModels;
 
-public record MakePayment
+public record Payment
 {
     public double Amount { get; init; }
 

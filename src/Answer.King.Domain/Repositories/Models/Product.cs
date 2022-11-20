@@ -1,41 +1,39 @@
-﻿using Answer.King.Domain.Inventory;
-using Answer.King.Domain.Inventory.Models;
-using Answer.King.Domain.Orders.Models;
-
-namespace Answer.King.Domain.Repositories.Models;
+﻿namespace Answer.King.Domain.Repositories.Models;
 
 public class Product
 {
-    public Product(string name, string description, double price, IList<Category> categories)
+    public Product(string name, string description, double price, IList<CategoryId> categories)
     {
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
         Guard.AgainstNegativeValue(nameof(price), price);
+        Guard.AgainstNullOrEmptyArgument(nameof(categories), categories);
 
         this.Id = 0;
         this.Name = name;
         this.Description = description;
         this.Price = price;
-        this._Categories = new HashSet<Category>(categories ?? Array.Empty<Category>());
+        this._Categories = new HashSet<CategoryId>(categories);
     }
 
     private Product(long id,
         string name,
         string description,
         double price,
-        IList<Category>? categories,
+        IList<CategoryId> categories,
         bool retired)
     {
         Guard.AgainstDefaultValue(nameof(id), id);
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
         Guard.AgainstNegativeValue(nameof(price), price);
+        Guard.AgainstNullOrEmptyArgument(nameof(categories), categories);
 
         this.Id = id;
         this.Name = name;
         this.Description = description;
         this.Price = price;
-        this._Categories = new HashSet<Category>(categories ?? Array.Empty<Category>());
+        this._Categories = new HashSet<CategoryId>(categories);
         this.Retired = retired;
     }
 
@@ -47,13 +45,13 @@ public class Product
 
     public double Price { get; set; }
 
-    private HashSet<Category> _Categories { get; }
+    private HashSet<CategoryId> _Categories { get; }
 
-    public IReadOnlyCollection<Category> Categories => this._Categories;
+    public IReadOnlyCollection<CategoryId> Categories => this._Categories;
 
     public bool Retired { get; private set; }
 
-    public void AddCategory(Category category)
+    public void AddCategory(CategoryId category)
     {
         if (this.Retired)
         {
@@ -63,7 +61,7 @@ public class Product
         this._Categories.Add(category);
     }
 
-    public void RemoveCategory(Category category)
+    public void RemoveCategory(CategoryId category)
     {
         if (this.Retired)
         {

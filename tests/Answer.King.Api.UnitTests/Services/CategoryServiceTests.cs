@@ -62,8 +62,8 @@ public class CategoryServiceTests
     public async void CreateCategory_ValidCategory_ReturnsNewlyCreatedCategory()
     {
         // Arrange
-        var products = new List<RequestModels.ProductId> { new RequestModels.ProductId { Id = 1 } };
-        var request = new RequestModels.CategoryDto
+        var products = new List<long> { 1 };
+        var request = new RequestModels.Category
         {
             Name = "category",
             Description = "desc",
@@ -132,7 +132,7 @@ public class CategoryServiceTests
     public async void UpdateCategory_InvalidCategoryId_ReturnsNull()
     {
         // Arrange
-        var updateCategoryRequest = new RequestModels.CategoryDto();
+        var updateCategoryRequest = new RequestModels.Category();
         var categoryId = 1;
 
         // Act
@@ -150,7 +150,7 @@ public class CategoryServiceTests
         var oldCategory = new Category("old category", "old desc");
         var categoryId = oldCategory.Id;
 
-        var updateCategoryRequest = new RequestModels.CategoryDto
+        var updateCategoryRequest = new RequestModels.Category
         {
             Name = "updated category",
             Description = "updated desc"

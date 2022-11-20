@@ -75,18 +75,19 @@ public class CategoriesControllerTests
         Assert.IsType<NotFoundResult>(result);
     }
 
-    [Fact(Skip = "Solve access issue for private Category - WIP")]
-    public void GetOne_ValidRequestWithResult_ReturnsOkObjectResult()
+    [Fact]
+    public async Task GetOne_ValidRequestWithResult_ReturnsOkObjectResult()
     {
         // Arrange
-        //var data = new Category();
-        //CategoryService.GetCategory(Arg.Any<long>()).Returns(data);
+        const long id = 1;
+        var data = new Category("name", "description");
+        CategoryService.GetCategory(Arg.Is(id)).Returns(data);
 
         // Act
-        //var result = await GetSubjectUnderTest.GetOne((Arg.Any<long>()));
+        var result = await GetSubjectUnderTest.GetOne(id);
 
         // Assert
-        //Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<OkObjectResult>(result);
     }
 
     #endregion GetOne
@@ -141,7 +142,7 @@ public class CategoriesControllerTests
     {
         // Arrange
         var id = 1;
-        var categoryRequestModel = new RequestModels.CategoryDto
+        var categoryRequestModel = new RequestModels.Category
         {
             Name = "CATEGORY_NAME",
             Description = "CATEGORY_DESCRIPTION"
@@ -175,10 +176,7 @@ public class CategoriesControllerTests
     [Fact]
     public async void Retire_NullCategory_ReturnsNotFound()
     {
-        // Arrange
-        var category = null as RequestModels.CategoryDto;
-
-        // Act
+        // Arrange / Act
         var result = await GetSubjectUnderTest.Retire(Arg.Any<long>());
 
         // Assert

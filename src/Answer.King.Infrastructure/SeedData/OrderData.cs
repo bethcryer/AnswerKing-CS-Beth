@@ -23,12 +23,10 @@ internal static class OrderData
 
     private static Order OrderWithLineItems()
     {
-        var fish = ProductData.Products
-            .Where(p => p.Id == 1)
-            .SingleOrDefault();
+        var fish = ProductData.Products.SingleOrDefault(p => p.Id == 1);
 
         var fishCategories = CategoryData.Categories
-            .Where(c => fish!.Categories.Select(cs => cs.Id).Contains(c.Id))
+            .Where(c => fish!.Categories.Select(cs => cs.Value).Contains(c.Id))
             .Select(x => new Category(x.Id, x.Name, x.Description))
             .ToList();
 
@@ -37,12 +35,10 @@ internal static class OrderData
         var lineItem1 = new LineItem(fishOrder);
         lineItem1.AddQuantity(1);
 
-        var chips = ProductData.Products
-            .Where(p => p.Id == 2)
-            .SingleOrDefault();
+        var chips = ProductData.Products.SingleOrDefault(p => p.Id == 2);
 
         var chipsCategories = CategoryData.Categories
-            .Where(c => chips!.Categories.Select(cs => cs.Id).Contains(c.Id))
+            .Where(c => chips!.Categories.Select(cs => cs.Value).Contains(c.Id))
             .Select(x => new Category(x.Id, x.Name, x.Description))
             .ToList();
 

@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Answer.King.Api.Common.Filters;
+namespace Answer.King.Api.OpenApi;
 
 public class EnumSchemaFilter : ISchemaFilter
 {

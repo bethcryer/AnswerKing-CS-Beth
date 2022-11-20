@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories.Models;
-using Category = Answer.King.Domain.Repositories.Models.Category;
 
 [assembly: InternalsVisibleTo("Answer.King.Domain.UnitTests")]
 
@@ -18,7 +15,7 @@ internal static class ProductFactory
         string name,
         string description,
         double price,
-        IList<Category> categories,
+        IList<CategoryId> categories,
         bool retired)
     {
         var ctor = typeof(Product)

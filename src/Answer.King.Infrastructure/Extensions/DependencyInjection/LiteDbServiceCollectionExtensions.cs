@@ -25,6 +25,8 @@ public static class LiteDbServiceCollectionExtensions
 
     public static IApplicationBuilder UseLiteDb(this IApplicationBuilder app)
     {
+        BsonMapper.Global.UseCamelCase();
+
         var mappings =
             app.ApplicationServices.GetServices<IEntityMapping>().ToList();
 

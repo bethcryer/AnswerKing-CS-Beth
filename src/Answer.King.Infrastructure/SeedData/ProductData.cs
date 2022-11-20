@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
@@ -27,9 +26,9 @@ internal static class ProductData
     };
 
 
-    private static IList<Category> Categories(long id)
+    private static IList<CategoryId> Categories(long id)
     {
         return CategoryData.Categories.Where(c => c.Id == id)
-            .Select(x => new Category(x.Id, x.Name, x.Description)).ToList();
+            .Select(x => new CategoryId(x.Id)).ToList();
     }
 }

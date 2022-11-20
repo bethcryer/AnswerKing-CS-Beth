@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Answer.King.Api.Validators;
 
-public class OrderValidator : AbstractValidator<OrderDto>
+public class OrderValidator : AbstractValidator<Order>
 {
     public OrderValidator()
     {

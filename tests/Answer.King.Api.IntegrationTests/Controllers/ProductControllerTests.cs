@@ -1,10 +1,7 @@
 ﻿using Alba;
 using Answer.King.Api.IntegrationTests.Common;
-using Answer.King.Api.IntegrationTests.Common.Models;
 using Answer.King.Api.RequestModels;
-using VerifyTests;
-using VerifyXunit;
-using Xunit;
+using Product = Answer.King.Api.IntegrationTests.Common.Models.Product;
 
 namespace Answer.King.Api.IntegrationTests.Controllers;
 
@@ -75,7 +72,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
+                    Categories = new List<long> { 1 }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -96,7 +93,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Categories = new List<CategoryId> { new CategoryId { Id = 4 } }
+                    Categories = new List<long> { 4 }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -118,7 +115,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
+                    Categories = new List<long> { 1 }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -134,7 +131,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "BBQ Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
+                    Categories = new List<long> { 1 }
                 })
                 .ToUrl($"/api/products/{products?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
@@ -155,7 +152,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "BBQ Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Categories = new List<CategoryId> { new CategoryId { Id = 4 } }
+                    Categories = new List<long> { 4 }
                 })
                 .ToUrl("/api/products/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -175,7 +172,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "BBQ Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
+                    Categories = new List<long> { 1 }
                 })
                 .ToUrl("/api/products/5");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
@@ -210,7 +207,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
+                    Categories = new List<long> { 1 }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -239,7 +236,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
+                    Categories = new List<long> { 1 }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);

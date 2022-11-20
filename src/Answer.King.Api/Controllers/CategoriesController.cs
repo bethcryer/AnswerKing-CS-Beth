@@ -1,7 +1,7 @@
-﻿using Answer.King.Api.Services;
-using Answer.King.Domain.Inventory;
+using Answer.King.Api.RequestModels;
+using Answer.King.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using CategoryDto = Answer.King.Api.RequestModels.CategoryDto;
+using Swashbuckle.AspNetCore.Annotations;
 using Product = Answer.King.Domain.Orders.Models.Product;
 
 namespace Answer.King.Api.Controllers;
@@ -28,7 +28,8 @@ public class CategoriesController : ControllerBase
     /// <response code="200">When all the categories have been returned.</response>
     // GET api/categories
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<Category>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Domain.Inventory.Category>), StatusCodes.Status200OK)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> GetAll()
     {
         return this.Ok(await this.Categories.GetCategories());
@@ -45,6 +46,7 @@ public class CategoriesController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> GetOne(long id)
     {
         var category = await this.Categories.GetCategory(id);
@@ -64,9 +66,10 @@ public class CategoriesController : ControllerBase
     /// <response code="400">When invalid parameters are provided.</response>
     // POST api/categories
     [HttpPost]
-    [ProducesResponseType(typeof(Category), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromBody] CategoryDto createCategory)
+    [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
+    public async Task<IActionResult> Post([FromBody] Category createCategory)
     {
         try
         {
@@ -91,10 +94,11 @@ public class CategoriesController : ControllerBase
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
     // PUT api/categories/{ID}
     [HttpPut("{id}")]
-    [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Put(long id, [FromBody] CategoryDto updateCategory)
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
+    public async Task<IActionResult> Put(long id, [FromBody] Category updateCategory)
     {
         try
         {
@@ -123,10 +127,11 @@ public class CategoriesController : ControllerBase
     /// <response code="410">When the category with the given <paramref name="id"/> is already retired.</response>
     // DELETE api/categories/{ID}
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> Retire(long id)
     {
         try
@@ -165,8 +170,9 @@ public class CategoriesController : ControllerBase
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
     // GET api/categories/{ID}/products
     [HttpGet("{id}/products")]
-    [ProducesResponseType(typeof(IEnumerable<Product>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Answer.King.Domain.Repositories.Models.Product>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> GetProducts(long id)
     {
         var category = await this.Categories.GetCategory(id);
@@ -176,7 +182,7 @@ public class CategoriesController : ControllerBase
             return this.NotFound();
         }
 
-        var productIds = category.Products.Select(p => p.Id);
+        var productIds = category.Products.Select(p => p.Value);
 
         var products = await this.Products.GetProducts(productIds);
 

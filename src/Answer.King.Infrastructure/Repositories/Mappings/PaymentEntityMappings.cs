@@ -19,9 +19,9 @@ public class PaymentEntityMappings : IEntityMapping
                 var doc = new BsonDocument
                 {
                     ["_id"] = payment.Id,
-                    ["OrderId"] = payment.OrderId,
-                    ["Amount"] = payment.Amount,
-                    ["OrderTotal"] = payment.OrderTotal,
+                    ["orderId"] = payment.OrderId,
+                    ["amount"] = payment.Amount,
+                    ["orderTotal"] = payment.OrderTotal,
                     ["date"] = payment.Date
                 };
 
@@ -33,9 +33,9 @@ public class PaymentEntityMappings : IEntityMapping
 
                 return PaymentFactory.CreatePayment(
                     doc["_id"].AsInt64,
-                    doc["OrderId"].AsInt64,
-                    doc["Amount"].AsDouble,
-                    doc["OrderTotal"].AsDouble,
+                    doc["orderId"].AsInt64,
+                    doc["amount"].AsDouble,
+                    doc["orderTotal"].AsDouble,
                     doc["date"].AsDateTime);
             }
         );

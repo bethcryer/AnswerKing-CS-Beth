@@ -20,29 +20,29 @@ public class OrderEntityMappings : IEntityMapping
             {
                 var lineItems = order.LineItems.Select(li => new BsonDocument
                 {
-                    ["Product"] = new BsonDocument
+                    ["product"] = new BsonDocument
                     {
                         ["_id"] = li.Product.Id,
-                        ["Name"] = li.Product.Name,
-                        ["Description"] = li.Product.Description,
-                        ["Categories"] = new BsonArray(li.Product.Categories.Select(c => new BsonDocument
+                        ["name"] = li.Product.Name,
+                        ["description"] = li.Product.Description,
+                        ["categories"] = new BsonArray(li.Product.Categories.Select(c => new BsonDocument
                         {
                             ["_id"] = c.Id,
-                            ["Name"] = c.Name,
-                            ["Description"] = c.Description
+                            ["name"] = c.Name,
+                            ["description"] = c.Description
                         })),
-                        ["Price"] = li.Product.Price
+                        ["price"] = li.Product.Price
                     },
-                    ["Quantity"] = li.Quantity
+                    ["quantity"] = li.Quantity
                 });
 
                 var doc = new BsonDocument
                 {
                     ["_id"] = order.Id,
-                    ["CreatedOn"] = order.CreatedOn,
-                    ["LastUpdated"] = order.LastUpdated,
-                    ["OrderStatus"] = $"{order.OrderStatus}",
-                    ["LineItems"] = new BsonArray(lineItems)
+                    ["createdOn"] = order.CreatedOn,
+                    ["lastUpdated"] = order.LastUpdated,
+                    ["orderStatus"] = $"{order.OrderStatus}",
+                    ["lineItems"] = new BsonArray(lineItems)
                 };
 
                 return doc;
@@ -52,14 +52,14 @@ public class OrderEntityMappings : IEntityMapping
                 var doc = bson.AsDocument;
 
                 var lineItems =
-                    doc["LineItems"].AsArray.Select(this.ToLineItem)
+                    doc["lineItems"].AsArray.Select(this.ToLineItem)
                         .ToList();
 
                 return OrderFactory.CreateOrder(
                     doc["_id"].AsInt64,
-                    doc["CreatedOn"].AsDateTime,
-                    doc["LastUpdated"].AsDateTime,
-                    (OrderStatus)Enum.Parse(typeof(OrderStatus), doc["OrderStatus"]),
+                    doc["createdOn"].AsDateTime,
+                    doc["lastUpdated"].AsDateTime,
+                    (OrderStatus)Enum.Parse(typeof(OrderStatus), doc["orderStatus"]),
                     lineItems);
             }
         );
@@ -77,26 +77,26 @@ public class OrderEntityMappings : IEntityMapping
     private LineItem ToLineItem(BsonValue item)
     {
         var lineItem = item.AsDocument;
-        var product = lineItem["Product"].AsDocument;
-        var category = product["Category"].AsDocument;
+        var product = lineItem["product"].AsDocument;
+        var category = product["category"].AsDocument;
 
         var result = new LineItem(
             new Product(
                 product["_id"].AsInt64,
-                product["Name"].AsString,
-                product["Description"].AsString,
-                product["Price"].AsDouble,
+                product["name"].AsString,
+                product["description"].AsString,
+                product["price"].AsDouble,
                 product["Categories"].AsArray.Select(p =>
                     new Category(
                         p.AsDocument["_id"].AsInt64,
-                        p.AsDocument["Name"].AsString,
-                        p.AsDocument["Description"].AsString
+                        p.AsDocument["name"].AsString,
+                        p.AsDocument["description"].AsString
                      )
                 ).ToList()
             )
         );
 
-        result.AddQuantity(lineItem["Quantity"].AsInt32);
+        result.AddQuantity(lineItem["quantity"].AsInt32);
 
         return result;
     }

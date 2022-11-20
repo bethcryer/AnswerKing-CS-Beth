@@ -4,11 +4,7 @@
   description: Juicy,
   price: 1.5,
   categories: [
-    {
-      id: 1,
-      name: Seafood,
-      description: Food from the oceans
-    }
+    1
   ],
   retired: true
 }

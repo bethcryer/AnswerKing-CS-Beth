@@ -6,7 +6,7 @@ namespace Answer.King.Api.Services.Extensions;
 
 public static class OrderExtensions
 {
-    public static void AddOrRemoveLineItems(this Order order, RequestModels.OrderDto orderChanges, IList<Product> domainProducts)
+    public static void AddOrRemoveLineItems(this Order order, RequestModels.Order orderChanges, IList<Product> domainProducts, IList<Category> domainCategories)
     {
         var actions = new List<AddRemoveUpdateAction>();
         actions.AddRange(order.GetLineItemsToAdd(orderChanges));
@@ -18,7 +18,7 @@ public static class OrderExtensions
             if (action.IsIncrease)
             {
                 var product = domainProducts.Single(p => p.Id == action.ProductId);
-                var categories = product.Categories.Select(c => new Category(c.Id, c.Name, c.Description)).ToList();
+                var categories = domainCategories.Where(dc => product.Categories.Any(c => c == dc.Id)).ToList();
 
                 order.AddLineItem(
                     product.Id,
@@ -35,15 +35,15 @@ public static class OrderExtensions
         }
     }
 
-    private static IEnumerable<AddRemoveUpdateAction> GetLineItemsToRemove(this Order order, RequestModels.OrderDto orderChanges)
+    private static IEnumerable<AddRemoveUpdateAction> GetLineItemsToRemove(this Order order, RequestModels.Order orderChanges)
     {
-        var newProductIds = orderChanges.LineItems.Select(li => li.Product.Id);
+        var newProductIds = orderChanges.LineItems.Select(li => li.ProductId);
 
         var lineItemsToRemove =
             order.LineItems
                 .Where(x
                     => !newProductIds.Contains(x.Product.Id)
-                       || orderChanges.LineItems.Single(l => l.Product.Id == x.Product.Id).Quantity == 0)
+                       || orderChanges.LineItems.Single(l => l.ProductId == x.Product.Id).Quantity == 0)
                 .ToList();
 
         var removeActions =
@@ -58,20 +58,20 @@ public static class OrderExtensions
         return removeActions;
     }
 
-    private static IEnumerable<AddRemoveUpdateAction> GetLineItemsToAdd(this Order order, RequestModels.OrderDto orderChanges)
+    private static IEnumerable<AddRemoveUpdateAction> GetLineItemsToAdd(this Order order, RequestModels.Order orderChanges)
     {
         var oldProductIds = order.LineItems.Select(li => li.Product.Id);
 
         var lineItemsToAdd =
             orderChanges.LineItems
-                .Where(x => !oldProductIds.Contains(x.Product.Id) && x.Quantity > 0)
+                .Where(x => !oldProductIds.Contains(x.ProductId) && x.Quantity > 0)
                 .ToList();
 
         var addActions =
             lineItemsToAdd.Select(lineItem =>
                 new AddRemoveUpdateAction
                 {
-                    ProductId = lineItem.Product.Id,
+                    ProductId = lineItem.ProductId,
                     QuantityDifference = lineItem.Quantity,
                     IsIncrease = true
                 });
@@ -79,12 +79,12 @@ public static class OrderExtensions
         return addActions;
     }
 
-    private static IEnumerable<AddRemoveUpdateAction> GetLineItemQuantityUpdates(this Order order, RequestModels.OrderDto orderChanges)
+    private static IEnumerable<AddRemoveUpdateAction> GetLineItemQuantityUpdates(this Order order, RequestModels.Order orderChanges)
     {
         var newProductIds =
             orderChanges.LineItems
                 .Where(li => li.Quantity > 0)
-                .Select(li => li.Product.Id);
+                .Select(li => li.ProductId);
 
         var lineItemsToUpdate =
             order.LineItems
@@ -94,7 +94,7 @@ public static class OrderExtensions
         var quantityAddRemoveActions =
             lineItemsToUpdate.Select(lineItem =>
             {
-                var updatedLineItem = orderChanges.LineItems.First(li => li.Product.Id == lineItem.Product.Id);
+                var updatedLineItem = orderChanges.LineItems.First(li => li.ProductId == lineItem.Product.Id);
 
                 return new AddRemoveUpdateAction
                 {

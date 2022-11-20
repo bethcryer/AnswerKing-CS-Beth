@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
-using Answer.King.Api.Common.Filters;
+using Answer.King.Api.Common.JsonConverters;
 using Answer.King.Api.Common.Validators;
 using Answer.King.Api.Extensions.DependencyInjection;
 using Answer.King.Api.OpenApi;
@@ -30,7 +30,11 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers().AddJsonOptions(options =>
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.Converters.Add(new ProductIdJsonConverter());
+    options.JsonSerializerOptions.Converters.Add(new CategoryIdJsonConverter());
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -39,15 +43,18 @@ builder.Services.AddSwaggerGen(options =>
     options.UseCustomSchemaIdSelectorStrategy();
 
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Answer King API", Version = "v1" });
+    options.DocumentFilter<TagDescriptionsDocumentFilter>();
     options.SchemaFilter<ValidationProblemDetailsSchemaFilter>();
-    options.SchemaFilter<ProblemDetailsSchemaFilter>();
     options.SchemaFilter<EnumSchemaFilter>();
+    options.SchemaFilter<ProductCategorySchemaFilter>();
+    options.SchemaFilter<RemoveSchemasFilter>();
 
     // Set the comments path for the Swagger JSON and UI.
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
     options.IncludeXmlComments(xmlPath);
+    options.EnableAnnotations();
 });
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();

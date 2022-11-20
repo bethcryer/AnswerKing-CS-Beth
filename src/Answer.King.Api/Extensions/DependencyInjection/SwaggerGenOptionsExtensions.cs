@@ -1,42 +1,41 @@
-﻿using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Answer.King.Domain.Orders;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Answer.King.Api.Extensions.DependencyInjection;
 
 public static class SwaggerGenOptionsExtensions
 {
-    private const string AnswerKingPrefix = "AnswerKing";
-
     public static void UseCustomSchemaIdSelectorStrategy(this SwaggerGenOptions options)
     {
         options.CustomSchemaIds(CustomSchemaIdSelector);
     }
 
-    private static string CustomSchemaIdSelector(Type modelType)
+    internal static string CustomSchemaIdSelector(this Type modelType)
     {
         if (!modelType.IsConstructedGenericType)
         {
             var schemaId = modelType.Name.Replace("[]", "Array");
             if (modelType.Namespace!.EndsWith("RequestModels", StringComparison.OrdinalIgnoreCase))
             {
-                schemaId = $"RequestModels.{schemaId}";
+                schemaId = $"{schemaId}.Request";
             }
 
             if (modelType.Namespace!.Contains("Domain.Orders", StringComparison.OrdinalIgnoreCase))
             {
-                schemaId = $"Orders.{schemaId}";
+                schemaId = $"Orders.{schemaId}.Response";
             }
 
             if (modelType.Namespace!.Contains("Domain.Inventory", StringComparison.OrdinalIgnoreCase))
             {
-                schemaId = $"Inventory.{schemaId}";
+                schemaId = $"Inventory.{schemaId}.Response";
             }
 
             if (modelType.Namespace!.Contains("Domain.Repositories", StringComparison.OrdinalIgnoreCase))
             {
-                schemaId = $"Entity.{schemaId}";
+                schemaId = $"Inventory.{schemaId}.Response";
             }
 
-            return $"{AnswerKingPrefix}.{schemaId}";
+            return schemaId;
         }
 
         var prefix = modelType.GetGenericArguments()
@@ -46,24 +45,24 @@ public static class SwaggerGenOptionsExtensions
         var genericSchemaId = modelType.Name.Split('`').First();
         if (modelType.Namespace!.EndsWith("RequestModels", StringComparison.OrdinalIgnoreCase))
         {
-            genericSchemaId = $"RequestModels.{genericSchemaId}";
+            genericSchemaId = $"{genericSchemaId}.Request";
         }
 
         if (modelType.Namespace!.Contains("Domain.Orders", StringComparison.OrdinalIgnoreCase))
         {
-            genericSchemaId = $"Orders.{genericSchemaId}";
+            genericSchemaId = $"Orders.{genericSchemaId}.Response";
         }
 
         if (modelType.Namespace!.Contains("Domain.Inventory", StringComparison.OrdinalIgnoreCase))
         {
-            genericSchemaId = $"Inventory.{genericSchemaId}";
+            genericSchemaId = $"Inventory.{genericSchemaId}.Response";
         }
 
         if (modelType.Namespace!.Contains("Domain.Repositories", StringComparison.OrdinalIgnoreCase))
         {
-            genericSchemaId = $"Entity.{genericSchemaId}";
+            genericSchemaId = $"Inventory.{genericSchemaId}.Response";
         }
 
-        return $"{AnswerKingPrefix}.{prefix}.{genericSchemaId}";
+        return $"{prefix}.{genericSchemaId}";
     }
 }

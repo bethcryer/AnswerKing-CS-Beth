@@ -21,7 +21,6 @@ public class LiteDbConnectionFactory : ILiteDbConnectionFactory
 
     private LiteDatabase Database { get; }
 
-
     public LiteDatabase GetConnection()
     {
         return this.Database;

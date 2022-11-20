@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Answer.King.Domain.Orders;
 using Answer.King.Domain.Repositories;
-using Answer.King.Infrastructure.SeedData;
 using LiteDB;
 
 namespace Answer.King.Infrastructure.Repositories;
@@ -14,7 +13,7 @@ public class OrderRepository : IOrderRepository
         var db = connections.GetConnection();
 
         this.Collection = db.GetCollection<Order>();
-        this.Collection.EnsureIndex("LineItems.Product._id");
+        this.Collection.EnsureIndex("lineItems.product._id");
     }
 
     private ILiteCollection<Order> Collection { get; }

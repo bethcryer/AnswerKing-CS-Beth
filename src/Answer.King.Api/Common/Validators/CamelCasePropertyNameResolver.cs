@@ -7,7 +7,6 @@ namespace Answer.King.Api.Common.Validators;
 
 public static class CamelCasePropertyNameResolver
 {
-
     public static string? ResolvePropertyName(Type type, MemberInfo memberInfo, LambdaExpression expression)
     {
         return ToCamelCase(DefaultPropertyNameResolver(type, memberInfo, expression));

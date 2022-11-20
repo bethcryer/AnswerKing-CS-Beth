@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Answer.King.Api.Validators;
 
-public class ProductValidator : AbstractValidator<ProductDto>
+public class ProductValidator : AbstractValidator<Product>
 {
     public ProductValidator()
     {
@@ -16,8 +16,10 @@ public class ProductValidator : AbstractValidator<ProductDto>
         this.RuleFor(p => p.Price)
             .GreaterThanOrEqualTo(0.00);
 
-        this.RuleForEach(p => p.Categories)
-            .NotNull()
-            .SetValidator(new CategoryIdValidator());
+        this.RuleFor(p => p.Categories)
+            .NotEmpty()
+            .ForEach(p =>
+                p.NotNull()
+                    .GreaterThanOrEqualTo(0));
     }
 }

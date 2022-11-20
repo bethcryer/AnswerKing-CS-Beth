@@ -1,12 +1,8 @@
 ﻿using System.Linq;
 using System;
 using System.Reflection;
-using Answer.King.Domain.Inventory.Models;
-using Answer.King.Domain.Orders;
 using Answer.King.Domain.Repositories.Models;
 using LiteDB;
-using System.Collections.Generic;
-using Category = Answer.King.Domain.Repositories.Models.Category;
 
 namespace Answer.King.Infrastructure.Repositories.Mappings;
 
@@ -21,21 +17,16 @@ public class ProductEntityMappings : IEntityMapping
         (
             serialize: product =>
             {
-                var categories = product.Categories.Select(p => new BsonDocument
-                {
-                    ["_id"] = p.Id,
-                    ["Name"] = p.Name,
-                    ["Description"] = p.Description
-                });
+                var categories = product.Categories.Select(c => new BsonValue(c.Value));
 
                 var doc = new BsonDocument
                 {
                     ["_id"] = product.Id,
-                    ["Name"] = product.Name,
-                    ["Description"] = product.Description,
-                    ["Price"] = product.Price,
-                    ["Categories"] = new BsonArray(categories),
-                    ["Retired"] = product.Retired
+                    ["name"] = product.Name,
+                    ["description"] = product.Description,
+                    ["price"] = product.Price,
+                    ["categories"] = new BsonArray(categories),
+                    ["retired"] = product.Retired
                 };
 
                 return doc;
@@ -43,19 +34,15 @@ public class ProductEntityMappings : IEntityMapping
             deserialize: bson =>
             {
                 var doc = bson.AsDocument;
+                var categories = doc["categories"].AsArray.Select(c => new CategoryId(c)).ToList();
 
                 return ProductFactory.CreateProduct(
                     doc["_id"].AsInt64,
-                    doc["Name"].AsString,
-                    doc["Description"].AsString,
-                    doc["Price"].AsDouble,
-                    doc["Categories"].AsArray.Select(
-                        p => new Category(
-                            p.AsDocument["_id"].AsInt64,
-                            p.AsDocument["Name"].AsString,
-                            p.AsDocument["Description"].AsString
-                            )).ToList(),
-                    doc["Retired"].AsBoolean);
+                    doc["name"].AsString,
+                    doc["description"].AsString,
+                    doc["price"].AsDouble,
+                    categories,
+                    doc["retired"].AsBoolean);
             }
         );
     }

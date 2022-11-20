@@ -1,7 +1,7 @@
-﻿using Answer.King.Api.RequestModels;
-using Answer.King.Domain.Orders;
+﻿using Answer.King.Domain.Orders;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Repositories.Models;
+using Payment = Answer.King.Domain.Repositories.Models.Payment;
 
 namespace Answer.King.Api.Services;
 
@@ -29,7 +29,7 @@ public class PaymentService : IPaymentService
         return await this.Payments.Get(paymentId);
     }
 
-    public async Task<Payment> MakePayment(MakePayment makePayment)
+    public async Task<Payment> MakePayment(Api.RequestModels.Payment makePayment)
     {
         var order = await this.Orders.Get(makePayment.OrderId);
 

@@ -1,7 +1,6 @@
 ﻿using Answer.King.Api.Services;
 using Answer.King.Domain.Orders;
 using Microsoft.AspNetCore.Mvc;
-using OrderDto = Answer.King.Api.RequestModels.OrderDto;
 
 namespace Answer.King.Api.Controllers;
 
@@ -61,8 +60,8 @@ public class OrdersController : ControllerBase
     // POST api/orders
     [HttpPost]
     [ProducesResponseType(typeof(Order), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromBody] OrderDto createOrder)
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Post([FromBody] RequestModels.Order createOrder)
     {
         try
         {
@@ -88,9 +87,9 @@ public class OrdersController : ControllerBase
     // PUT api/orders/{ID}
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Put(long id, [FromBody] OrderDto updateOrder)
+    public async Task<IActionResult> Put(long id, [FromBody] RequestModels.Order updateOrder)
     {
         try
         {
@@ -125,7 +124,7 @@ public class OrdersController : ControllerBase
     // DELETE api/orders/{ID}
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Cancel(long id)
     {

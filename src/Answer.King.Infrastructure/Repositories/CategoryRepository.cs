@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Repositories;
@@ -13,11 +14,10 @@ public class CategoryRepository : ICategoryRepository
         var db = connections.GetConnection();
 
         this.Collection = db.GetCollection<Category>();
-        this.Collection.EnsureIndex("Products._id");
+        this.Collection.EnsureIndex("products");
     }
 
     private ILiteCollection<Category> Collection { get; }
-
 
     public Task<IEnumerable<Category>> Get()
     {
@@ -36,7 +36,13 @@ public class CategoryRepository : ICategoryRepository
 
     public Task<IEnumerable<Category>> GetByProductId(long productId)
     {
-        var query = Query.EQ("Products[*]._id ANY", productId);
+        var query = Query.EQ("products[*] ANY", productId);
         return Task.FromResult(this.Collection.Find(query))!;
+    }
+
+    public Task<IEnumerable<Category>> GetByProductId(params long[] productIds)
+    {
+        return Task.FromResult(
+            this.Collection.Find(c => c.Products.Any(p => productIds.Contains(p))));
     }
 }

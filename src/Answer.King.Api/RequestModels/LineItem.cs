@@ -1,8 +1,8 @@
 ﻿namespace Answer.King.Api.RequestModels;
 
-public record LineItemDto
+public record LineItem
 {
-    public ProductId Product { get; init; } = null!;
+    public long ProductId { get; init; }
 
     public int Quantity { get; init; }
 }

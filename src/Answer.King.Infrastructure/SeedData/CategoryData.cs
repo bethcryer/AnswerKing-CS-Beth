@@ -18,7 +18,7 @@ public static class CategoryData
             DateTime.UtcNow.AddHours(-10),
             new List<ProductId>
             {
-                new ProductId(1)
+                new(1)
             },
             false),
         CategoryFactory.CreateCategory(
@@ -29,7 +29,7 @@ public static class CategoryData
             DateTime.UtcNow.AddHours(-30),
             new List<ProductId>
             {
-                new ProductId(2)
+                new(2)
             },
             false)
     };

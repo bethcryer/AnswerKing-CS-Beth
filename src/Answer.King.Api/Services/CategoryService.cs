@@ -1,6 +1,7 @@
 ﻿using Answer.King.Api.RequestModels;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Inventory;
+using Category = Answer.King.Domain.Inventory.Category;
 
 namespace Answer.King.Api.Services;
 
@@ -23,7 +24,7 @@ public class CategoryService : ICategoryService
         return await this.Categories.Get();
     }
 
-    public async Task<Category> CreateCategory(RequestModels.CategoryDto createCategory)
+    public async Task<Category> CreateCategory(RequestModels.Category createCategory)
     {
         var category = new Category(createCategory.Name, createCategory.Description);
 
@@ -32,7 +33,7 @@ public class CategoryService : ICategoryService
         return category;
     }
 
-    public async Task<Category?> UpdateCategory(long categoryId, RequestModels.CategoryDto updateCategory)
+    public async Task<Category?> UpdateCategory(long categoryId, RequestModels.Category updateCategory)
     {
         var category = await this.Categories.Get(categoryId);
         if (category == null)
@@ -73,7 +74,7 @@ public class CategoryService : ICategoryService
         {
             // ignored
             throw new CategoryServiceException(
-                $"Cannot retire category whilst there are still products assigned. {string.Join(',', category.Products.Select(p => p.Id))}"
+                $"Cannot retire category whilst there are still products assigned. {string.Join(',', category.Products.Select(p => p.Value))}"
                 , ex);
         }
     }

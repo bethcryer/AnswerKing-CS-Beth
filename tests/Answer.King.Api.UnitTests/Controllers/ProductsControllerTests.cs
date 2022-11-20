@@ -1,5 +1,6 @@
 ﻿using Answer.King.Api.Controllers;
 using Answer.King.Api.Services;
+using Answer.King.Domain.Repositories.Models;
 using Answer.King.Test.Common.CustomAsserts;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
@@ -66,19 +67,20 @@ public class ProductsControllerTests
         Assert.IsType<NotFoundResult>(result);
     }
 
-    [Fact(Skip = "Unfinished test (WIP)")]
-    public void GetOne_ValidRequest_ReturnsOkObjectResult()
+    [Fact]
+    public async Task GetOne_ValidRequest_ReturnsOkObjectResult()
     {
         // Arrange
-        //var id = 1;
-        //var products = new List<Product>();
-        //ProductService.GetProduct(id).Returns(products);
+        const long id = 1;
+        var categories = new[] { new CategoryId(id) };
+        var products = new Product("name", "description", 1.99, categories);
+        ProductService.GetProduct(Arg.Is(id)).Returns(products);
 
         // Act
-        //var result = await GetSubjectUnderTest.GetOne(id);
+        var result = await GetSubjectUnderTest.GetOne(id);
 
         // Assert
-        //Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<OkObjectResult>(result);
     }
 
     #endregion GetOne

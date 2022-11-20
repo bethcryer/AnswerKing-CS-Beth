@@ -43,7 +43,6 @@ public class Category : IAggregateRoot
         this.Retired = retired;
     }
 
-
     public long Id { get; }
 
     public string Name { get; private set; }
@@ -103,7 +102,7 @@ public class Category : IAggregateRoot
             return;
         }
 
-        if (this._Products.Any())
+        if (this._Products.Count > 0)
         {
             throw new CategoryLifecycleException("Cannot retire category whilst there are still products assigned.");
         }

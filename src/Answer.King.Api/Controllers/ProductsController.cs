@@ -1,7 +1,7 @@
-﻿using System.Xml.Linq;
-using Answer.King.Api.Services;
+﻿using Answer.King.Api.Services;
 using Answer.King.Domain.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Answer.King.Api.Controllers;
 
@@ -25,6 +25,7 @@ public class ProductsController : ControllerBase
     // GET api/products
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Product>), 200)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> GetAll()
     {
         return this.Ok(await this.Products.GetProducts());
@@ -41,6 +42,7 @@ public class ProductsController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> GetOne(long id)
     {
         var product = await this.Products.GetProduct(id);
@@ -62,8 +64,9 @@ public class ProductsController : ControllerBase
     // POST api/products
     [HttpPost]
     [ProducesResponseType(typeof(Product), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromBody] RequestModels.ProductDto createProduct)
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
+    public async Task<IActionResult> Post([FromBody] RequestModels.Product createProduct)
     {
         try
         {
@@ -89,9 +92,10 @@ public class ProductsController : ControllerBase
     // PUT api/products/{ID}
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Put(long id, [FromBody] RequestModels.ProductDto updateProduct)
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
+    public async Task<IActionResult> Put(long id, [FromBody] RequestModels.Product updateProduct)
     {
         try
         {
@@ -123,6 +127,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> Retire(long id)
     {
         try

@@ -1,12 +1,10 @@
 ﻿using Answer.King.Domain.Repositories.Models;
 
-using RequestProduct = Answer.King.Api.RequestModels.ProductDto;
-
 namespace Answer.King.Api.Services;
 
 public interface IProductService
 {
-    Task<Product> CreateProduct(RequestProduct createProduct);
+    Task<Product> CreateProduct(RequestModels.Product createProduct);
 
     Task<Product?> GetProduct(long productId);
 
@@ -16,5 +14,5 @@ public interface IProductService
 
     Task<Product?> RetireProduct(long productId);
 
-    Task<Product?> UpdateProduct(long productId, RequestProduct updateProduct);
+    Task<Product?> UpdateProduct(long productId, RequestModels.Product updateProduct);
 }
