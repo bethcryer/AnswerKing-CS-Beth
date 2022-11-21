@@ -14,7 +14,7 @@ public class Category : IAggregateRoot
         this.Name = name;
         this.Description = description;
         this.LastUpdated = this.CreatedOn = DateTime.UtcNow;
-        this._Products = new List<ProductId>();
+        this._Products = new HashSet<ProductId>();
         this.Retired = false;
     }
 
@@ -39,7 +39,7 @@ public class Category : IAggregateRoot
         this.Description = description;
         this.CreatedOn = createdOn;
         this.LastUpdated = lastUpdated;
-        this._Products = products ?? new List<ProductId>();
+        this._Products = new HashSet<ProductId>(products ?? Array.Empty<ProductId>());
         this.Retired = retired;
     }
 
@@ -54,9 +54,9 @@ public class Category : IAggregateRoot
 
     public DateTime LastUpdated { get; private set; }
 
-    private IList<ProductId> _Products { get; }
+    private HashSet<ProductId> _Products { get; }
 
-    public IReadOnlyCollection<ProductId> Products => (this._Products as List<ProductId>)!;
+    public IReadOnlyCollection<ProductId> Products => this._Products;
 
     public bool Retired { get; private set; }
 
@@ -77,16 +77,10 @@ public class Category : IAggregateRoot
             throw new CategoryLifecycleException("Cannot add product to retired catgory.");
         }
 
-        var exists = this._Products.Any(p => p.Id == productId.Id);
-
-        if (exists)
+        if (this._Products.Add(productId))
         {
-            return;
+            this.LastUpdated = DateTime.UtcNow;
         }
-
-        this._Products.Add(productId);
-
-        this.LastUpdated = DateTime.UtcNow;
     }
 
     public void RemoveProduct(ProductId productId)
@@ -96,16 +90,10 @@ public class Category : IAggregateRoot
             throw new CategoryLifecycleException("Cannot remove product from retired catgory.");
         }
 
-        var existing = this._Products.SingleOrDefault(p => p.Id == productId.Id);
-
-        if (existing == null)
+        if (this._Products.Remove(productId))
         {
-            return;
+            this.LastUpdated = DateTime.UtcNow;
         }
-
-        this._Products.Remove(existing);
-
-        this.LastUpdated = DateTime.UtcNow;
     }
 
     public void RetireCategory()

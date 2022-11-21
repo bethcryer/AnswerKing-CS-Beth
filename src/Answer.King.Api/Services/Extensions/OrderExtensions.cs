@@ -18,14 +18,14 @@ public static class OrderExtensions
             if (action.IsIncrease)
             {
                 var product = domainProducts.Single(p => p.Id == action.ProductId);
-                var category = new Category(product.Category.Id, product.Category.Name, product.Category.Description);
+                var categories = product.Categories.Select(c => new Category(c.Id, c.Name, c.Description)).ToList();
 
                 order.AddLineItem(
                     product.Id,
                     product.Name,
                     product.Description,
                     product.Price,
-                    category,
+                    categories,
                     action.QuantityDifference);
             }
             else

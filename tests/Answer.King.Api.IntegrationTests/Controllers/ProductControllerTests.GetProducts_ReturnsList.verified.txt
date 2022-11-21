@@ -4,13 +4,14 @@
     Name: Fish,
     Description: Delicious and satisfying.,
     Price: 5.99,
-    Category: {
-      Name: Seafood,
-      Description: Food from the oceans,
-      CreatedOn: DateTime_1,
-      LastUpdated: DateTime_1,
-      Retired: false
-    },
+    Categories: [
+      {
+        Id: 1,
+        Name: Seafood,
+        Description: Food from the oceans,
+        Retired: false
+      }
+    ],
     Retired: false
   },
   {
@@ -18,13 +19,14 @@
     Name: Chips,
     Description: Nothing more to say.,
     Price: 2.99,
-    Category: {
-      Name: Sundries,
-      Description: Things that go with things.,
-      CreatedOn: DateTime_2,
-      LastUpdated: DateTime_2,
-      Retired: false
-    },
+    Categories: [
+      {
+        Id: 2,
+        Name: Sundries,
+        Description: Things that go with things.,
+        Retired: false
+      }
+    ],
     Retired: false
   }
 ]

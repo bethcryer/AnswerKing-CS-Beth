@@ -62,10 +62,12 @@ public class CategoryServiceTests
     public async void CreateCategory_ValidCategory_ReturnsNewlyCreatedCategory()
     {
         // Arrange
+        var products = new List<RequestModels.ProductId> { new RequestModels.ProductId { Id = 1 } };
         var request = new RequestModels.CategoryDto
         {
             Name = "category",
-            Description = "desc"
+            Description = "desc",
+            Products = products
         };
 
         // Act

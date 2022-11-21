@@ -25,18 +25,30 @@ internal static class OrderData
     {
         var fish = ProductData.Products
             .Where(p => p.Id == 1)
-            .Select(x => new Product(x.Id, x.Name, x.Description, x.Price, new Category(x.Category.Id, x.Category.Name, x.Category.Description)))
             .SingleOrDefault();
 
-        var lineItem1 = new LineItem(fish!);
+        var fishCategories = CategoryData.Categories
+            .Where(c => fish!.Categories.Select(cs => cs.Id).Contains(c.Id))
+            .Select(x => new Category(x.Id, x.Name, x.Description))
+            .ToList();
+
+        var fishOrder = new Product(fish!.Id, fish.Name, fish.Description, fish.Price, fishCategories);
+
+        var lineItem1 = new LineItem(fishOrder);
         lineItem1.AddQuantity(1);
 
         var chips = ProductData.Products
             .Where(p => p.Id == 2)
-            .Select(x => new Product(x.Id, x.Name, x.Description, x.Price, new Category(x.Category.Id, x.Category.Name, x.Category.Description)))
             .SingleOrDefault();
 
-        var lineItem2 = new LineItem(chips!);
+        var chipsCategories = CategoryData.Categories
+            .Where(c => chips!.Categories.Select(cs => cs.Id).Contains(c.Id))
+            .Select(x => new Category(x.Id, x.Name, x.Description))
+            .ToList();
+
+        var chipsOrder = new Product(chips!.Id, chips.Name, chips.Description, chips.Price, chipsCategories);
+
+        var lineItem2 = new LineItem(chipsOrder);
         lineItem2.AddQuantity(2);
 
         var lineItems = new List<LineItem>

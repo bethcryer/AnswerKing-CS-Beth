@@ -3,12 +3,13 @@
   Name: Burger,
   Description: Juicy,
   Price: 1.5,
-  Category: {
-    Name: Seafood,
-    Description: Food from the oceans,
-    CreatedOn: DateTime_1,
-    LastUpdated: DateTime_1,
-    Retired: false
-  },
+  Categories: [
+    {
+      Id: 1,
+      Name: Seafood,
+      Description: Food from the oceans,
+      Retired: false
+    }
+  ],
   Retired: false
 }

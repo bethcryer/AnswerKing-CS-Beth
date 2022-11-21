@@ -34,7 +34,10 @@ public class PaymentServiceTests
         // Arrange
         var order = new Order();
         order.AddLineItem(1, "product", "desc", 12.00,
-            new Category(1, "category", "desc"), 2);
+            new List<Category>
+            {
+                new Category(1, "category", "desc")
+            }, 2);
 
         var makePayment = new MakePayment { OrderId = order.Id, Amount = 20.00 };
 
@@ -52,7 +55,10 @@ public class PaymentServiceTests
         // Arrange
         var order = new Order();
         order.AddLineItem(1, "product", "desc", 12.00,
-            new Category(1, "category", "desc"), 2);
+            new List<Category>
+            {
+                new Category(1, "category", "desc")
+            }, 2);
         order.CompleteOrder();
 
         var makePayment = new MakePayment { OrderId = order.Id, Amount = 24.00 };
@@ -88,7 +94,10 @@ public class PaymentServiceTests
         // Arrange
         var order = new Order();
         order.AddLineItem(1, "product", "desc", 12.00,
-            new Category(1, "category", "desc"), 2);
+            new List<Category>
+            {
+                new Category(1, "category", "desc")
+            }, 2);
 
         var makePayment = new MakePayment { OrderId = order.Id, Amount = 24.00 };
         var expectedPayment = new Payment(order.Id, makePayment.Amount, order.OrderTotal);

@@ -3,10 +3,12 @@
   name: Burger,
   description: Juicy,
   price: 1.5,
-  category: {
-    id: 1,
-    name: Seafood,
-    description: Food from the oceans
-  },
+  categories: [
+    {
+      id: 1,
+      name: Seafood,
+      description: Food from the oceans
+    }
+  ],
   retired: true
 }

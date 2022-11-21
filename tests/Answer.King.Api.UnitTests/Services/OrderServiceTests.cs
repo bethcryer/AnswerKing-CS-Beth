@@ -49,11 +49,14 @@ public class OrderServiceTests
     public async void CreateOrder_ValidOrderRequestRecieved_ReturnsOrder()
     {
         // Arrange
-        var category = new Category(1, "Cat 1", "desc");
+        var categories = new List<Category>
+        {
+            new Category(1, "Cat 1", "desc")
+        };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, category, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, category, false)
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categories, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categories, false)
         };
 
         var orderRequest = new RequestModels.OrderDto
@@ -98,11 +101,14 @@ public class OrderServiceTests
         var order = new Order();
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
-        var category = new Category(1, "Cat 1", "desc");
+        var categories = new List<Category>
+        {
+            new Category(1, "Cat 1", "desc")
+        };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, category, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, category, false)
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categories, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categories, false)
         };
 
         var orderRequest = new RequestModels.OrderDto
@@ -133,11 +139,14 @@ public class OrderServiceTests
         var order = new Order();
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
-        var category = new Category(1, "Cat 1", "desc");
+        var categories = new List<Category>
+        {
+            new Category(1, "Cat 1", "desc")
+        };
         var products = new[]
         {
-            new Product("product 1", "desc", 2.0, category),
-            new Product("product 2", "desc", 4.0, category)
+            new Product("product 1", "desc", 2.0, categories),
+            new Product("product 2", "desc", 4.0, categories)
         };
 
         var orderRequest = new RequestModels.OrderDto

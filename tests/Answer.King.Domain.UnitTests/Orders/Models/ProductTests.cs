@@ -16,7 +16,10 @@ public class ProductTests
         var name = "name";
         var description = "description";
         var price = 142;
-        var category = new Category(1, "name", "description");
+        var categories = new List<Category>
+        {
+            new Category(1, "name", "description")
+        };
 
         // Act / Assert
 
@@ -25,7 +28,7 @@ public class ProductTests
             name,
             description,
             price,
-            category)
+            categories)
         );
     }
 
@@ -37,7 +40,10 @@ public class ProductTests
         var name = "name";
         var description = "description";
         var price = -1;
-        var category = new Category(1, "name", "description");
+        var categories = new List<Category>
+        {
+            new Category(1, "name", "description")
+        };
 
         // Act Assert
         Assert.Throws<ArgumentOutOfRangeException>(() => new Product(
@@ -45,7 +51,7 @@ public class ProductTests
             name,
             description,
             price,
-            category)
+            categories)
         );
     }
 }

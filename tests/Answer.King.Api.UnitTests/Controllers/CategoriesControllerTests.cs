@@ -1,6 +1,7 @@
 ﻿using Answer.King.Api.Controllers;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory.Models;
 using Answer.King.Test.Common.CustomAsserts;
 using Answer.King.Test.Common.CustomTraits;
 using Microsoft.AspNetCore.Mvc;

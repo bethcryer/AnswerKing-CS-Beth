@@ -8,5 +8,5 @@ public record ProductDto
 
     public double Price { get; init; }
 
-    public CategoryId Category { get; init; } = null!;
+    public List<CategoryId> Categories { get; init; } = new List<CategoryId>();
 }

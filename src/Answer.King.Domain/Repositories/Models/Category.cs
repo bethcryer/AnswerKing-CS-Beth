@@ -1,6 +1,6 @@
 ﻿namespace Answer.King.Domain.Repositories.Models;
 
-public class Category
+public record Category
 {
     public Category(long id, string name, string description)
     {

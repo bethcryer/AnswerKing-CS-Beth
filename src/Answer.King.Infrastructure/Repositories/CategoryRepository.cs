@@ -34,9 +34,9 @@ public class CategoryRepository : ICategoryRepository
         return Task.FromResult(this.Collection.Upsert(item));
     }
 
-    public Task<Category?> GetByProductId(long productId)
+    public Task<IEnumerable<Category>> GetByProductId(long productId)
     {
         var query = Query.EQ("Products[*]._id ANY", productId);
-        return Task.FromResult(this.Collection.FindOne(query))!;
+        return Task.FromResult(this.Collection.Find(query))!;
     }
 }

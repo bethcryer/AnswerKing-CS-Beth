@@ -75,7 +75,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Category = new CategoryId { Id = 1 }
+                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -96,7 +96,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Category = new CategoryId { Id = 4 }
+                    Categories = new List<CategoryId> { new CategoryId { Id = 4 } }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -118,7 +118,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Category = new CategoryId { Id = 1 }
+                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -134,7 +134,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "BBQ Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Category = new CategoryId { Id = 1 }
+                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
                 })
                 .ToUrl($"/api/products/{products?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
@@ -155,7 +155,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "BBQ Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Category = new CategoryId { Id = 4 }
+                    Categories = new List<CategoryId> { new CategoryId { Id = 4 } }
                 })
                 .ToUrl("/api/products/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -175,7 +175,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "BBQ Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Category = new CategoryId { Id = 1 }
+                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
                 })
                 .ToUrl("/api/products/5");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
@@ -210,7 +210,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Category = new CategoryId { Id = 1 }
+                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -239,7 +239,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                     Name = "Burger",
                     Description = "Juicy",
                     Price = 1.50,
-                    Category = new CategoryId { Id = 1 }
+                    Categories = new List<CategoryId> { new CategoryId { Id = 1 } }
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);

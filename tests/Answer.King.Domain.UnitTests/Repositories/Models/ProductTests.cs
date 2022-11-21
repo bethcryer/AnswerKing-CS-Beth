@@ -15,9 +15,11 @@ public class ProductTests
         var id = 0;
         var productName = "Product Name";
         var productDescription = "Product Description";
-        var category = this.GetCategory();
+        var categories = new List<Category> { this.GetCategory() };
         var price = 142;
         var retired = false;
+        var createdOn = DateTime.Now;
+        var lastUpdated = DateTime.Now;
 
         // Act / Assert
 
@@ -26,7 +28,7 @@ public class ProductTests
             productName,
             productDescription,
             price,
-            category,
+            categories,
             retired)
         );
     }
@@ -38,7 +40,7 @@ public class ProductTests
         var id = 1;
         var productName = null as string;
         var productDescription = "Product Description";
-        var category = this.GetCategory();
+        var categories = new List<Category> { this.GetCategory() };
         var price = 142;
         var retired = false;
 
@@ -48,7 +50,7 @@ public class ProductTests
             productName!,
             productDescription,
             price,
-            category,
+            categories,
             retired)
         );
     }
@@ -60,7 +62,7 @@ public class ProductTests
         var id = 1;
         var productName = "";
         var productDescription = "Product Description";
-        var category = this.GetCategory();
+        var categories = new List<Category> { this.GetCategory() };
         var price = 142;
         var retired = false;
 
@@ -70,7 +72,7 @@ public class ProductTests
             productName,
             productDescription,
             price,
-            category,
+            categories,
             retired)
         );
     }
@@ -82,7 +84,7 @@ public class ProductTests
         var id = 1;
         var productName = "Product Name";
         var productDescription = null as string;
-        var category = this.GetCategory();
+        var categories = new List<Category> { this.GetCategory() };
         var price = 142;
         var retired = false;
 
@@ -92,7 +94,7 @@ public class ProductTests
             productName,
             productDescription!,
             price,
-            category,
+            categories,
             retired)
         );
     }
@@ -104,7 +106,7 @@ public class ProductTests
         var id = 1;
         var productName = "Product Name";
         var productDescription = "";
-        var category = this.GetCategory();
+        var categories = new List<Category> { this.GetCategory() };
         var price = 142;
         var retired = false;
 
@@ -114,29 +116,7 @@ public class ProductTests
             productName,
             productDescription,
             price,
-            category,
-            retired)
-        );
-    }
-
-    [Fact]
-    public void Product_InitWithNullCategory_ThrowsNullArgumentException()
-    {
-        // Arrange
-        var id = 1;
-        var productName = "Product Name";
-        var productDescription = "Product Description";
-        var category = null as Category;
-        var price = 142;
-        var retired = false;
-
-        // Act / Assert
-        Assert.Throws<ArgumentNullException>(() => ProductFactory.CreateProduct(
-            id,
-            productName,
-            productDescription,
-            price,
-            category!,
+            categories,
             retired)
         );
     }
@@ -148,7 +128,7 @@ public class ProductTests
         var id = 1;
         var productName = "Product Name";
         var productDescription = "Product Description";
-        var category = this.GetCategory();
+        var categories = new List<Category> { this.GetCategory() };
         var price = -1;
         var retired = false;
 
@@ -158,7 +138,7 @@ public class ProductTests
             productName,
             productDescription,
             price,
-            category,
+            categories,
             retired)
         );
     }
