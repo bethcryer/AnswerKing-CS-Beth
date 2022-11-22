@@ -44,7 +44,7 @@ public class CategoriesController : ControllerBase
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist</response>
     // GET api/categories/{ID}
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> GetOne(long id)
