@@ -42,7 +42,7 @@ public class CategoryRepository : ICategoryRepository
 
     public Task<IEnumerable<Category>> GetByProductId(params long[] productIds)
     {
-        return Task.FromResult(
-            this.Collection.Find(c => c.Products.Any(p => productIds.Contains(p))));
+        var query = Query.In("products[*] ANY", productIds.Select(c => new BsonValue(c)));
+        return Task.FromResult(this.Collection.Find(query));
     }
 }
