@@ -6,7 +6,7 @@ namespace Answer.King.Infrastructure;
 
 public class LiteDbConnectionFactory : ILiteDbConnectionFactory
 {
-    public LiteDbConnectionFactory(IConfiguration config)
+    public LiteDbConnectionFactory(IConfiguration config, BsonMapper mapper)
     {
         var connectionString = config.GetConnectionString("AnswerKing");
 
@@ -16,7 +16,7 @@ public class LiteDbConnectionFactory : ILiteDbConnectionFactory
                 "Cannot find database connection string in configuration file.");
         }
 
-        this.Database = new LiteDatabase(connectionString);
+        this.Database = new LiteDatabase(connectionString, mapper);
     }
 
     private LiteDatabase Database { get; }

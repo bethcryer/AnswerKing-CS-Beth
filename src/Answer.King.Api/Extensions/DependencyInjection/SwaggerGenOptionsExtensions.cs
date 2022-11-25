@@ -1,5 +1,4 @@
-﻿using Answer.King.Domain.Orders;
-using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Answer.King.Api.Extensions.DependencyInjection;
 

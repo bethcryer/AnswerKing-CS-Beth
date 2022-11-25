@@ -1,15 +1,17 @@
 ﻿using Alba;
 using Answer.King.Api.IntegrationTests.Common;
-using Product = Answer.King.Api.IntegrationTests.Common.Models.Product;
+using Xunit.Abstractions;
+using Order = Answer.King.Api.IntegrationTests.Common.Models.Order;
+using RMLineItems = Answer.King.Api.RequestModels.LineItem;
 
 namespace Answer.King.Api.IntegrationTests.Controllers;
 
 [UsesVerify]
-public class ProductControllerTests : WebFixtures
+public class OrderControllerTests : WebFixtures
 {
     private readonly VerifySettings _verifySettings;
 
-    public ProductControllerTests()
+    public OrderControllerTests()
     {
         this._verifySettings = new();
         this._verifySettings.ScrubMembers("traceId");
@@ -17,37 +19,37 @@ public class ProductControllerTests : WebFixtures
 
     #region Get
     [Fact]
-    public async Task<VerifyResult> GetProducts_ReturnsList()
+    public async Task<VerifyResult> GetOrders_ReturnsList()
     {
         var result = await this.AlbaHost.Scenario(_ =>
         {
-            _.Get.Url("/api/products");
+            _.Get.Url("/api/orders");
             _.StatusCodeShouldBeOk();
         });
 
-        var products = result.ReadAsJson<IEnumerable<Product>>();
-        return await Verify(products, this._verifySettings);
+        var orders = result.ReadAsJson<IEnumerable<Order>>();
+        return await Verify(orders, this._verifySettings);
     }
 
     [Fact]
-    public async Task<VerifyResult> GetProduct_ProductExists_ReturnsProduct()
+    public async Task<VerifyResult> GetOrder_OrderExists_ReturnsOrder()
     {
         var result = await this.AlbaHost.Scenario(_ =>
         {
-            _.Get.Url("/api/products/1");
+            _.Get.Url("/api/orders/1");
             _.StatusCodeShouldBeOk();
         });
 
-        var products = result.ReadAsJson<Product>();
-        return await Verify(products, this._verifySettings);
+        var order = result.ReadAsJson<Order>();
+        return await Verify(order, this._verifySettings);
     }
 
     [Fact]
-    public async Task<VerifyResult> GetProduct_ProductDoesNotExist_Returns404()
+    public async Task<VerifyResult> GetOrder_OrderDoesNotExist_Returns404()
     {
         var result = await this.AlbaHost.Scenario(_ =>
         {
-            _.Get.Url("/api/products/50");
+            _.Get.Url("/api/orders/50");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
@@ -57,36 +59,38 @@ public class ProductControllerTests : WebFixtures
 
     #region Post
     [Fact]
-    public async Task<VerifyResult> PostProduct_ValidModel_ReturnsNewProduct()
+    public async Task<VerifyResult> PostOrder_ValidModel_ReturnsNewOrder()
     {
         var result = await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
                 {
-                    Name = "Burger",
-                    Description = "Juicy",
-                    Price = 1.50
+                    lineItems = new List<RMLineItems>() {
+                        new RMLineItems(){ProductId= 1,Quantity=1}
+                    }
                 })
-                .ToUrl("/api/products");
+                .ToUrl("/api/orders");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
         });
 
-        var products = result.ReadAsJson<Product>();
-        return await Verify(products, this._verifySettings);
+        var order = result.ReadAsJson<Order>();
+        return await Verify(order, this._verifySettings);
     }
 
     [Fact]
-    public async Task<VerifyResult> PostProduct_InValidDTO_Fails()
+    public async Task<VerifyResult> PostOrder_InValidDTO_Fails()
     {
         var result = await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
                 {
-                    Name = "Burger"
+                    lineItems = new List<RMLineItems>() {
+                        new RMLineItems(){ProductId= 1,Quantity=-1}
+                    }
                 })
-                .ToUrl("/api/products");
+                .ToUrl("/api/orders");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
@@ -96,52 +100,53 @@ public class ProductControllerTests : WebFixtures
 
     #region Put
     [Fact]
-    public async Task<VerifyResult> PutProduct_ValidDTO_ReturnsModel()
+    public async Task<VerifyResult> PutOrder_ValidDTO_ReturnsModel()
     {
         var postResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
                 {
-                    Name = "Burger",
-                    Description = "Juicy",
-                    Price = 1.50
+                    lineItems = new List<RMLineItems>() {
+                        new RMLineItems(){ProductId= 1,Quantity=1}
+                    }
                 })
-                .ToUrl("/api/products");
+                .ToUrl("/api/orders");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
         });
 
-        var products = postResult.ReadAsJson<Product>();
+        var order = postResult.ReadAsJson<Order>();
 
         var putResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Put
                 .Json(new
                 {
-                    Name = "BBQ Burger",
-                    Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 1 }
+                    lineItems = new List<RMLineItems>() {
+                        new RMLineItems(){ProductId= 1,Quantity=2}
+                    }
                 })
-                .ToUrl($"/api/products/{products?.Id}");
+                .ToUrl($"/api/orders/{order?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
         });
 
-        var updatedProduct = putResult.ReadAsJson<Product>();
-        return await Verify(updatedProduct, this._verifySettings);
+        var updatedOrder = putResult.ReadAsJson<Order>();
+        return await Verify(updatedOrder, this._verifySettings);
     }
 
     [Fact]
-    public async Task<VerifyResult> PutProduct_InvalidDTO_ReturnsBadRequest()
+    public async Task<VerifyResult> PutOrder_InvalidDTO_ReturnsBadRequest()
     {
         var putResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Put
                 .Json(new
                 {
-                    Name = "BBQ Burger"
+                    lineItems = new List<RMLineItems>() {
+                        new RMLineItems(){ProductId= 1,Quantity=-1}
+                    }
                 })
-                .ToUrl("/api/products/1");
+                .ToUrl("/api/orders/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
@@ -149,19 +154,18 @@ public class ProductControllerTests : WebFixtures
     }
 
     [Fact]
-    public async Task<VerifyResult> PutProduct_InvalidId_ReturnsNotFound()
+    public async Task<VerifyResult> PutOrder_InvalidId_ReturnsNotFound()
     {
         var putResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Put
                 .Json(new
                 {
-                    Name = "BBQ Burger",
-                    Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 1 }
+                    lineItems = new List<RMLineItems>() {
+                        new RMLineItems(){ProductId= 1,Quantity=1}
+                    }
                 })
-                .ToUrl("/api/products/5");
+                .ToUrl("/api/orders/5");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
@@ -171,12 +175,12 @@ public class ProductControllerTests : WebFixtures
 
     #region Retire
     [Fact]
-    public async Task<VerifyResult> RetireProduct_InvalidId_ReturnsNotFound()
+    public async Task<VerifyResult> CancelOrder_InvalidId_ReturnsNotFound()
     {
         var putResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
-                .Url("/api/products/5");
+                .Url("/api/orders/5");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
@@ -184,27 +188,27 @@ public class ProductControllerTests : WebFixtures
     }
 
     [Fact]
-    public async Task<VerifyResult> RetireProduct_ValidId_ReturnsOk()
+    public async Task<VerifyResult> CancelOrder_ValidId_ReturnsOk()
     {
         var postResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
                 {
-                    Name = "Burger",
-                    Description = "Juicy",
-                    Price = 1.50
+                    lineItems = new List<RMLineItems>() {
+                        new RMLineItems(){ProductId= 1,Quantity=1}
+                    }
                 })
-                .ToUrl("/api/products");
+                .ToUrl("/api/orders");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
         });
 
-        var products = postResult.ReadAsJson<Product>();
+        var order = postResult.ReadAsJson<Order>();
 
         var putResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
-                .Url($"/api/products/{products?.Id}");
+                .Url($"/api/orders/{order?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
         });
 
@@ -212,35 +216,35 @@ public class ProductControllerTests : WebFixtures
     }
 
     [Fact]
-    public async Task<VerifyResult> RetireProduct_ValidId_IsRetired_ReturnsNotFound()
+    public async Task<VerifyResult> CancelOrder_ValidId_IsCanceled_ReturnsBadRequest()
     {
         var postResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
                 {
-                    Name = "Burger",
-                    Description = "Juicy",
-                    Price = 1.50
+                    lineItems = new List<RMLineItems>() {
+                        new RMLineItems(){ProductId= 1,Quantity=1}
+                    }
                 })
-                .ToUrl("/api/products");
+                .ToUrl("/api/orders");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
         });
 
-        var products = postResult.ReadAsJson<Product>();
+        var order = postResult.ReadAsJson<Order>();
 
         await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
-                .Url($"/api/products/{products?.Id}");
+                .Url($"/api/orders/{order?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
         });
 
         var secondDeleteResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
-                .Url($"/api/products/{products?.Id}");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Gone);
+                .Url($"/api/orders/{order?.Id}");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
         return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this._verifySettings);

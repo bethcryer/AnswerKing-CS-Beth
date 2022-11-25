@@ -9,7 +9,7 @@ public class ProductDataSeeder : ISeedData
         var db = connections.GetConnection();
         var collection = db.GetCollection<Product>();
 
-        if (DataSeeded)
+        if (this.DataSeeded)
         {
             return;
         }
@@ -17,11 +17,11 @@ public class ProductDataSeeder : ISeedData
         var none = collection.Count() < 1;
         if (none)
         {
-            collection.Insert(ProductData.Products);
+            collection.InsertBulk(ProductData.Products);
         }
 
-        DataSeeded = true;
+        this.DataSeeded = true;
     }
 
-    private static bool DataSeeded { get; set; }
+    private bool DataSeeded { get; set; }
 }

@@ -1,5 +1,4 @@
-﻿using Answer.King.Api.RequestModels;
-using Answer.King.Domain.Repositories;
+﻿using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Inventory;
 using Category = Answer.King.Domain.Inventory.Category;
 using Answer.King.Domain.Inventory.Models;

@@ -20,24 +20,28 @@ public static class LiteDbServiceCollectionExtensions
         options.EntityMappers.ForEach(type => services.Add(ServiceDescriptor.Transient(typeof(IEntityMapping), type)));
         options.DataSeeders.ForEach(type => services.Add(ServiceDescriptor.Transient(typeof(ISeedData), type)));
 
+        services.AddSingleton<BsonMapper>();
+        services.AddSingleton<ILiteDbConnectionFactory, LiteDbConnectionFactory>();
+
         return services;
     }
 
     public static IApplicationBuilder UseLiteDb(this IApplicationBuilder app)
     {
-        BsonMapper.Global.UseCamelCase();
+        var mapperInstance = app.ApplicationServices.GetService<BsonMapper>()!;
+        mapperInstance.UseCamelCase();
 
         var mappings =
             app.ApplicationServices.GetServices<IEntityMapping>().ToList();
 
         foreach (var entityMapping in mappings)
         {
-            entityMapping.RegisterMapping(BsonMapper.Global);
+            entityMapping.RegisterMapping(mapperInstance);
         }
 
-        var originalResolver = BsonMapper.Global.ResolveMember;
+        var originalResolver = mapperInstance.ResolveMember;
 
-        BsonMapper.Global.ResolveMember = (type, memberInfo, memberMapper) =>
+        mapperInstance.ResolveMember = (type, memberInfo, memberMapper) =>
         {
             originalResolver(type, memberInfo, memberMapper);
             mappings.ForEach(mapping => mapping.ResolveMember(type, memberInfo, memberMapper));

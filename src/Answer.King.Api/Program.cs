@@ -6,7 +6,6 @@ using Answer.King.Api.Extensions.DependencyInjection;
 using Answer.King.Api.OpenApi;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Repositories;
-using Answer.King.Infrastructure;
 using Answer.King.Infrastructure.Extensions.DependencyInjection;
 using Answer.King.Infrastructure.Repositories;
 using Answer.King.Infrastructure.Repositories.Mappings;
@@ -75,7 +74,6 @@ builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
-builder.Services.AddSingleton<ILiteDbConnectionFactory, LiteDbConnectionFactory>();
 
 var app = builder.Build();
 

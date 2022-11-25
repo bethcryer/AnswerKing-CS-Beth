@@ -1,5 +1,4 @@
-﻿using Answer.King.Domain;
-using Answer.King.Domain.Inventory.Models;
+﻿using Answer.King.Domain.Inventory.Models;
 
 namespace Answer.King.Api.IntegrationTests.Common.Models;
 

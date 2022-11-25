@@ -2,7 +2,6 @@ using Answer.King.Api.RequestModels;
 using Answer.King.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Product = Answer.King.Domain.Orders.Models.Product;
 
 namespace Answer.King.Api.Controllers;
 
