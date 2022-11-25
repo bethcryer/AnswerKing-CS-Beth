@@ -2,18 +2,17 @@
 
 public class Product
 {
-    public Product(string name, string description, double price, IList<CategoryId> categories)
+    public Product(string name, string description, double price)
     {
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
         Guard.AgainstNegativeValue(nameof(price), price);
-        Guard.AgainstNullOrEmptyArgument(nameof(categories), categories);
 
         this.Id = 0;
         this.Name = name;
         this.Description = description;
         this.Price = price;
-        this._Categories = new HashSet<CategoryId>(categories);
+        this._Categories = new HashSet<CategoryId>();
     }
 
     private Product(long id,
@@ -27,7 +26,7 @@ public class Product
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
         Guard.AgainstNegativeValue(nameof(price), price);
-        Guard.AgainstNullOrEmptyArgument(nameof(categories), categories);
+        Guard.AgainstNullArgument(nameof(categories), categories);
 
         this.Id = id;
         this.Name = name;

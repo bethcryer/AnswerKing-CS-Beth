@@ -15,11 +15,5 @@ public class ProductValidator : AbstractValidator<Product>
 
         this.RuleFor(p => p.Price)
             .GreaterThanOrEqualTo(0.00);
-
-        this.RuleFor(p => p.Categories)
-            .NotEmpty()
-            .ForEach(p =>
-                p.NotNull()
-                    .GreaterThanOrEqualTo(0));
     }
 }

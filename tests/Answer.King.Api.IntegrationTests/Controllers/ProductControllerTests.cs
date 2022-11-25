@@ -71,8 +71,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                 {
                     Name = "Burger",
                     Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 1 }
+                    Price = 1.50
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -90,10 +89,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
             _.Post
                 .Json(new
                 {
-                    Name = "Burger",
-                    Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 4 }
+                    Name = "Burger"
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -114,8 +110,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                 {
                     Name = "Burger",
                     Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 1 }
+                    Price = 1.50
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -149,10 +144,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
             _.Put
                 .Json(new
                 {
-                    Name = "BBQ Burger",
-                    Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 4 }
+                    Name = "BBQ Burger"
                 })
                 .ToUrl("/api/products/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -206,8 +198,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                 {
                     Name = "Burger",
                     Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 1 }
+                    Price = 1.50
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -235,8 +226,7 @@ public class ProductControllerTests : IClassFixture<WebFixtures>
                 {
                     Name = "Burger",
                     Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 1 }
+                    Price = 1.50
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);

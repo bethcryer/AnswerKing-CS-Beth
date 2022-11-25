@@ -5,16 +5,17 @@ namespace Answer.King.Domain.Inventory;
 // Todo: look at custom deserialisation: https://stackoverflow.com/questions/42336751/custom-deserialization
 public class Category : IAggregateRoot
 {
-    public Category(string name, string description)
+    public Category(string name, string description, IList<ProductId> products)
     {
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
+        Guard.AgainstNullArgument(nameof(products), products);
 
         this.Id = 0;
         this.Name = name;
         this.Description = description;
         this.LastUpdated = this.CreatedOn = DateTime.UtcNow;
-        this._Products = new HashSet<ProductId>();
+        this._Products = new HashSet<ProductId>(products);
         this.Retired = false;
     }
 
@@ -25,7 +26,7 @@ public class Category : IAggregateRoot
         string description,
         DateTime createdOn,
         DateTime lastUpdated,
-        IList<ProductId>? products,
+        IList<ProductId> products,
         bool retired)
     {
         Guard.AgainstDefaultValue(nameof(id), id);
@@ -33,13 +34,14 @@ public class Category : IAggregateRoot
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
         Guard.AgainstDefaultValue(nameof(createdOn), createdOn);
         Guard.AgainstDefaultValue(nameof(lastUpdated), lastUpdated);
+        Guard.AgainstNullArgument(nameof(products), products);
 
         this.Id = id;
         this.Name = name;
         this.Description = description;
         this.CreatedOn = createdOn;
         this.LastUpdated = lastUpdated;
-        this._Products = new HashSet<ProductId>(products ?? Array.Empty<ProductId>());
+        this._Products = new HashSet<ProductId>(products);
         this.Retired = retired;
     }
 

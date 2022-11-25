@@ -10,7 +10,7 @@ public class Product
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
         Guard.AgainstNegativeValue(nameof(price), price);
-        Guard.AgainstNullOrEmptyArgument(nameof(categories), categories);
+        Guard.AgainstNullArgument(nameof(categories), categories);
 
         this.Id = id;
         this.Name = name;
@@ -21,11 +21,11 @@ public class Product
 
     public long Id { get; }
 
-    public string Name { get; set; }
+    public string Name { get; }
 
-    public string Description { get; set; }
+    public string Description { get; }
 
-    public double Price { get; set; }
+    public double Price { get; }
 
     private IList<Category> _Categories { get; }
 

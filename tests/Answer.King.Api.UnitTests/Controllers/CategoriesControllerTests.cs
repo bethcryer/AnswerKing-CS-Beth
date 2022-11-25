@@ -80,7 +80,7 @@ public class CategoriesControllerTests
     {
         // Arrange
         const long id = 1;
-        var data = new Category("name", "description");
+        var data = new Category("name", "description", new List<ProductId>());
         CategoryService.GetCategory(Arg.Is(id)).Returns(data);
 
         // Act
@@ -148,7 +148,7 @@ public class CategoriesControllerTests
             Description = "CATEGORY_DESCRIPTION"
         };
 
-        var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION");
+        var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION", new List<ProductId>());
 
         CategoryService.UpdateCategory(id, categoryRequestModel).Returns(category);
 
@@ -188,7 +188,7 @@ public class CategoriesControllerTests
     {
         // Arrange
         var id = 1;
-        var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION");
+        var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION", new List<ProductId>());
 
         CategoryService.RetireCategory(id).Returns(category);
 

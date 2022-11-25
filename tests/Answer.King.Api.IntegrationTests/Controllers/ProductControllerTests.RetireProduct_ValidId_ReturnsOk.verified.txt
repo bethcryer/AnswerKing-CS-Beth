@@ -3,8 +3,5 @@
   name: Burger,
   description: Juicy,
   price: 1.5,
-  categories: [
-    1
-  ],
   retired: true
 }

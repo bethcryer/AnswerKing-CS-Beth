@@ -72,8 +72,7 @@ public class ProductsControllerTests
     {
         // Arrange
         const long id = 1;
-        var categories = new[] { new CategoryId(id) };
-        var products = new Product("name", "description", 1.99, categories);
+        var products = new Product("name", "description", 1.99);
         ProductService.GetProduct(Arg.Is(id)).Returns(products);
 
         // Act

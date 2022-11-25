@@ -162,11 +162,10 @@ public class OrderServiceTests
         var order = new Order();
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
-        var categoryIds = new List<CategoryId> { new(1) };
         var products = new[]
         {
-            new Product("product 1", "desc", 2.0, categoryIds),
-            new Product("product 2", "desc", 4.0, categoryIds)
+            new Product("product 1", "desc", 2.0),
+            new Product("product 2", "desc", 4.0)
         };
 
         var orderRequest = new RequestModels.Order

@@ -2,6 +2,8 @@
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
+using Answer.King.Domain.Repositories.Models;
+using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;
 using Xunit;
@@ -28,7 +30,7 @@ public class CategoryServiceTests
     public async void RetireCategory_CategoryContainsProducts_ThrowsException()
     {
         // Arrange
-        var category = new Category("category", "desc");
+        var category = new Category("category", "desc", new List<ProductId>());
         category.AddProduct(new ProductId(1));
 
         this.CategoryRepository.Get(category.Id).Returns(category);
@@ -43,7 +45,7 @@ public class CategoryServiceTests
     public async void RetireCategory_NoProductsAssociatedWithCategory_ReturnsRetiredCategory()
     {
         // Arrange
-        var category = new Category("category", "desc");
+        var category = new Category("category", "desc", new List<ProductId>());
         this.CategoryRepository.Get(category.Id).Returns(category);
 
         // Act
@@ -59,26 +61,21 @@ public class CategoryServiceTests
     #region Create
 
     [Fact]
-    public async void CreateCategory_ValidCategory_ReturnsNewlyCreatedCategory()
+    public async void CreateCategory_InvalidProductIdInCategory_ThrowsException()
     {
         // Arrange
-        var products = new List<long> { 1 };
-        var request = new RequestModels.Category
+        var categoryRequest = new RequestModels.Category
         {
-            Name = "category",
+            Name = "Laptop",
             Description = "desc",
-            Products = products
+            Products = new List<long> { 1 }
         };
 
-        // Act
+        this.ProductRepository.Get(Arg.Any<long>()).Returns(null as Product);
+
+        // Act / Assert
         var sut = this.GetServiceUnderTest();
-        var category = await sut.CreateCategory(request);
-
-        // Assert
-        Assert.Equal(request.Name, category.Name);
-        Assert.Equal(request.Description, category.Description);
-
-        await this.CategoryRepository.Received().Save(Arg.Any<Category>());
+        await Assert.ThrowsAsync<CategoryServiceException>(() => sut.CreateCategory(categoryRequest));
     }
 
     #endregion
@@ -89,7 +86,7 @@ public class CategoryServiceTests
     public async void GetCategory_ValdidCategoryId_ReturnsCategory()
     {
         // Arrange
-        var category = new Category("category", "desc");
+        var category = new Category("category", "desc", new List<ProductId>());
         var id = category.Id;
 
         this.CategoryRepository.Get(id).Returns(category);
@@ -109,8 +106,8 @@ public class CategoryServiceTests
         // Arrange
         var categories = new[]
         {
-            new Category("category 1", "desc"),
-            new Category("category 2", "desc")
+            new Category("category 1", "desc", new List<ProductId>()),
+            new Category("category 2", "desc", new List<ProductId>())
         };
 
         this.CategoryRepository.Get().Returns(categories);
@@ -147,13 +144,14 @@ public class CategoryServiceTests
     public async void UpdateCategory_ValidCategoryIdAndRequest_ReturnsUpdatedCategory()
     {
         // Arrange
-        var oldCategory = new Category("old category", "old desc");
+        var oldCategory = new Category("old category", "old desc", new List<ProductId>());
         var categoryId = oldCategory.Id;
 
         var updateCategoryRequest = new RequestModels.Category
         {
             Name = "updated category",
-            Description = "updated desc"
+            Description = "updated desc",
+            Products = new List<long>()
         };
 
         this.CategoryRepository.Get(categoryId).Returns(oldCategory);
@@ -170,15 +168,106 @@ public class CategoryServiceTests
         await this.CategoryRepository.Received().Save(Arg.Any<Category>());
     }
 
+    [Fact]
+    public async void UpdateCategory_InvalidCategoryNotAssociatedWithProduct_ThrowsException()
+    {
+        // Arrange
+        var product = new List<ProductId> { new(1) };
+        var category = new Category("category", "desc", product);
+
+        this.CategoryRepository.Get(Arg.Any<long>()).Returns(category);
+        this.ProductRepository.GetByCategoryId(category.Id).Returns(Array.Empty<Product>());
+
+        var updateCategoryRequest = new RequestModels.Category
+        {
+            Name = "updated category",
+            Description = "updated desc",
+            Products = new List<long> { 1 }
+        };
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        await Assert.ThrowsAsync<CategoryServiceException>(() =>
+            sut.UpdateCategory(category.Id, updateCategoryRequest));
+    }
+
+    [Fact]
+    public async void UpdateCategory_InvalidUpdatedProduct_ThrowsException()
+    {
+        // Arrange
+        var oldProduct = this.CreateProduct(1, "product", "desc", 1.0);
+        var oldProducts = new Product[] { oldProduct };
+        var oldCategory = this.CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
+
+        var updatedProduct = this.CreateProduct(2, "updated product", "desc", 1.0);
+
+        this.CategoryRepository.Get(Arg.Any<long>()).Returns(oldCategory);
+        this.ProductRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
+        this.ProductRepository.Get(updatedProduct.Id).Returns(null as Product);
+
+        var updatedCategory = new RequestModels.Category { Products = new List<long> { updatedProduct.Id } };
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        await Assert.ThrowsAsync<CategoryServiceException>(() =>
+            sut.UpdateCategory(oldCategory.Id, updatedCategory));
+    }
+
+    [Fact]
+    public async void UpdateCategory_ValidUpdatedProduct_UpdatesProductCorrectly()
+    {
+        // Arrange
+        var oldProduct = this.CreateProduct(1, "product", "desc", 1.0);
+        var oldProducts = new Product[]
+        {
+            oldProduct
+        };
+        var oldCategory = this.CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
+
+        var updatedProduct = this.CreateProduct(2, "updated product", "desc", 10.0);
+
+        this.CategoryRepository.Get(Arg.Any<long>()).Returns(oldCategory);
+        this.ProductRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
+        this.ProductRepository.Get(updatedProduct.Id).Returns(updatedProduct);
+
+        var updatedCategory = new RequestModels.Category
+        {
+            Name = "updated category",
+            Description = "desc",
+            Products = new List<long> { updatedProduct.Id }
+        };
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        var category = await sut.UpdateCategory(oldCategory.Id, updatedCategory);
+        Assert.Equal(updatedProduct.Id, category?.Products.First().Value);
+    }
+
+    #endregion
+
+    #region Helpers
+
+    public Category CreateCategory(long id, string name, string description, IList<ProductId> products)
+    {
+        return CategoryFactory.CreateCategory(id, name, description, DateTime.UtcNow, DateTime.UtcNow, products, false);
+    }
+
+    public Product CreateProduct(long id, string name, string description, double price)
+    {
+        return ProductFactory.CreateProduct(id, name, description, price, new List<CategoryId>(), false);
+    }
+
     #endregion
 
     #region Setup
 
     private readonly ICategoryRepository CategoryRepository = Substitute.For<ICategoryRepository>();
 
+    private readonly IProductRepository ProductRepository = Substitute.For<IProductRepository>();
+
     private ICategoryService GetServiceUnderTest()
     {
-        return new CategoryService(this.CategoryRepository);
+        return new CategoryService(this.CategoryRepository, this.ProductRepository);
     }
 
     #endregion

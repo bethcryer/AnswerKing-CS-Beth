@@ -2,17 +2,25 @@
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Inventory;
 using Category = Answer.King.Domain.Inventory.Category;
+using Answer.King.Domain.Inventory.Models;
+using Answer.King.Domain.Repositories.Models;
+using Answer.King.Domain.Orders.Models;
 
 namespace Answer.King.Api.Services;
 
 public class CategoryService : ICategoryService
 {
-    public CategoryService(ICategoryRepository categories)
+    public CategoryService(
+        ICategoryRepository categories,
+        IProductRepository products)
     {
         this.Categories = categories;
+        this.Products = products;
     }
 
     private ICategoryRepository Categories { get; }
+
+    private IProductRepository Products { get; }
 
     public async Task<Category?> GetCategory(long categoryId)
     {
@@ -26,9 +34,31 @@ public class CategoryService : ICategoryService
 
     public async Task<Category> CreateCategory(RequestModels.Category createCategory)
     {
-        var category = new Category(createCategory.Name, createCategory.Description);
+        var categoryProducts = new List<ProductId>();
+        var products = new List<Domain.Repositories.Models.Product>();
+
+        foreach (var productId in createCategory.Products)
+        {
+            var product = await this.Products.Get(productId);
+
+            if (product == null)
+            {
+                throw new CategoryServiceException("The provided product id is not valid.");
+            }
+
+            categoryProducts.Add(new(product.Id));
+            products.Add(product);
+        }
+
+        var category = new Category(createCategory.Name, createCategory.Description, categoryProducts);
 
         await this.Categories.Save(category);
+
+        foreach (var product in products)
+        {
+            product.AddCategory(new CategoryId(category.Id));
+            await this.Products.AddOrUpdate(product);
+        }
 
         return category;
     }
@@ -39,6 +69,40 @@ public class CategoryService : ICategoryService
         if (category == null)
         {
             return null;
+        }
+
+        var productsToCheck = updateCategory.Products;
+        var oldProducts = await this.Products.GetByCategoryId(categoryId);
+
+        foreach (var oldProduct in oldProducts)
+        {
+            // If old product is not still present in updated list, remove link between product and category.
+            if (!productsToCheck.Contains(oldProduct.Id))
+            {
+                oldProduct.RemoveCategory(new CategoryId(categoryId));
+                await this.Products.AddOrUpdate(oldProduct);
+
+                category.RemoveProduct(new ProductId(oldProduct.Id));
+            }
+
+            // Remove old products from list of products to be added
+            productsToCheck.Remove(oldProduct.Id);
+        }
+
+        // Add any new categories remaining in the list
+        foreach (var updateId in productsToCheck)
+        {
+            var product = await this.Products.Get(updateId);
+
+            if (product == null)
+            {
+                throw new CategoryServiceException("The provided product id is not valid.");
+            }
+
+            category.AddProduct(new ProductId(product.Id));
+
+            product.AddCategory(new CategoryId(updateId));
+            await this.Products.AddOrUpdate(product);
         }
 
         category.Rename(updateCategory.Name, updateCategory.Description);
