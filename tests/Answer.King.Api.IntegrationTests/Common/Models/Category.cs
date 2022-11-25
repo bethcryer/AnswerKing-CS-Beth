@@ -23,8 +23,7 @@ public class Category
         this.Retired = retired;
     }
 
-
-    public long Id { get; }
+    public long Id { get; set; }
 
     public string Name { get; }
 

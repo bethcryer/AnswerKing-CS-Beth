@@ -120,8 +120,7 @@ public class ProductControllerTests : WebFixtures
                 {
                     Name = "BBQ Burger",
                     Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 1 }
+                    Price = 1.50
                 })
                 .ToUrl($"/api/products/{products?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
@@ -158,8 +157,7 @@ public class ProductControllerTests : WebFixtures
                 {
                     Name = "BBQ Burger",
                     Description = "Juicy",
-                    Price = 1.50,
-                    Categories = new List<long> { 1 }
+                    Price = 1.50
                 })
                 .ToUrl("/api/products/5");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
