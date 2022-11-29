@@ -75,7 +75,6 @@ public class CategoryService : ICategoryService
 
         foreach (var oldProduct in oldProducts)
         {
-            // If old product is not still present in updated list, remove link between product and category.
             if (!productsToCheck.Contains(oldProduct.Id))
             {
                 oldProduct.RemoveCategory(new CategoryId(categoryId));
@@ -84,11 +83,9 @@ public class CategoryService : ICategoryService
                 category.RemoveProduct(new ProductId(oldProduct.Id));
             }
 
-            // Remove old products from list of products to be added
             productsToCheck.Remove(oldProduct.Id);
         }
 
-        // Add any new categories remaining in the list
         foreach (var updateId in productsToCheck)
         {
             var product = await this.Products.Get(updateId);
@@ -100,7 +97,7 @@ public class CategoryService : ICategoryService
 
             category.AddProduct(new ProductId(product.Id));
 
-            product.AddCategory(new CategoryId(updateId));
+            product.AddCategory(new CategoryId(categoryId));
             await this.Products.AddOrUpdate(product);
         }
 
