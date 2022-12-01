@@ -1,22 +1,17 @@
-name: Continious Integration
+name: Build, Test, and Analyse
 
 on:
-  push:
-  pull_request:
-    types: [opened, reopened]
-    branches:
-      - develop
-      - main
+  workflow_call:
 
 jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
       
-      - name: cache
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.nuget/packages
@@ -24,7 +19,6 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
-
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
@@ -35,30 +29,30 @@ jobs:
 
       - name: Build
         run: dotnet build -c Release --no-restore
-        
+      
       - name: Test
         run: dotnet test -c Release --no-restore --collect:"XPlat Code Coverage" --logger "trx;LogFilePrefix=TestResults" -r TestResults -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: upload TestResults
         uses: actions/upload-artifact@v3
         with:
-          name: test-results
+          name: test-results-${{ github.sha }}
           path: |
             ./TestResults/*.trx
             ./TestResults/**/coverage.opencover.xml
-
+            
   integration-test:
     name: Report Tests
     runs-on: ubuntu-latest
     needs: [build]
     steps:
       - uses: actions/checkout@v3
-        
+
       - name: download test results
         uses: actions/download-artifact@v3
         with:
-          name: test-results
-          path: ./TestResults
+          name: test-results-${{ github.sha }}
+
 
       - name: Report Tests
         id: report-tests
@@ -75,7 +69,7 @@ jobs:
           hide_and_recreate: true
           hide_classify: "OUTDATED"
           message: Tests run with ${{ steps.report-tests.outputs.passed }} passed and ${{ steps.report-tests.outputs.failed }} failed in ${{ steps.report-tests.outputs.time }}ms.
-          
+
   analysis:
       name: Analyse
       runs-on: ubuntu-latest
@@ -110,8 +104,7 @@ jobs:
         - name: download test results
           uses: actions/download-artifact@v3
           with:
-            name: test-results
-            path: ./TestResults
+            name: test-results-${{ github.sha }}
 
         - name: Build and analyze
           env:
