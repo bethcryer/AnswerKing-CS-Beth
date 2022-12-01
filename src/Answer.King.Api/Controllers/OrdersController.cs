@@ -35,7 +35,7 @@ public class OrdersController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     /// <response code="200">When the order with the provided <paramref name="id"/> has been found.</response>
-    /// <response code="404">When the order with the given <paramref name="id"/> does not exist</response>
+    /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
     // GET api/orders/{ID}
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]

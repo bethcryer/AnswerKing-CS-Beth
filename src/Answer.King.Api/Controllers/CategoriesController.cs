@@ -40,7 +40,7 @@ public class CategoriesController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     /// <response code="200">When the category with the provided <paramref name="id"/> has been found.</response>
-    /// <response code="404">When the category with the given <paramref name="id"/> does not exist</response>
+    /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
     // GET api/categories/{ID}
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]

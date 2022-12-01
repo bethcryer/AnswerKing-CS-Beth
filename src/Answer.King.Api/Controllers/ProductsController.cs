@@ -37,7 +37,7 @@ public class ProductsController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     /// <response code="200">When the product with the provided <paramref name="id"/> has been found.</response>
-    /// <response code="404">When the product with the given <paramref name="id"/> does not exist</response>
+    /// <response code="404">When the product with the given <paramref name="id"/> does not exist.</response>
     // GET api/products/{ID}
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
