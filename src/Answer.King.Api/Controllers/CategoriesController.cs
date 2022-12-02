@@ -120,13 +120,13 @@ public class CategoriesController : ControllerBase
     /// Retire an existing category.
     /// </summary>
     /// <param name="id"></param>
-    /// <response code="200">When the category has been retired.</response>
+    /// <response code="204">When the category has been retired.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
     /// <response code="410">When the category with the given <paramref name="id"/> is already retired.</response>
     // DELETE api/categories/{ID}
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
@@ -135,14 +135,12 @@ public class CategoriesController : ControllerBase
     {
         try
         {
-            var category = await this.Categories.RetireCategory(id);
-
-            if (category == null)
+            if (await this.Categories.RetireCategory(id) == null)
             {
                 return this.NotFound();
             }
 
-            return this.Ok(category);
+            return this.NoContent();
         }
         catch (CategoryServiceException ex) when (ex.Message.StartsWith(
                                                       "Cannot retire category whilst there are still products assigned.",

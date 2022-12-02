@@ -237,7 +237,7 @@ public class CategoryControllerTests : WebFixtures
     }
 
     [Fact]
-    public async Task<VerifyResult> RetireCategory_ValidId_ReturnsOk()
+    public async Task RetireCategory_ValidId_ReturnsNoContent()
     {
         var postResult = await this.AlbaHost.Scenario(_ =>
         {
@@ -254,14 +254,12 @@ public class CategoryControllerTests : WebFixtures
 
         var categories = postResult.ReadAsJson<Category>();
 
-        var putResult = await this.AlbaHost.Scenario(_ =>
+        await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
                 .Url($"/api/categories/{categories?.Id}");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
         });
-
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
     }
 
     [Fact]
@@ -286,7 +284,7 @@ public class CategoryControllerTests : WebFixtures
         {
             _.Delete
                 .Url($"/api/categories/{categories?.Id}");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
         });
 
         var secondDeleteResult = await this.AlbaHost.Scenario(_ =>

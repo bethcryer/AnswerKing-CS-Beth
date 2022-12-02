@@ -118,26 +118,24 @@ public class OrdersController : ControllerBase
     /// Cancel an existind order.
     /// </summary>
     /// <param name="id"></param>
-    /// <response code="200">When the order has been cancelled.</response>
+    /// <response code="204">When the order has been cancelled.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
     // DELETE api/orders/{ID}
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Cancel(long id)
     {
         try
         {
-            var order = await this.Orders.CancelOrder(id);
-
-            if (order == null)
+            if (await this.Orders.CancelOrder(id) == null)
             {
                 return this.NotFound();
             }
 
-            return this.Ok(order);
+            return this.NoContent();
         }
         catch (OrderLifeCycleException ex)
         {

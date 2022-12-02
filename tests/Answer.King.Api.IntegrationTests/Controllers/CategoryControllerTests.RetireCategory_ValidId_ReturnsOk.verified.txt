@@ -1,8 +1,0 @@
-﻿{
-  id: 3,
-  name: Seafood,
-  description: Food from the oceans,
-  createdOn: DateTimeOffset_1,
-  lastUpdated: DateTimeOffset_2,
-  retired: true
-}

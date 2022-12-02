@@ -119,12 +119,12 @@ public class ProductsController : ControllerBase
     /// Retire an existing product.
     /// </summary>
     /// <param name="id"></param>
-    /// <response code="200">When the product has been retired.</response>
+    /// <response code="204">When the product has been retired.</response>
     /// <response code="404">When the product with the given <paramref name="id"/> does not exist.</response>
     /// <response code="410">When the product with the given <paramref name="id"/> is already retired.</response>
     // DELETE api/products/{ID}
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [SwaggerOperation(Tags = new[] { "Inventory" })]
@@ -132,14 +132,12 @@ public class ProductsController : ControllerBase
     {
         try
         {
-            var product = await this.Products.RetireProduct(id);
-
-            if (product == null)
+            if (await this.Products.RetireProduct(id) == null)
             {
                 return this.NotFound();
             }
 
-            return this.Ok(product);
+            return this.NoContent();
         }
         catch (ProductServiceException)
         {

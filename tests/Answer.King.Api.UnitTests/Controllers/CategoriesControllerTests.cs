@@ -196,7 +196,7 @@ public class CategoriesControllerTests
         var result = await GetSubjectUnderTest.Retire(id);
 
         // Assert
-        Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<NoContentResult>(result);
     }
 
     #endregion Retire

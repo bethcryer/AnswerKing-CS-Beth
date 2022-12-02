@@ -188,7 +188,7 @@ public class OrderControllerTests : WebFixtures
     }
 
     [Fact]
-    public async Task<VerifyResult> CancelOrder_ValidId_ReturnsOk()
+    public async Task CancelOrder_ValidId_ReturnsNoContent()
     {
         var postResult = await this.AlbaHost.Scenario(_ =>
         {
@@ -205,14 +205,12 @@ public class OrderControllerTests : WebFixtures
 
         var order = postResult.ReadAsJson<Order>();
 
-        var putResult = await this.AlbaHost.Scenario(_ =>
+        await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
                 .Url($"/api/orders/{order?.Id}");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
         });
-
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
     }
 
     [Fact]
@@ -237,7 +235,7 @@ public class OrderControllerTests : WebFixtures
         {
             _.Delete
                 .Url($"/api/orders/{order?.Id}");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
         });
 
         var secondDeleteResult = await this.AlbaHost.Scenario(_ =>

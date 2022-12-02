@@ -182,7 +182,7 @@ public class ProductControllerTests : WebFixtures
     }
 
     [Fact]
-    public async Task<VerifyResult> RetireProduct_ValidId_ReturnsOk()
+    public async Task RetireProduct_ValidId_ReturnsNoContent()
     {
         var postResult = await this.AlbaHost.Scenario(_ =>
         {
@@ -199,14 +199,12 @@ public class ProductControllerTests : WebFixtures
 
         var products = postResult.ReadAsJson<Product>();
 
-        var putResult = await this.AlbaHost.Scenario(_ =>
+        await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
                 .Url($"/api/products/{products?.Id}");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
         });
-
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
     }
 
     [Fact]
@@ -231,7 +229,7 @@ public class ProductControllerTests : WebFixtures
         {
             _.Delete
                 .Url($"/api/products/{products?.Id}");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
         });
 
         var secondDeleteResult = await this.AlbaHost.Scenario(_ =>
