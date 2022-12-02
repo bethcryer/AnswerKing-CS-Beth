@@ -82,7 +82,6 @@ public class PaymentsController : ControllerBase
         {
             this.ModelState.AddModelError("error", ex.Message);
             return this.ValidationProblem();
-
         }
     }
 

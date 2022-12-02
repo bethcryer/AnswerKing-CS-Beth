@@ -13,7 +13,6 @@ public class Category
         IList<ProductId>? products,
         bool retired)
     {
-
         this.Id = id;
         this.Name = name;
         this.Description = description;
@@ -36,5 +35,4 @@ public class Category
     public IList<ProductId> Products { get; }
 
     public bool Retired { get; }
-
 }

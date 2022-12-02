@@ -43,15 +43,15 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
         var categories = new List<Category>
         {
             new Category(1, "name", "description")
         };
-        var price = 1.24;
-        var quantity = 2;
+        const double price = 1.24;
+        const int quantity = 2;
 
         order.CompleteOrder();
 
@@ -65,15 +65,15 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
         var categories = new List<Category>
         {
             new Category(1, "name", "description")
         };
-        var price = 1.24;
-        var quantity = 2;
+        const double price = 1.24;
+        const int quantity = 2;
 
         order.CancelOrder();
 
@@ -87,15 +87,15 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
         var categories = new List<Category>
         {
             new Category(1, "name", "description")
         };
-        var price = 1.24;
-        var quantity = 2;
+        const double price = 1.24;
+        const int quantity = 2;
 
         // Act
         order.AddLineItem(id, name, description, price, categories, quantity);
@@ -104,10 +104,10 @@ public class OrderTests
 
         // Assert
         Assert.NotNull(lineItem);
-        Assert.Equal(lineItem.Quantity, quantity);
+        Assert.Equal(quantity, lineItem.Quantity);
         Assert.NotNull(lineItem.Product);
-        Assert.Equal(lineItem.Product.Id, id);
-        Assert.Equal(lineItem.Product.Price, price);
+        Assert.Equal(id, lineItem.Product.Id);
+        Assert.Equal(price, lineItem.Product.Price);
     }
 
     [Fact]
@@ -115,15 +115,15 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
         var categories = new List<Category>
         {
             new Category(1, "name", "description")
         };
-        var price = 1.24;
-        var quantity = 2;
+        const double price = 1.24;
+        const int quantity = 2;
 
         // Act
         order.AddLineItem(id, name, description, price, categories, quantity);
@@ -132,7 +132,7 @@ public class OrderTests
 
         // Assert
         Assert.NotNull(lineItem);
-        Assert.Equal(lineItem.SubTotal, quantity * price);
+        Assert.Equal(quantity * price, lineItem.SubTotal);
     }
 
     [Fact]
@@ -140,15 +140,15 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
         var categories = new List<Category>
         {
             new Category(1, "name", "description")
         };
-        var price = 1.24;
-        var quantity = 2;
+        const double price = 1.24;
+        const int quantity = 2;
 
         // Act
         order.AddLineItem(id, name, description, price, categories, quantity);
@@ -158,7 +158,7 @@ public class OrderTests
         // Assert
         Assert.NotNull(lineItem);
         Assert.NotNull(lineItem.Product);
-        Assert.Equal(lineItem.Product.Price, price);
+        Assert.Equal(price, lineItem.Product.Price);
     }
 
     #endregion AddLineItem
@@ -170,8 +170,8 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var quantity = 2;
+        const int id = 1;
+        const int quantity = 2;
 
         order.CompleteOrder();
 
@@ -185,8 +185,8 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var quantity = 2;
+        const int id = 1;
+        const int quantity = 2;
 
         order.CancelOrder();
 
@@ -200,8 +200,8 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var quantity = 3;
+        const int id = 1;
+        const int quantity = 3;
 
         // Act
         order.RemoveLineItem(id, quantity);
@@ -215,9 +215,9 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var productName = "PRODUCT_NAME";
-        var productDescription = "PRODUCT_DESCRIPTION";
+        const int id = 1;
+        const string productName = "PRODUCT_NAME";
+        const string productDescription = "PRODUCT_DESCRIPTION";
         var categories = new List<Category>
         {
             new Category(
@@ -225,8 +225,8 @@ public class OrderTests
             "CATEGORY_NAME",
             "CATEGORY_DESCRIPTION"
         )};
-        var quantity = 5;
-        var price = 1.25;
+        const int quantity = 5;
+        const double price = 1.25;
 
         order.AddLineItem(id, productName, productDescription, price, categories, quantity);
 
@@ -245,9 +245,9 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var productName = "PRODUCT_NAME";
-        var productDescription = "PRODUCT_DESCRIPTION";
+        const int id = 1;
+        const string productName = "PRODUCT_NAME";
+        const string productDescription = "PRODUCT_DESCRIPTION";
         var categories = new List<Category>
         {
             new Category(
@@ -255,8 +255,8 @@ public class OrderTests
             "CATEGORY_NAME",
             "CATEGORY_DESCRIPTION"
         )};
-        var quantity = 3;
-        var price = 1.25;
+        const int quantity = 3;
+        const double price = 1.25;
 
         order.AddLineItem(id, productName, productDescription, price, categories, quantity);
 

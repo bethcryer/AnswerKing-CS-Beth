@@ -142,7 +142,7 @@ public class ProductServiceTests
 
     #region Helpers
 
-    public Category CreateCategory(long id, string name, string description)
+    public static Category CreateCategory(long id, string name, string description)
     {
         return CategoryFactory.CreateCategory(id, name, description, DateTime.UtcNow, DateTime.UtcNow, new List<Answer.King.Domain.Inventory.Models.ProductId>(), false);
     }

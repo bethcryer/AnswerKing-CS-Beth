@@ -15,7 +15,9 @@ public class Payment
         this.Date = DateTime.UtcNow;
     }
 
+#pragma warning disable IDE0051 // Remove unused private members
     private Payment(long id, long orderId, double amount, double orderTotal, DateTime date)
+#pragma warning restore IDE0051 // Remove unused private members
     {
         Domain.Guard.AgainstDefaultValue(nameof(id), id);
         Domain.Guard.AgainstDefaultValue(nameof(orderId), orderId);

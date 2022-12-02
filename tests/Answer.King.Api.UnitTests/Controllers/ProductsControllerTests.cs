@@ -58,7 +58,7 @@ public class ProductsControllerTests
     public async void GetOne_ServiceReturnsNull_ReturnsNotFoundResult()
     {
         // Arrange
-        var id = 1;
+        const int id = 1;
 
         // Act
         var result = await GetSubjectUnderTest.GetOne(id);

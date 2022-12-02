@@ -4,6 +4,7 @@ using Category = Answer.King.Domain.Inventory.Category;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Domain.Orders.Models;
+using System.Runtime.Serialization;
 
 namespace Answer.King.Api.Services;
 
@@ -141,17 +142,24 @@ public class CategoryService : ICategoryService
 }
 
 [Serializable]
-internal class CategoryServiceException : Exception
+public class CategoryServiceException : Exception
 {
-    public CategoryServiceException(string message, Exception innerException) : base(message, innerException)
+    public CategoryServiceException()
     {
     }
 
-    public CategoryServiceException() : base()
+    public CategoryServiceException(string message)
+        : base(message)
     {
     }
 
-    public CategoryServiceException(string? message) : base(message)
+    public CategoryServiceException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
+
+    protected CategoryServiceException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
     {
     }
 }

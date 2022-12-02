@@ -8,7 +8,6 @@ using Category = Answer.King.Api.IntegrationTests.Common.Models.Category;
 
 namespace Answer.King.Api.IntegrationTests.Controllers;
 
-
 [UsesVerify]
 public class CategoryControllerTests : WebFixtures
 {
@@ -44,7 +43,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { }
+                    Products = new List<long>()
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -84,7 +83,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { }
+                    Products = new List<long>()
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -194,7 +193,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { }
+                    Products = new List<long>()
                 })
                 .ToUrl("/api/categories/50");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
@@ -247,7 +246,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { }
+                    Products = new List<long>()
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -275,7 +274,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { }
+                    Products = new List<long>()
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);

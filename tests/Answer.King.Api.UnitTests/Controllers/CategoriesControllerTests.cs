@@ -128,7 +128,7 @@ public class CategoriesControllerTests
     public async void Put_NullCategory_ReturnsNotFoundResult()
     {
         // Arrange
-        var id = 1;
+        const int id = 1;
 
         // Act
         var result = await GetSubjectUnderTest.Put(id, null!);
@@ -141,7 +141,7 @@ public class CategoriesControllerTests
     public async void Put_ValidRequest_ReturnsOkObjectResult()
     {
         // Arrange
-        var id = 1;
+        const int id = 1;
         var categoryRequestModel = new RequestModels.Category
         {
             Name = "CATEGORY_NAME",
@@ -187,7 +187,7 @@ public class CategoriesControllerTests
     public async void Retire_ValidRequest_ReturnsOkObjectResult()
     {
         // Arrange
-        var id = 1;
+        const int id = 1;
         var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION", new List<ProductId>());
 
         CategoryService.RetireCategory(id).Returns(category);

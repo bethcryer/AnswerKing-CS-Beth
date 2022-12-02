@@ -1,4 +1,6 @@
-﻿namespace Answer.King.Domain.Repositories.Models;
+﻿using System.Runtime.Serialization;
+
+namespace Answer.King.Domain.Repositories.Models;
 
 public class Product
 {
@@ -15,7 +17,9 @@ public class Product
         this._Categories = new HashSet<CategoryId>();
     }
 
+#pragma warning disable IDE0051 // Remove unused private members
     private Product(long id,
+#pragma warning restore IDE0051 // Remove unused private members
         string name,
         string description,
         double price,
@@ -79,15 +83,22 @@ public class Product
 [Serializable]
 public class ProductLifecycleException : Exception
 {
-    public ProductLifecycleException(string message) : base(message)
+    public ProductLifecycleException()
     {
     }
 
-    public ProductLifecycleException() : base()
+    public ProductLifecycleException(string message)
+        : base(message)
     {
     }
 
-    public ProductLifecycleException(string? message, Exception? innerException) : base(message, innerException)
+    public ProductLifecycleException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
+
+    protected ProductLifecycleException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
     {
     }
 }

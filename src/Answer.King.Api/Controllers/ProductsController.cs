@@ -144,9 +144,9 @@ public class ProductsController : ControllerBase
         catch (ProductServiceException)
         {
             return this.Problem(
-                type: "https://www.rfc-editor.org/rfc/rfc7231#section-6.5.9",
+                statusCode: StatusCodes.Status410Gone,
                 title: "Gone",
-                statusCode: StatusCodes.Status410Gone);
+                type: "https://www.rfc-editor.org/rfc/rfc7231#section-6.5.9");
         }
     }
 }

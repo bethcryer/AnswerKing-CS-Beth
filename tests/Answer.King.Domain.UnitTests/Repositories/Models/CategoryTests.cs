@@ -11,7 +11,7 @@ public class CategoryTests
     public void CategoryId_InitWithWithDefaultId_ThrowsDefaultValueException()
     {
         // Arrange
-        var id = 0;
+        const int id = 0;
 
         // Act / Assert
         Assert.Throws<Guard.DefaultValueException>(() => new CategoryId(id));

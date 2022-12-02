@@ -130,7 +130,7 @@ public class CategoryServiceTests
     {
         // Arrange
         var updateCategoryRequest = new RequestModels.Category();
-        var categoryId = 1;
+        const int categoryId = 1;
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -195,11 +195,11 @@ public class CategoryServiceTests
     public async void UpdateCategory_InvalidUpdatedProduct_ThrowsException()
     {
         // Arrange
-        var oldProduct = this.CreateProduct(1, "product", "desc", 1.0);
+        var oldProduct = CreateProduct(1, "product", "desc", 1.0);
         var oldProducts = new Product[] { oldProduct };
-        var oldCategory = this.CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
+        var oldCategory = CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
 
-        var updatedProduct = this.CreateProduct(2, "updated product", "desc", 1.0);
+        var updatedProduct = CreateProduct(2, "updated product", "desc", 1.0);
 
         this.CategoryRepository.Get(Arg.Any<long>()).Returns(oldCategory);
         this.ProductRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
@@ -217,14 +217,14 @@ public class CategoryServiceTests
     public async void UpdateCategory_ValidUpdatedProduct_UpdatesProductCorrectly()
     {
         // Arrange
-        var oldProduct = this.CreateProduct(1, "product", "desc", 1.0);
+        var oldProduct = CreateProduct(1, "product", "desc", 1.0);
         var oldProducts = new Product[]
         {
             oldProduct
         };
-        var oldCategory = this.CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
+        var oldCategory = CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
 
-        var updatedProduct = this.CreateProduct(2, "updated product", "desc", 10.0);
+        var updatedProduct = CreateProduct(2, "updated product", "desc", 10.0);
 
         this.CategoryRepository.Get(Arg.Any<long>()).Returns(oldCategory);
         this.ProductRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
@@ -247,12 +247,12 @@ public class CategoryServiceTests
 
     #region Helpers
 
-    public Category CreateCategory(long id, string name, string description, IList<ProductId> products)
+    public static Category CreateCategory(long id, string name, string description, IList<ProductId> products)
     {
         return CategoryFactory.CreateCategory(id, name, description, DateTime.UtcNow, DateTime.UtcNow, products, false);
     }
 
-    public Product CreateProduct(long id, string name, string description, double price)
+    public static Product CreateProduct(long id, string name, string description, double price)
     {
         return ProductFactory.CreateProduct(id, name, description, price, new List<CategoryId>(), false);
     }

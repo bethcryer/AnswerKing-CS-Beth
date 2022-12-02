@@ -78,7 +78,6 @@ public class OrderEntityMappings : IEntityMapping
     {
         var lineItem = item.AsDocument;
         var product = lineItem["product"].AsDocument;
-        var category = product["category"].AsDocument;
 
         var result = new LineItem(
             new Product(

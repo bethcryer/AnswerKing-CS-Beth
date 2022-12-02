@@ -12,10 +12,10 @@ public class ProductTests
     public void Product_InitWithDefaultId_ThrowsDefaultValueException()
     {
         // Arrange
-        var id = 0;
-        var name = "name";
-        var description = "description";
-        var price = 142;
+        const int id = 0;
+        const string name = "name";
+        const string description = "description";
+        const int price = 142;
         var categories = new List<Category>
         {
             new Category(1, "name", "description")
@@ -36,10 +36,10 @@ public class ProductTests
     public void Product_InitWithNegativePrice_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
-        var id = 1;
-        var name = "name";
-        var description = "description";
-        var price = -1;
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
+        const int price = -1;
         var categories = new List<Category>
         {
             new Category(1, "name", "description")
