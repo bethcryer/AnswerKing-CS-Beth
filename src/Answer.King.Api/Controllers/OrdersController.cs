@@ -130,7 +130,8 @@ public class OrdersController : ControllerBase
     {
         try
         {
-            if (await this.Orders.CancelOrder(id) == null)
+            var order = await this.Orders.CancelOrder(id);
+            if (order == null)
             {
                 return this.NotFound();
             }

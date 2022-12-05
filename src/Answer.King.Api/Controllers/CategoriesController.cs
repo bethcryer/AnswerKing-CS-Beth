@@ -135,7 +135,8 @@ public class CategoriesController : ControllerBase
     {
         try
         {
-            if (await this.Categories.RetireCategory(id) == null)
+            var category = await this.Categories.RetireCategory(id);
+            if (category == null)
             {
                 return this.NotFound();
             }

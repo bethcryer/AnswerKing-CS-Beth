@@ -132,7 +132,8 @@ public class ProductsController : ControllerBase
     {
         try
         {
-            if (await this.Products.RetireProduct(id) == null)
+            var product = await this.Products.RetireProduct(id);
+            if (product == null)
             {
                 return this.NotFound();
             }
