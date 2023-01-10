@@ -20,7 +20,6 @@ public class ProductsController : ControllerBase
     /// <summary>
     /// Get all products.
     /// </summary>
-    /// <returns></returns>
     /// <response code="200">When all the products have been returned.</response>
     // GET api/products
     [HttpGet]
@@ -35,7 +34,6 @@ public class ProductsController : ControllerBase
     /// Get a single product.
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
     /// <response code="200">When the product with the provided <paramref name="id"/> has been found.</response>
     /// <response code="404">When the product with the given <paramref name="id"/> does not exist.</response>
     // GET api/products/{ID}

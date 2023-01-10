@@ -1,4 +1,6 @@
-﻿namespace Answer.King.Domain.Orders.Models;
+﻿using System.Runtime.Serialization;
+
+namespace Answer.King.Domain.Orders.Models;
 
 public class LineItem
 {
@@ -52,6 +54,10 @@ public class LineItemException : Exception
     }
 
     public LineItemException(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
+
+    protected LineItemException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
 }

@@ -1,0 +1,12 @@
+﻿[
+  {
+    Id: 1,
+    Name: Fish,
+    Description: Delicious and satisfying.,
+    Price: 5.99,
+    Categories: [
+      1
+    ],
+    Retired: false
+  }
+]

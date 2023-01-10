@@ -118,11 +118,6 @@ public class CategoryService : ICategoryService
             return null;
         }
 
-        if (category.Retired)
-        {
-            throw new CategoryServiceException("The category is already retired.");
-        }
-
         try
         {
             category.RetireCategory();
@@ -133,10 +128,7 @@ public class CategoryService : ICategoryService
         }
         catch (CategoryLifecycleException ex)
         {
-            // ignored
-            throw new CategoryServiceException(
-                $"Cannot retire category whilst there are still products assigned. {string.Join(',', category.Products.Select(p => p.Value))}"
-                , ex);
+            throw new CategoryServiceException(ex.Message, ex);
         }
     }
 }

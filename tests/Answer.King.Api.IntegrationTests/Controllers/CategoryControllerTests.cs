@@ -29,14 +29,14 @@ public class CategoryControllerTests : WebFixtures
             _.StatusCodeShouldBeOk();
         });
 
-        var products = result.ReadAsJson<IEnumerable<Category>>();
-        return await Verify(products);
+        var categories = result.ReadAsJson<IEnumerable<Category>>();
+        return await Verify(categories);
     }
 
     [Fact]
     public async Task<VerifyResult> GetCategory_CategoryExists_ReturnsCategory()
     {
-        var category = await this.AlbaHost.Scenario(_ =>
+        var newCategory = await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
@@ -55,8 +55,8 @@ public class CategoryControllerTests : WebFixtures
             _.StatusCodeShouldBeOk();
         });
 
-        var products = result.ReadAsJson<Category>();
-        return await Verify(products);
+        var category = result.ReadAsJson<Category>();
+        return await Verify(category);
     }
 
     [Fact]
@@ -65,6 +65,47 @@ public class CategoryControllerTests : WebFixtures
         var result = await this.AlbaHost.Scenario(_ =>
         {
             _.Get.Url("/api/categories/50");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
+        });
+
+        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+    }
+    #endregion
+
+    #region Get Products
+
+    [Fact]
+    public async Task<VerifyResult> GetProducts_TagExists_ReturnsProducts()
+    {
+        var newCategory = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Seafood",
+                    Description = "Food from the oceans",
+                    Products = new List<long>()
+                })
+                .ToUrl("/api/categories");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
+        });
+
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Get.Url("/api/categories/1/products");
+            _.StatusCodeShouldBeOk();
+        });
+
+        var tag = result.ReadAsJson<IEnumerable<Product>>();
+        return await Verify(tag);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> GetProducts_TagDoesNotExist_Returns404()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Get.Url("/api/categories/50/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
@@ -89,8 +130,8 @@ public class CategoryControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
         });
 
-        var products = result.ReadAsJson<Category>();
-        return await Verify(products);
+        var category = result.ReadAsJson<Category>();
+        return await Verify(category);
     }
 
     [Fact]
@@ -252,12 +293,12 @@ public class CategoryControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
         });
 
-        var categories = postResult.ReadAsJson<Category>();
+        var category = postResult.ReadAsJson<Category>();
 
         await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
-                .Url($"/api/categories/{categories?.Id}");
+                .Url($"/api/categories/{category?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
         });
     }
@@ -278,19 +319,19 @@ public class CategoryControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
         });
 
-        var categories = postResult.ReadAsJson<Category>();
+        var category = postResult.ReadAsJson<Category>();
 
         await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
-                .Url($"/api/categories/{categories?.Id}");
+                .Url($"/api/categories/{category?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
         });
 
         var secondDeleteResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
-                .Url($"/api/categories/{categories?.Id}");
+                .Url($"/api/categories/{category?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Gone);
         });
 

@@ -46,10 +46,6 @@ public class OrderTests
         const int id = 1;
         const string name = "name";
         const string description = "description";
-        var categories = new List<Category>
-        {
-            new Category(1, "name", "description")
-        };
         const double price = 1.24;
         const int quantity = 2;
 
@@ -57,7 +53,7 @@ public class OrderTests
 
         // Act / Assert
         Assert.Throws<OrderLifeCycleException>(() =>
-            order.AddLineItem(id, name, description, price, categories, quantity));
+            order.AddLineItem(id, name, description, price, quantity));
     }
 
     [Fact]
@@ -68,10 +64,6 @@ public class OrderTests
         const int id = 1;
         const string name = "name";
         const string description = "description";
-        var categories = new List<Category>
-        {
-            new Category(1, "name", "description")
-        };
         const double price = 1.24;
         const int quantity = 2;
 
@@ -79,7 +71,7 @@ public class OrderTests
 
         // Act / Assert
         Assert.Throws<OrderLifeCycleException>(() =>
-            order.AddLineItem(id, name, description, price, categories, quantity));
+            order.AddLineItem(id, name, description, price, quantity));
     }
 
     [Fact]
@@ -90,15 +82,11 @@ public class OrderTests
         const int id = 1;
         const string name = "name";
         const string description = "description";
-        var categories = new List<Category>
-        {
-            new Category(1, "name", "description")
-        };
         const double price = 1.24;
         const int quantity = 2;
 
         // Act
-        order.AddLineItem(id, name, description, price, categories, quantity);
+        order.AddLineItem(id, name, description, price, quantity);
 
         var lineItem = order.LineItems.FirstOrDefault();
 
@@ -118,15 +106,11 @@ public class OrderTests
         const int id = 1;
         const string name = "name";
         const string description = "description";
-        var categories = new List<Category>
-        {
-            new Category(1, "name", "description")
-        };
         const double price = 1.24;
         const int quantity = 2;
 
         // Act
-        order.AddLineItem(id, name, description, price, categories, quantity);
+        order.AddLineItem(id, name, description, price, quantity);
 
         var lineItem = order.LineItems.FirstOrDefault();
 
@@ -143,15 +127,11 @@ public class OrderTests
         const int id = 1;
         const string name = "name";
         const string description = "description";
-        var categories = new List<Category>
-        {
-            new Category(1, "name", "description")
-        };
         const double price = 1.24;
         const int quantity = 2;
 
         // Act
-        order.AddLineItem(id, name, description, price, categories, quantity);
+        order.AddLineItem(id, name, description, price, quantity);
 
         var lineItem = order.LineItems.FirstOrDefault();
 
@@ -218,17 +198,10 @@ public class OrderTests
         const int id = 1;
         const string productName = "PRODUCT_NAME";
         const string productDescription = "PRODUCT_DESCRIPTION";
-        var categories = new List<Category>
-        {
-            new Category(
-            1,
-            "CATEGORY_NAME",
-            "CATEGORY_DESCRIPTION"
-        )};
         const int quantity = 5;
         const double price = 1.25;
 
-        order.AddLineItem(id, productName, productDescription, price, categories, quantity);
+        order.AddLineItem(id, productName, productDescription, price, quantity);
 
         // Act
         order.RemoveLineItem(id, 3);
@@ -241,24 +214,17 @@ public class OrderTests
     }
 
     [Fact]
-    public void RemoveLineItem_LineItemExistsInOrder_RemovedFromOrderIfQuantityGteCurrent()
+    public void RemoveLineItem_LineItemExistsInOrder_RemovedFromOrderIfQuantityGetCurrent()
     {
         // Arrange
         var order = new Order();
         const int id = 1;
         const string productName = "PRODUCT_NAME";
         const string productDescription = "PRODUCT_DESCRIPTION";
-        var categories = new List<Category>
-        {
-            new Category(
-            1,
-            "CATEGORY_NAME",
-            "CATEGORY_DESCRIPTION"
-        )};
         const int quantity = 3;
         const double price = 1.25;
 
-        order.AddLineItem(id, productName, productDescription, price, categories, quantity);
+        order.AddLineItem(id, productName, productDescription, price, quantity);
 
         // Act
         order.RemoveLineItem(id, 3);

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace Answer.King.Domain;
 
@@ -298,6 +299,10 @@ public static class Guard
         public EmptyStringException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
+
+        protected EmptyStringException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
 
     [Serializable]
@@ -312,6 +317,10 @@ public static class Guard
         }
 
         public WhitespaceException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
+
+        protected WhitespaceException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
@@ -330,6 +339,10 @@ public static class Guard
         public StringExceedsNCharactersException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
+
+        protected StringExceedsNCharactersException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
 
     [Serializable]
@@ -346,6 +359,10 @@ public static class Guard
         public DefaultValueException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
+
+        protected DefaultValueException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
 
     [Serializable]
@@ -360,6 +377,10 @@ public static class Guard
         }
 
         public EmptyListException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
+
+        protected EmptyListException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

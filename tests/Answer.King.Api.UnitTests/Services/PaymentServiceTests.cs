@@ -5,6 +5,7 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Xunit;
 using Category = Answer.King.Domain.Orders.Models.Category;
+using Tag = Answer.King.Domain.Orders.Models.Tag;
 using Order = Answer.King.Domain.Orders.Order;
 using Payment = Answer.King.Api.RequestModels.Payment;
 
@@ -16,7 +17,7 @@ public class PaymentServiceTests
     #region MakePayment
 
     [Fact]
-    public async void MakePayment_InvalidOrderIdReceived_ThrowsException()
+    public async Task MakePayment_InvalidOrderIdReceived_ThrowsException()
     {
         // Arrange
         this.OrderRepository.Get(Arg.Any<long>()).ReturnsNull();
@@ -28,15 +29,11 @@ public class PaymentServiceTests
     }
 
     [Fact]
-    public async void MakePayment_PaymentAmountLessThanOrderTotal_ThrowsException()
+    public async Task MakePayment_PaymentAmountLessThanOrderTotal_ThrowsException()
     {
         // Arrange
         var order = new Order();
-        order.AddLineItem(1, "product", "desc", 12.00,
-            new List<Category>
-            {
-                new Category(1, "category", "desc")
-            }, 2);
+        order.AddLineItem(1, "product", "desc", 12.00, 2);
 
         var makePayment = new Payment { OrderId = order.Id, Amount = 20.00 };
 
@@ -49,15 +46,11 @@ public class PaymentServiceTests
     }
 
     [Fact]
-    public async void MakePayment_PaidOrder_ThrowsException()
+    public async Task MakePayment_PaidOrder_ThrowsException()
     {
         // Arrange
         var order = new Order();
-        order.AddLineItem(1, "product", "desc", 12.00,
-            new List<Category>
-            {
-                new Category(1, "category", "desc")
-            }, 2);
+        order.AddLineItem(1, "product", "desc", 12.00, 2);
         order.CompleteOrder();
 
         var makePayment = new Payment { OrderId = order.Id, Amount = 24.00 };
@@ -71,7 +64,7 @@ public class PaymentServiceTests
     }
 
     [Fact]
-    public async void MakePayment_CancelledOrder_ThrowsException()
+    public async Task MakePayment_CancelledOrder_ThrowsException()
     {
         // Arrange
         var order = new Order();
@@ -88,15 +81,11 @@ public class PaymentServiceTests
     }
 
     [Fact]
-    public async void MakePayment_ValidPaymentRequest_ReturnsPayment()
+    public async Task MakePayment_ValidPaymentRequest_ReturnsPayment()
     {
         // Arrange
         var order = new Order();
-        order.AddLineItem(1, "product", "desc", 12.00,
-            new List<Category>
-            {
-                new Category(1, "category", "desc")
-            }, 2);
+        order.AddLineItem(1, "product", "desc", 12.00, 2);
 
         var makePayment = new Payment { OrderId = order.Id, Amount = 24.00 };
         var expectedPayment = new Domain.Repositories.Models.Payment(order.Id, makePayment.Amount, order.OrderTotal);
@@ -122,7 +111,7 @@ public class PaymentServiceTests
     #region Get
 
     [Fact]
-    public async void GetPayments_ReturnsAllPayments()
+    public async Task GetPayments_ReturnsAllPayments()
     {
         // Arrange
         var payments = new[]
@@ -143,7 +132,7 @@ public class PaymentServiceTests
     }
 
     [Fact]
-    public async void GetPayment_ValidPaymentId_ReturnsPayment()
+    public async Task GetPayment_ValidPaymentId_ReturnsPayment()
     {
         // Arrange
         var payment = new Domain.Repositories.Models.Payment(1, 50.00, 35.00);

@@ -14,7 +14,8 @@ public class Product
         this.Name = name;
         this.Description = description;
         this.Price = price;
-        this._Categories = new HashSet<CategoryId>();
+        this._categories = new HashSet<CategoryId>();
+        this._tags = new HashSet<TagId>();
     }
 
 #pragma warning disable IDE0051 // Remove unused private members
@@ -24,6 +25,7 @@ public class Product
         string description,
         double price,
         IList<CategoryId> categories,
+        IList<TagId> tags,
         bool retired)
     {
         Guard.AgainstDefaultValue(nameof(id), id);
@@ -31,12 +33,14 @@ public class Product
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
         Guard.AgainstNegativeValue(nameof(price), price);
         Guard.AgainstNullArgument(nameof(categories), categories);
+        Guard.AgainstNullArgument(nameof(tags), tags);
 
         this.Id = id;
         this.Name = name;
         this.Description = description;
         this.Price = price;
-        this._Categories = new HashSet<CategoryId>(categories);
+        this._categories = new HashSet<CategoryId>(categories);
+        this._tags = new HashSet<TagId>(tags);
         this.Retired = retired;
     }
 
@@ -48,9 +52,13 @@ public class Product
 
     public double Price { get; set; }
 
-    private HashSet<CategoryId> _Categories { get; }
+    private HashSet<CategoryId> _categories { get; }
 
-    public IReadOnlyCollection<CategoryId> Categories => this._Categories;
+    public IReadOnlyCollection<CategoryId> Categories => this._categories;
+
+    private HashSet<TagId> _tags { get; }
+
+    public IReadOnlyCollection<TagId> Tags => this._tags;
 
     public bool Retired { get; private set; }
 
@@ -61,7 +69,7 @@ public class Product
             throw new ProductLifecycleException("Cannot add category to retired product.");
         }
 
-        this._Categories.Add(category);
+        this._categories.Add(category);
     }
 
     public void RemoveCategory(CategoryId category)
@@ -71,7 +79,27 @@ public class Product
             throw new ProductLifecycleException("Cannot remove category from retired product.");
         }
 
-        this._Categories.Remove(category);
+        this._categories.Remove(category);
+    }
+
+    public void AddTag(TagId tag)
+    {
+        if (this.Retired)
+        {
+            throw new ProductLifecycleException("Cannot add tag to retired product.");
+        }
+
+        this._tags.Add(tag);
+    }
+
+    public void RemoveTag(TagId tag)
+    {
+        if (this.Retired)
+        {
+            throw new ProductLifecycleException("Cannot remove tag from retired product.");
+        }
+
+        this._tags.Remove(tag);
     }
 
     public void Retire()

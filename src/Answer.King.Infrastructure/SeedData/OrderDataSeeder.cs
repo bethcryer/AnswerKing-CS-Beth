@@ -6,13 +6,13 @@ public class OrderDataSeeder : ISeedData
 {
     public void SeedData(ILiteDbConnectionFactory connections)
     {
-        var db = connections.GetConnection();
-        var collection = db.GetCollection<Order>();
-
         if (this.DataSeeded)
         {
             return;
         }
+
+        var db = connections.GetConnection();
+        var collection = db.GetCollection<Order>();
 
         var none = collection.Count() < 1;
         if (none)

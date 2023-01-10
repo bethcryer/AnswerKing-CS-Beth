@@ -19,7 +19,6 @@ public class OrdersController : ControllerBase
     /// <summary>
     /// Get all orders.
     /// </summary>
-    /// <returns></returns>
     /// <response code="200">When all the orders have been returned.</response>
     // GET api/orders
     [HttpGet]
@@ -33,7 +32,6 @@ public class OrdersController : ControllerBase
     /// Get a single order.
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
     /// <response code="200">When the order with the provided <paramref name="id"/> has been found.</response>
     /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
     // GET api/orders/{ID}

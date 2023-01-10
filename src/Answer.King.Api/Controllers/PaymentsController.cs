@@ -26,7 +26,6 @@ public class PaymentsController : ControllerBase
     /// <summary>
     /// Gets all payments.
     /// </summary>
-    /// <returns></returns>
     /// <response code="200">When all the payments have been returned.</response>
     // GET: api/payments
     [HttpGet]
@@ -41,7 +40,6 @@ public class PaymentsController : ControllerBase
     /// Get a single payment.
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
     /// <response code="200">When the payment with the provided <paramref name="id"/> has been found.</response>
     /// <response code="404">When the payment with the given <paramref name="id"/> does not exist.</response>
     // GET: api/payments/5

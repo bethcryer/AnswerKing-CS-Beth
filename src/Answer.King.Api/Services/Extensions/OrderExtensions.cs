@@ -6,7 +6,7 @@ namespace Answer.King.Api.Services.Extensions;
 
 public static class OrderExtensions
 {
-    public static void AddOrRemoveLineItems(this Order order, RequestModels.Order orderChanges, IList<Product> domainProducts, IList<Category> domainCategories)
+    public static void AddOrRemoveLineItems(this Order order, RequestModels.Order orderChanges, IList<Product> domainProducts)
     {
         var actions = new List<AddRemoveUpdateAction>();
         actions.AddRange(order.GetLineItemsToAdd(orderChanges));
@@ -18,14 +18,12 @@ public static class OrderExtensions
             if (action.IsIncrease)
             {
                 var product = domainProducts.Single(p => p.Id == action.ProductId);
-                var categories = domainCategories.Where(dc => product.Categories.Any(c => c == dc.Id)).ToList();
 
                 order.AddLineItem(
                     product.Id,
                     product.Name,
                     product.Description,
                     product.Price,
-                    categories,
                     action.QuantityDifference);
             }
             else

@@ -55,4 +55,42 @@ public class CategoryTests
 
         Assert.Throws<CategoryLifecycleException>(() => category.RetireCategory());
     }
+
+    [Fact]
+    public void AddProduct_WithValidIdAndNotRetired_ReturnsExpectedResult()
+    {
+        var category = new Category("Phones", "Electronics", new List<ProductId>());
+        var productId = new ProductId(1);
+
+        category.AddProduct(productId);
+
+        Assert.Equal(category.Products.First(), productId);
+    }
+
+    [Fact]
+    public void AddProduct_CategoryRetired_ThrowsException()
+    {
+        var category = new Category("Phones", "Electronics", new List<ProductId>());
+        category.RetireCategory();
+
+        Assert.Throws<CategoryLifecycleException>(() => category.AddProduct(new ProductId(1)));
+    }
+
+    [Fact]
+    public void RemoveProduct_WithValidIdAndNotRetired_ReturnsExpectedResult()
+    {
+        var category = new Category("Phones", "Electronics", new List<ProductId>());
+        category.RemoveProduct(new ProductId(1));
+
+        Assert.Empty(category.Products);
+    }
+
+    [Fact]
+    public void RemoveProduct_CategoryRetired_ThrowsException()
+    {
+        var category = new Category("Phones", "Electronics", new List<ProductId>());
+        category.RetireCategory();
+
+        Assert.Throws<CategoryLifecycleException>(() => category.RemoveProduct(new ProductId(1)));
+    }
 }

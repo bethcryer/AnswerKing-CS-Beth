@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories.Models;
 
 namespace Answer.King.Api.Common.JsonConverters;

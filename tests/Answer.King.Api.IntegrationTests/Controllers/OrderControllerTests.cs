@@ -222,7 +222,7 @@ public class OrderControllerTests : WebFixtures
                 .Json(new
                 {
                     lineItems = new List<RMLineItems>() {
-                        new RMLineItems(){ProductId= 1,Quantity=1}
+                        new RMLineItems(){ProductId= 1, Quantity=1}
                     }
                 })
                 .ToUrl("/api/orders");

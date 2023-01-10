@@ -8,6 +8,7 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Xunit;
 using CategoryId = Answer.King.Domain.Repositories.Models.CategoryId;
+using TagId = Answer.King.Domain.Repositories.Models.TagId;
 using Order = Answer.King.Domain.Orders.Order;
 using Product = Answer.King.Domain.Repositories.Models.Product;
 
@@ -16,10 +17,14 @@ namespace Answer.King.Api.UnitTests.Services;
 [TestCategory(TestType.Unit)]
 public class OrderServiceTests
 {
+    private static CategoryFactory CategoryFactory { get; } = new();
+
+    private static ProductFactory ProductFactory { get; } = new();
+
     #region Create
 
     [Fact]
-    public async void CreateOrder_InvalidProductsSubmitted_ThrowsException()
+    public async Task CreateOrder_InvalidProductsSubmitted_ThrowsException()
     {
         // Arrange
         var lineItem1 = new LineItem
@@ -47,14 +52,15 @@ public class OrderServiceTests
 
 
     [Fact]
-    public async void CreateOrder_ValidOrderRequestRecieved_ReturnsOrder()
+    public async Task CreateOrder_ValidOrderRequestRecieved_ReturnsOrder()
     {
         // Arrange
         var categoryIds = new List<CategoryId> { new(1) };
+        var tagIds = new List<TagId> { new(1) };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categoryIds, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categoryIds, false)
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categoryIds, tagIds, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categoryIds, tagIds, false)
         };
 
         var orderRequest = new RequestModels.Order
@@ -96,7 +102,7 @@ public class OrderServiceTests
     #region Update
 
     [Fact]
-    public async void UpdateOrder_InvalidOrderIdReceived_ReturnsNull()
+    public async Task UpdateOrder_InvalidOrderIdReceived_ReturnsNull()
     {
         // Arrange
         this.OrderRepository.Get(Arg.Any<long>()).ReturnsNull();
@@ -107,17 +113,18 @@ public class OrderServiceTests
     }
 
     [Fact]
-    public async void UpdateOrder_ValidOrderRequestReceived_ReturnsUpdatedOrder()
+    public async Task UpdateOrder_ValidOrderRequestReceived_ReturnsUpdatedOrder()
     {
         // Arrange
         var order = new Order();
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
         var categoryIds = new List<CategoryId> { new(1) };
+        var tagIds = new List<TagId> { new(1) };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categoryIds, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categoryIds, false)
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categoryIds, tagIds, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categoryIds, tagIds, false)
         };
 
         var orderRequest = new RequestModels.Order
@@ -156,7 +163,7 @@ public class OrderServiceTests
     }
 
     [Fact]
-    public async void UpdateOrder_InvalidProductReceivedInOrder_ThrowsException()
+    public async Task UpdateOrder_InvalidProductReceivedInOrder_ThrowsException()
     {
         // Arrange
         var order = new Order();
@@ -189,7 +196,7 @@ public class OrderServiceTests
     #region Get
 
     [Fact]
-    public async void GetOrder_ValidOrderId_ReturnsOrder()
+    public async Task GetOrder_ValidOrderId_ReturnsOrder()
     {
         // Arrange
         var order = new Order();
@@ -205,7 +212,7 @@ public class OrderServiceTests
     }
 
     [Fact]
-    public async void GetOrders_ReturnsAllOrders()
+    public async Task GetOrders_ReturnsAllOrders()
     {
         // Arrange
         var orders = new[]
@@ -229,7 +236,7 @@ public class OrderServiceTests
     #region Cancel
 
     [Fact]
-    public async void CancelOrder_InvalidOrderIdReceived_ReturnsNull()
+    public async Task CancelOrder_InvalidOrderIdReceived_ReturnsNull()
     {
         // Arrange
         this.OrderRepository.Get(Arg.Any<long>()).ReturnsNull();
@@ -252,7 +259,7 @@ public class OrderServiceTests
 
     private IOrderService GetServiceUnderTest()
     {
-        return new OrderService(this.OrderRepository, this.ProductRepository, this.CategoryRepository);
+        return new OrderService(this.OrderRepository, this.ProductRepository);
     }
 
     #endregion

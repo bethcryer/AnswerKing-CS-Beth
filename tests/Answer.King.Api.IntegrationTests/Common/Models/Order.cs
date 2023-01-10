@@ -57,19 +57,17 @@ public class LineItem
 
 public class OrderProduct
 {
-    public OrderProduct(long id, string name, string description, double price, IList<OrderCategory> categories)
+    public OrderProduct(long id, string name, string description, double price)
     {
         Guard.AgainstDefaultValue(nameof(id), id);
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
         Guard.AgainstNegativeValue(nameof(price), price);
-        Guard.AgainstNullOrEmptyArgument(nameof(categories), categories);
 
         this.Id = id;
         this.Name = name;
         this.Description = description;
         this.Price = price;
-        this.Categories = categories ?? new List<OrderCategory>();
     }
     public long Id { get; }
 
@@ -78,26 +76,4 @@ public class OrderProduct
     public string Description { get; set; }
 
     public double Price { get; set; }
-
-    public IList<OrderCategory> Categories { get; set; }
-}
-
-public class OrderCategory
-{
-    public OrderCategory(
-        long id,
-        string name,
-        string description
-        )
-    {
-        this.Id = id;
-        this.Name = name;
-        this.Description = description;
-    }
-
-    public long Id { get; }
-
-    public string Name { get; }
-
-    public string Description { get; }
 }

@@ -9,7 +9,9 @@ namespace Answer.King.Infrastructure.Repositories.Mappings;
 
 public class OrderEntityMappings : IEntityMapping
 {
-    private static readonly FieldInfo? OrderIdFieldInfo =
+    private static readonly OrderFactory orderFactory = new();
+
+    private static readonly FieldInfo? orderIdFieldInfo =
         typeof(Order).GetField($"<{nameof(Order.Id)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public void RegisterMapping(BsonMapper mapper)
@@ -25,12 +27,6 @@ public class OrderEntityMappings : IEntityMapping
                         ["_id"] = li.Product.Id,
                         ["name"] = li.Product.Name,
                         ["description"] = li.Product.Description,
-                        ["categories"] = new BsonArray(li.Product.Categories.Select(c => new BsonDocument
-                        {
-                            ["_id"] = c.Id,
-                            ["name"] = c.Name,
-                            ["description"] = c.Description
-                        })),
                         ["price"] = li.Product.Price
                     },
                     ["quantity"] = li.Quantity
@@ -55,7 +51,7 @@ public class OrderEntityMappings : IEntityMapping
                     doc["lineItems"].AsArray.Select(this.ToLineItem)
                         .ToList();
 
-                return OrderFactory.CreateOrder(
+                return orderFactory.CreateOrder(
                     doc["_id"].AsInt64,
                     doc["createdOn"].AsDateTime,
                     doc["lastUpdated"].AsDateTime,
@@ -70,7 +66,7 @@ public class OrderEntityMappings : IEntityMapping
         if (type == typeof(Order) && memberMapper.MemberName == "Id")
         {
             memberMapper.Setter =
-                (obj, value) => OrderIdFieldInfo?.SetValue(obj, value);
+                (obj, value) => orderIdFieldInfo?.SetValue(obj, value);
         }
     }
 
@@ -84,14 +80,7 @@ public class OrderEntityMappings : IEntityMapping
                 product["_id"].AsInt64,
                 product["name"].AsString,
                 product["description"].AsString,
-                product["price"].AsDouble,
-                product["Categories"].AsArray.Select(p =>
-                    new Category(
-                        p.AsDocument["_id"].AsInt64,
-                        p.AsDocument["name"].AsString,
-                        p.AsDocument["description"].AsString
-                     )
-                ).ToList()
+                product["price"].AsDouble
             )
         );
 

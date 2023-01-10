@@ -8,7 +8,9 @@ namespace Answer.King.Infrastructure.Repositories.Mappings;
 
 public class ProductEntityMappings : IEntityMapping
 {
-    private static readonly FieldInfo? ProductIdFieldInfo =
+    private static readonly ProductFactory productFactory = new();
+
+    private static readonly FieldInfo? productIdFieldInfo =
         typeof(Product).GetField($"<{nameof(Product.Id)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public void RegisterMapping(BsonMapper mapper)
@@ -18,6 +20,7 @@ public class ProductEntityMappings : IEntityMapping
             serialize: product =>
             {
                 var categories = product.Categories.Select(c => new BsonValue(c.Value));
+                var tags = product.Tags.Select(c => new BsonValue(c.Value));
 
                 var doc = new BsonDocument
                 {
@@ -26,6 +29,7 @@ public class ProductEntityMappings : IEntityMapping
                     ["description"] = product.Description,
                     ["price"] = product.Price,
                     ["categories"] = new BsonArray(categories),
+                    ["tags"] = new BsonArray(tags),
                     ["retired"] = product.Retired
                 };
 
@@ -35,13 +39,15 @@ public class ProductEntityMappings : IEntityMapping
             {
                 var doc = bson.AsDocument;
                 var categories = doc["categories"].AsArray.Select(c => new CategoryId(c)).ToList();
+                var tags = doc["tags"].AsArray.Select(c => new TagId(c)).ToList();
 
-                return ProductFactory.CreateProduct(
+                return productFactory.CreateProduct(
                     doc["_id"].AsInt64,
                     doc["name"].AsString,
                     doc["description"].AsString,
                     doc["price"].AsDouble,
                     categories,
+                    tags,
                     doc["retired"].AsBoolean);
             }
         );
@@ -52,7 +58,7 @@ public class ProductEntityMappings : IEntityMapping
         if (type == typeof(Product) && memberMapper.MemberName == "Id")
         {
             memberMapper.Setter =
-                (obj, value) => ProductIdFieldInfo?.SetValue(obj, value);
+                (obj, value) => productIdFieldInfo?.SetValue(obj, value);
         }
     }
 }

@@ -17,7 +17,7 @@ public class ProductsControllerTests
     {
         // Assert
         AssertController.HasRouteAttribute<ProductsController>("api/[controller]");
-        Assert.Equal(nameof(ProductsController), "ProductsController");
+        Assert.Equal("ProductsController", nameof(ProductsController));
     }
 
     #endregion GenericControllerTests
@@ -33,7 +33,7 @@ public class ProductsControllerTests
     }
 
     [Fact]
-    public async void GetAll_ValidRequest_ReturnsOkObjectResult()
+    public async Task GetAll_ValidRequest_ReturnsOkObjectResult()
     {
         // Act
         var result = await GetSubjectUnderTest.GetAll();
@@ -55,7 +55,7 @@ public class ProductsControllerTests
     }
 
     [Fact]
-    public async void GetOne_ServiceReturnsNull_ReturnsNotFoundResult()
+    public async Task GetOne_ServiceReturnsNull_ReturnsNotFoundResult()
     {
         // Arrange
         const int id = 1;

@@ -1,13 +1,16 @@
-﻿using Answer.King.Domain.Repositories.Models;
-using Answer.King.Test.Common.CustomTraits;
+﻿using Answer.King.Domain;
+using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
+using Answer.King.Test.Common.CustomTraits;
 using Xunit;
 
-namespace Answer.King.Domain.UnitTests.Repositories.Models;
+namespace Answer.King.Infrastructure.UnitTests.Repositories.Models;
 
 [TestCategory(TestType.Unit)]
 public class ProductTests
 {
+    private static readonly ProductFactory productFactory = new();
+
     [Fact]
     public void Product_InitWithDefaultId_ThrowsDefaultValueException()
     {
@@ -16,6 +19,7 @@ public class ProductTests
         const string productName = "Product Name";
         const string productDescription = "Product Description";
         var categories = new List<CategoryId> { new(1) };
+        var tags = new List<TagId> { new(1) };
         const int price = 142;
         const bool retired = false;
         var createdOn = DateTime.Now;
@@ -23,12 +27,13 @@ public class ProductTests
 
         // Act / Assert
 
-        Assert.Throws<Guard.DefaultValueException>(() => ProductFactory.CreateProduct(
+        Assert.Throws<Guard.DefaultValueException>(() => productFactory.CreateProduct(
             id,
             productName,
             productDescription,
             price,
             categories,
+            tags,
             retired)
         );
     }
@@ -41,16 +46,18 @@ public class ProductTests
         var productName = null as string;
         const string productDescription = "Product Description";
         var categories = new List<CategoryId> { new(1) };
+        var tags = new List<TagId> { new(1) };
         const int price = 142;
         const bool retired = false;
 
         // Act / Assert
-        Assert.Throws<ArgumentNullException>(() => ProductFactory.CreateProduct(
+        Assert.Throws<ArgumentNullException>(() => productFactory.CreateProduct(
             id,
             productName!,
             productDescription,
             price,
             categories,
+            tags,
             retired)
         );
     }
@@ -63,16 +70,18 @@ public class ProductTests
         const string productName = "";
         const string productDescription = "Product Description";
         var categories = new List<CategoryId> { new(1) };
+        var tags = new List<TagId> { new(1) };
         const int price = 142;
         const bool retired = false;
 
         // Act / Assert
-        Assert.Throws<Guard.EmptyStringException>(() => ProductFactory.CreateProduct(
+        Assert.Throws<Guard.EmptyStringException>(() => productFactory.CreateProduct(
             id,
             productName,
             productDescription,
             price,
             categories,
+            tags,
             retired)
         );
     }
@@ -85,16 +94,18 @@ public class ProductTests
         const string productName = "Product Name";
         var productDescription = null as string;
         var categories = new List<CategoryId> { new(1) };
+        var tags = new List<TagId> { new(1) };
         const int price = 142;
         const bool retired = false;
 
         // Act / Assert
-        Assert.Throws<ArgumentNullException>(() => ProductFactory.CreateProduct(
+        Assert.Throws<ArgumentNullException>(() => productFactory.CreateProduct(
             id,
             productName,
             productDescription!,
             price,
             categories,
+            tags,
             retired)
         );
     }
@@ -107,16 +118,18 @@ public class ProductTests
         const string productName = "Product Name";
         const string productDescription = "";
         var categories = new List<CategoryId> { new(1) };
+        var tags = new List<TagId> { new(1) };
         const int price = 142;
         const bool retired = false;
 
         // Act / Assert
-        Assert.Throws<Guard.EmptyStringException>(() => ProductFactory.CreateProduct(
+        Assert.Throws<Guard.EmptyStringException>(() => productFactory.CreateProduct(
             id,
             productName,
             productDescription,
             price,
             categories,
+            tags,
             retired)
         );
     }
@@ -129,16 +142,18 @@ public class ProductTests
         const string productName = "Product Name";
         const string productDescription = "Product Description";
         var categories = new List<CategoryId> { new(1) };
+        var tags = new List<TagId> { new(1) };
         const int price = -1;
         const bool retired = false;
 
         // Act Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => ProductFactory.CreateProduct(
+        Assert.Throws<ArgumentOutOfRangeException>(() => productFactory.CreateProduct(
             id,
             productName,
             productDescription,
             price,
             categories,
+            tags,
             retired)
         );
     }

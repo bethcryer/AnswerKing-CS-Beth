@@ -1,0 +1,6 @@
+﻿{
+  type: https://www.rfc-editor.org/rfc/rfc7231#section-6.5.9,
+  title: Gone,
+  status: 410,
+  traceId: {Scrubbed}
+}

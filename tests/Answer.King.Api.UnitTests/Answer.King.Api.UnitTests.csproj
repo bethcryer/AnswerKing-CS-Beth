@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,6 +27,5 @@
     <ProjectReference Include="..\..\src\Answer.King.Api\Answer.King.Api.csproj" />
     <ProjectReference Include="..\Answer.King.Test.Common\Answer.King.Test.Common.csproj" />
   </ItemGroup>
-
 
 </Project>

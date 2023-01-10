@@ -10,19 +10,15 @@ public class OrderService : IOrderService
 {
     public OrderService(
         IOrderRepository orders,
-        IProductRepository products,
-        ICategoryRepository categories)
+        IProductRepository products)
     {
         this.Orders = orders;
         this.Products = products;
-        this.Categories = categories;
     }
 
     private IOrderRepository Orders { get; }
 
     private IProductRepository Products { get; }
-
-    private ICategoryRepository Categories { get; }
 
     public async Task<Order?> GetOrder(long orderId)
     {
@@ -51,12 +47,8 @@ public class OrderService : IOrderService
                 $"Product id{(invalidProducts.Count > 1 ? "s" : "")} does not exist: {string.Join(',', invalidProducts)}");
         }
 
-        var categories =
-            (await this.Categories.GetByProductId(matchingProducts.Select(p => p.Id).ToArray()))
-                .Select(c => new Category(c.Id, c.Name, c.Description)).ToList();
-
         var order = new Order();
-        order.AddOrRemoveLineItems(createOrder, matchingProducts, categories);
+        order.AddOrRemoveLineItems(createOrder, matchingProducts);
 
         await this.Orders.Save(order);
 
@@ -87,11 +79,7 @@ public class OrderService : IOrderService
                 $"Product id{(invalidProducts.Count > 1 ? "s" : "")} does not exist: {string.Join(',', invalidProducts)}");
         }
 
-        var categories =
-            (await this.Categories.GetByProductId(matchingProducts.Select(p => p.Id).ToArray()))
-            .Select(c => new Category(c.Id, c.Name, c.Description)).ToList();
-
-        order.AddOrRemoveLineItems(updateOrder, matchingProducts, categories);
+        order.AddOrRemoveLineItems(updateOrder, matchingProducts);
 
         await this.Orders.Save(order);
 
