@@ -1,11 +1,12 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Answer.King.Domain.Inventory.Models;
-using Answer.King.Domain.Orders.Models;
 
 namespace Answer.King.Domain.Inventory;
 
 public class Tag : IAggregateRoot
 {
+    private readonly HashSet<ProductId> products;
+
     public Tag(string name, string description, IList<ProductId> products)
     {
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
@@ -16,7 +17,7 @@ public class Tag : IAggregateRoot
         this.Name = name;
         this.Description = description;
         this.LastUpdated = this.CreatedOn = DateTime.UtcNow;
-        this._products = new HashSet<ProductId>(products);
+        this.products = new HashSet<ProductId>(products);
         this.Retired = false;
     }
 
@@ -44,7 +45,7 @@ public class Tag : IAggregateRoot
         this.Description = description;
         this.CreatedOn = createdOn;
         this.LastUpdated = lastUpdated;
-        this._products = new HashSet<ProductId>(products);
+        this.products = new HashSet<ProductId>(products);
         this.Retired = retired;
     }
 
@@ -58,9 +59,7 @@ public class Tag : IAggregateRoot
 
     public DateTime LastUpdated { get; private set; }
 
-    private HashSet<ProductId> _products { get; }
-
-    public IReadOnlyCollection<ProductId> Products => this._products;
+    public IReadOnlyCollection<ProductId> Products => this.products;
 
     public bool Retired { get; private set; }
 
@@ -81,7 +80,7 @@ public class Tag : IAggregateRoot
             throw new TagLifecycleException("Cannot add product to retired tag.");
         }
 
-        if (this._products.Add(productId))
+        if (this.products.Add(productId))
         {
             this.LastUpdated = DateTime.UtcNow;
         }
@@ -94,7 +93,7 @@ public class Tag : IAggregateRoot
             throw new TagLifecycleException("Cannot remove product from retired tag.");
         }
 
-        if (this._products.Remove(productId))
+        if (this.products.Remove(productId))
         {
             this.LastUpdated = DateTime.UtcNow;
         }
@@ -107,7 +106,7 @@ public class Tag : IAggregateRoot
             throw new TagLifecycleException("The tag is already retired.");
         }
 
-        if (this._products.Count > 0)
+        if (this.products.Count > 0)
         {
             throw new TagLifecycleException(
                 $"Cannot retire tag whilst there are still products assigned. {string.Join(',', this.Products.Select(p => p.Value))}");
@@ -122,19 +121,22 @@ public class Tag : IAggregateRoot
 [Serializable]
 public class TagLifecycleException : Exception
 {
-    public TagLifecycleException(string message) : base(message)
+    public TagLifecycleException(string message)
+        : base(message)
     {
     }
 
-    public TagLifecycleException() : base()
+    public TagLifecycleException()
     {
     }
 
-    public TagLifecycleException(string? message, Exception? innerException) : base(message, innerException)
+    public TagLifecycleException(string? message, Exception? innerException)
+        : base(message, innerException)
     {
     }
 
-    protected TagLifecycleException(SerializationInfo info, StreamingContext context) : base(info, context)
+    protected TagLifecycleException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
     {
     }
 }

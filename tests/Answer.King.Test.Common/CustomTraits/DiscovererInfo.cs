@@ -1,4 +1,4 @@
-﻿namespace Answer.King.Test.Common.CustomTraits;
+namespace Answer.King.Test.Common.CustomTraits;
 
 public static class DiscovererInfo
 {

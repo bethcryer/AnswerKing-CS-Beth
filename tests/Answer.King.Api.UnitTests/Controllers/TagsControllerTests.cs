@@ -1,4 +1,4 @@
-﻿using Answer.King.Api.Controllers;
+using Answer.King.Api.Controllers;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
@@ -14,6 +14,16 @@ namespace Answer.King.Api.UnitTests.Controllers;
 [TestCategory(TestType.Unit)]
 public class TagsControllerTests
 {
+    #region Setup
+
+    private static readonly ITagService TagService = Substitute.For<ITagService>();
+
+    private static readonly IProductService ProductService = Substitute.For<IProductService>();
+
+    private static readonly TagsController GetSubjectUnderTest = new(TagService, ProductService);
+
+    #endregion Setup
+
     #region GenericControllerTests
 
     [Fact]
@@ -40,8 +50,7 @@ public class TagsControllerTests
     public async Task GetAll_ValidRequest_ReturnsOkObjectResult()
     {
         // Arrange
-        var data = new List<Tag>();
-        TagService.GetTags().Returns(data);
+        TagService.GetTags().Returns(new List<Tag>());
 
         // Act
         var result = await GetSubjectUnderTest.GetAll();
@@ -59,7 +68,7 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpGetAttribute>(
-            nameof(TagsController.GetOne), "{id}");
+            nameof(TagsController.GetOne), "{id:long}");
     }
 
     [Fact]
@@ -110,7 +119,7 @@ public class TagsControllerTests
         var tagRequestModel = new RequestModels.Tag
         {
             Name = "TAG_NAME",
-            Description = "TAG_DESCRIPTION"
+            Description = "TAG_DESCRIPTION",
         };
 
         var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId>());
@@ -135,7 +144,7 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpPutAttribute>(
-            nameof(TagsController.Put), "{id}");
+            nameof(TagsController.Put), "{id:long}");
     }
 
     [Fact]
@@ -159,7 +168,7 @@ public class TagsControllerTests
         var tagRequestModel = new RequestModels.Tag
         {
             Name = "TAG_NAME",
-            Description = "TAG_DESCRIPTION"
+            Description = "TAG_DESCRIPTION",
         };
 
         var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId>());
@@ -184,7 +193,7 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpPutAttribute>(
-            nameof(TagsController.AddProducts), "{id}/products");
+            nameof(TagsController.AddProducts), "{id:long}/products");
     }
 
     [Fact]
@@ -207,7 +216,7 @@ public class TagsControllerTests
         const int id = 1;
         var tagAddProductsRequestModel = new RequestModels.TagProducts
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         TagService.AddProducts(id, tagAddProductsRequestModel).Throws(new TagServiceException("The provided product id is not valid."));
@@ -226,7 +235,7 @@ public class TagsControllerTests
         const int id = 1;
         var tagAddProductsRequestModel = new RequestModels.TagProducts
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId> { new(1) });
@@ -273,7 +282,7 @@ public class TagsControllerTests
         const int id = 1;
         var tagRemoveProductsRequestModel = new RequestModels.TagProducts
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         TagService.RemoveProducts(id, tagRemoveProductsRequestModel).Throws(new TagServiceException("The provided product id is not valid."));
@@ -292,7 +301,7 @@ public class TagsControllerTests
         const int id = 1;
         var tagAddProductsRequestModel = new RequestModels.TagProducts
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId>());
@@ -316,7 +325,7 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpDeleteAttribute>(
-            nameof(TagsController.Retire), "{id}");
+            nameof(TagsController.Retire), "{id:long}");
     }
 
     [Fact]
@@ -369,19 +378,8 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpGetAttribute>(
-            nameof(TagsController.GetProducts), "{id}/products");
+            nameof(TagsController.GetProducts), "{id:long}/products");
     }
 
     #endregion GetProducts
-
-    #region Setup
-
-    private static readonly ITagService TagService = Substitute.For<ITagService>();
-
-    private static readonly IProductService ProductService = Substitute.For<IProductService>();
-
-    private static readonly TagsController GetSubjectUnderTest =
-        new TagsController(TagService, ProductService);
-
-    #endregion Setup
 }

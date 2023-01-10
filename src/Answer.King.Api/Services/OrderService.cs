@@ -1,10 +1,10 @@
-﻿using Answer.King.Api.Services.Extensions;
+using Answer.King.Api.Services.Extensions;
 using Answer.King.Domain.Orders;
-using Answer.King.Domain.Orders.Models;
 using Answer.King.Domain.Repositories;
 
-
 namespace Answer.King.Api.Services;
+
+using System.Runtime.Serialization;
 
 public class OrderService : IOrderService
 {
@@ -22,12 +22,12 @@ public class OrderService : IOrderService
 
     public async Task<Order?> GetOrder(long orderId)
     {
-        return await this.Orders.Get(orderId);
+        return await this.Orders.GetOne(orderId);
     }
 
     public async Task<IEnumerable<Order>> GetOrders()
     {
-        return await this.Orders.Get();
+        return await this.Orders.GetAll();
     }
 
     public async Task<Order> CreateOrder(RequestModels.Order createOrder)
@@ -35,7 +35,7 @@ public class OrderService : IOrderService
         var submittedProductIds = createOrder.LineItems.Select(l => l.ProductId).ToList();
 
         var matchingProducts =
-            (await this.Products.Get(submittedProductIds)).ToList();
+            (await this.Products.GetMany(submittedProductIds)).ToList();
 
         var invalidProducts =
             submittedProductIds.Except(matchingProducts.Select(p => p.Id))
@@ -44,7 +44,7 @@ public class OrderService : IOrderService
         if (invalidProducts.Any())
         {
             throw new ProductInvalidException(
-                $"Product id{(invalidProducts.Count > 1 ? "s" : "")} does not exist: {string.Join(',', invalidProducts)}");
+                $"Product id{(invalidProducts.Count > 1 ? "s" : string.Empty)} does not exist: {string.Join(',', invalidProducts)}");
         }
 
         var order = new Order();
@@ -57,7 +57,7 @@ public class OrderService : IOrderService
 
     public async Task<Order?> UpdateOrder(long orderId, RequestModels.Order updateOrder)
     {
-        var order = await this.Orders.Get(orderId);
+        var order = await this.Orders.GetOne(orderId);
 
         if (order == null)
         {
@@ -67,7 +67,7 @@ public class OrderService : IOrderService
         var submittedProductIds = updateOrder.LineItems.Select(l => l.ProductId).ToList();
 
         var matchingProducts =
-            (await this.Products.Get(submittedProductIds)).ToList();
+            (await this.Products.GetMany(submittedProductIds)).ToList();
 
         var invalidProducts =
             submittedProductIds.Except(matchingProducts.Select(p => p.Id))
@@ -76,7 +76,7 @@ public class OrderService : IOrderService
         if (invalidProducts.Count > 0)
         {
             throw new ProductInvalidException(
-                $"Product id{(invalidProducts.Count > 1 ? "s" : "")} does not exist: {string.Join(',', invalidProducts)}");
+                $"Product id{(invalidProducts.Count > 1 ? "s" : string.Empty)} does not exist: {string.Join(',', invalidProducts)}");
         }
 
         order.AddOrRemoveLineItems(updateOrder, matchingProducts);
@@ -88,7 +88,7 @@ public class OrderService : IOrderService
 
     public async Task<Order?> CancelOrder(long orderId)
     {
-        var order = await this.Orders.Get(orderId);
+        var order = await this.Orders.GetOne(orderId);
 
         if (order == null)
         {
@@ -103,17 +103,24 @@ public class OrderService : IOrderService
 }
 
 [Serializable]
-internal class ProductInvalidException : Exception
+public class ProductInvalidException : Exception
 {
-    public ProductInvalidException(string message) : base(message)
+    public ProductInvalidException(string message)
+        : base(message)
     {
     }
 
-    public ProductInvalidException() : base()
+    public ProductInvalidException()
     {
     }
 
-    public ProductInvalidException(string? message, Exception? innerException) : base(message, innerException)
+    public ProductInvalidException(string? message, Exception? innerException)
+        : base(message, innerException)
+    {
+    }
+
+    protected ProductInvalidException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        : base(serializationInfo, streamingContext)
     {
     }
 }

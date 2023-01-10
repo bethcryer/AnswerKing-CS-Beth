@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Answer.King.Api.Common.JsonConverters;
 using Answer.King.Api.Common.Validators;
@@ -19,13 +19,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var corsAllowAnyPolicy = "AllowAnyOrigin";
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy(corsAllowAnyPolicy,
+    options.AddPolicy(
+        corsAllowAnyPolicy,
         policy =>
             policy.AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader());
-});
+                .AllowAnyHeader()));
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers().AddJsonOptions(options =>

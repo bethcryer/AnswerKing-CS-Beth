@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Answer.King.Domain.Repositories;
+﻿using System.Reflection;
 using Answer.King.Infrastructure.SeedData;
 using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;

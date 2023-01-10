@@ -22,12 +22,12 @@ public class TagService : ITagService
 
     public async Task<Tag?> GetTag(long tagId)
     {
-        return await this.Tags.Get(tagId);
+        return await this.Tags.GetOne(tagId);
     }
 
     public async Task<IEnumerable<Tag>> GetTags()
     {
-        return await this.Tags.Get();
+        return await this.Tags.GetAll();
     }
 
     public async Task<Tag> CreateTag(RequestModels.Tag createTag)
@@ -41,7 +41,7 @@ public class TagService : ITagService
 
     public async Task<Tag?> UpdateTag(long tagId, RequestModels.Tag updateTag)
     {
-        var tag = await this.Tags.Get(tagId);
+        var tag = await this.Tags.GetOne(tagId);
         if (tag == null)
         {
             return null;
@@ -56,7 +56,7 @@ public class TagService : ITagService
 
     public async Task<Tag?> RetireTag(long tagId)
     {
-        var tag = await this.Tags.Get(tagId);
+        var tag = await this.Tags.GetOne(tagId);
         if (tag == null)
         {
             return null;
@@ -78,7 +78,7 @@ public class TagService : ITagService
 
     public async Task<Tag?> AddProducts(long tagId, RequestModels.TagProducts addProducts)
     {
-        var tag = await this.Tags.Get(tagId);
+        var tag = await this.Tags.GetOne(tagId);
         if (tag == null)
         {
             return null;
@@ -86,7 +86,7 @@ public class TagService : ITagService
 
         foreach (var productId in addProducts.Products)
         {
-            var product = await this.Products.Get(productId);
+            var product = await this.Products.GetOne(productId);
 
             if (product == null)
             {
@@ -106,7 +106,7 @@ public class TagService : ITagService
 
     public async Task<Tag?> RemoveProducts(long tagId, RequestModels.TagProducts removeProducts)
     {
-        var tag = await this.Tags.Get(tagId);
+        var tag = await this.Tags.GetOne(tagId);
         if (tag == null)
         {
             return null;
@@ -114,7 +114,7 @@ public class TagService : ITagService
 
         foreach (var productId in removeProducts.Products)
         {
-            var product = await this.Products.Get(productId);
+            var product = await this.Products.GetOne(productId);
 
             if (product == null)
             {

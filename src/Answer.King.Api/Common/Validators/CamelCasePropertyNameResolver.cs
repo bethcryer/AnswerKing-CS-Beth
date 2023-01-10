@@ -1,18 +1,19 @@
-﻿using FluentValidation.Internal;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
+using FluentValidation.Internal;
 
 namespace Answer.King.Api.Common.Validators;
 
 public static class CamelCasePropertyNameResolver
 {
-    public static string? ResolvePropertyName(Type _, MemberInfo memberInfo, LambdaExpression expression)
+    public static string? ResolvePropertyName(Type type, MemberInfo memberInfo, LambdaExpression expression)
     {
+        _ = type;
         return ToCamelCase(DefaultPropertyNameResolver(memberInfo, expression));
     }
 
-    private static string? DefaultPropertyNameResolver(MemberInfo memberInfo, LambdaExpression expression)
+    private static string? DefaultPropertyNameResolver(MemberInfo? memberInfo, LambdaExpression? expression)
     {
         if (expression != null)
         {

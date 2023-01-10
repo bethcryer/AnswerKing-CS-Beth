@@ -1,9 +1,11 @@
-﻿using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory;
 
 namespace Answer.King.Infrastructure.SeedData;
 
 public class CategoryDataSeeder : ISeedData
 {
+    private bool DataSeeded { get; set; }
+
     public void SeedData(ILiteDbConnectionFactory connections)
     {
         if (this.DataSeeded)
@@ -22,6 +24,4 @@ public class CategoryDataSeeder : ISeedData
 
         this.DataSeeded = true;
     }
-
-    private bool DataSeeded { get; set; }
 }

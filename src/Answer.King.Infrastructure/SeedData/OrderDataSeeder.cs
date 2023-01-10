@@ -1,9 +1,11 @@
-﻿using Answer.King.Domain.Orders;
+using Answer.King.Domain.Orders;
 
 namespace Answer.King.Infrastructure.SeedData;
 
 public class OrderDataSeeder : ISeedData
 {
+    private bool DataSeeded { get; set; }
+
     public void SeedData(ILiteDbConnectionFactory connections)
     {
         if (this.DataSeeded)
@@ -22,6 +24,4 @@ public class OrderDataSeeder : ISeedData
 
         this.DataSeeded = true;
     }
-
-    private bool DataSeeded { get; set; }
 }

@@ -1,5 +1,5 @@
-﻿using System.Linq;
 using System;
+using System.Linq;
 using System.Reflection;
 using Answer.King.Domain.Repositories.Models;
 using LiteDB;
@@ -8,15 +8,14 @@ namespace Answer.King.Infrastructure.Repositories.Mappings;
 
 public class ProductEntityMappings : IEntityMapping
 {
-    private static readonly ProductFactory productFactory = new();
+    private static readonly ProductFactory ProductFactory = new();
 
-    private static readonly FieldInfo? productIdFieldInfo =
+    private static readonly FieldInfo? ProductIdFieldInfo =
         typeof(Product).GetField($"<{nameof(Product.Id)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public void RegisterMapping(BsonMapper mapper)
     {
-        mapper.RegisterType
-        (
+        mapper.RegisterType(
             serialize: product =>
             {
                 var categories = product.Categories.Select(c => new BsonValue(c.Value));
@@ -30,7 +29,7 @@ public class ProductEntityMappings : IEntityMapping
                     ["price"] = product.Price,
                     ["categories"] = new BsonArray(categories),
                     ["tags"] = new BsonArray(tags),
-                    ["retired"] = product.Retired
+                    ["retired"] = product.Retired,
                 };
 
                 return doc;
@@ -41,7 +40,7 @@ public class ProductEntityMappings : IEntityMapping
                 var categories = doc["categories"].AsArray.Select(c => new CategoryId(c)).ToList();
                 var tags = doc["tags"].AsArray.Select(c => new TagId(c)).ToList();
 
-                return productFactory.CreateProduct(
+                return ProductFactory.CreateProduct(
                     doc["_id"].AsInt64,
                     doc["name"].AsString,
                     doc["description"].AsString,
@@ -49,8 +48,7 @@ public class ProductEntityMappings : IEntityMapping
                     categories,
                     tags,
                     doc["retired"].AsBoolean);
-            }
-        );
+            });
     }
 
     public void ResolveMember(Type type, MemberInfo memberInfo, MemberMapper memberMapper)
@@ -58,7 +56,7 @@ public class ProductEntityMappings : IEntityMapping
         if (type == typeof(Product) && memberMapper.MemberName == "Id")
         {
             memberMapper.Setter =
-                (obj, value) => productIdFieldInfo?.SetValue(obj, value);
+                (obj, value) => ProductIdFieldInfo?.SetValue(obj, value);
         }
     }
 }

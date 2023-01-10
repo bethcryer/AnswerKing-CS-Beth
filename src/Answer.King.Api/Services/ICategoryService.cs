@@ -5,8 +5,12 @@ namespace Answer.King.Api.Services;
 public interface ICategoryService
 {
     Task<Category> CreateCategory(RequestModels.Category createCategory);
+
     Task<IEnumerable<Category>> GetCategories();
+
     Task<Category?> GetCategory(long categoryId);
+
     Task<Category?> RetireCategory(long categoryId);
+
     Task<Category?> UpdateCategory(long categoryId, RequestModels.Category updateCategory);
 }

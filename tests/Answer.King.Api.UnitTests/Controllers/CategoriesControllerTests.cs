@@ -1,4 +1,4 @@
-﻿using Answer.King.Api.Controllers;
+using Answer.King.Api.Controllers;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
@@ -14,6 +14,16 @@ namespace Answer.King.Api.UnitTests.Controllers;
 [TestCategory(TestType.Unit)]
 public class CategoriesControllerTests
 {
+    #region Setup
+
+    private static readonly ICategoryService CategoryService = Substitute.For<ICategoryService>();
+
+    private static readonly IProductService ProductService = Substitute.For<IProductService>();
+
+    private static readonly CategoriesController GetSubjectUnderTest = new(CategoryService, ProductService);
+
+    #endregion Setup
+
     #region GenericControllerTests
 
     [Fact]
@@ -40,8 +50,7 @@ public class CategoriesControllerTests
     public async Task GetAll_ValidRequest_ReturnsOkObjectResult()
     {
         // Arrange
-        var data = new List<Category>();
-        CategoryService.GetCategories().Returns(data);
+        CategoryService.GetCategories().Returns(new List<Category>());
 
         // Act
         var result = await GetSubjectUnderTest.GetAll();
@@ -59,7 +68,7 @@ public class CategoriesControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<CategoriesController, HttpGetAttribute>(
-            nameof(CategoriesController.GetOne), "{id}");
+            nameof(CategoriesController.GetOne), "{id:long}");
     }
 
     [Fact]
@@ -110,7 +119,7 @@ public class CategoriesControllerTests
         var categoryRequestModel = new RequestModels.Category
         {
             Name = "CATEGORY_NAME",
-            Description = "CATEGORY_DESCRIPTION"
+            Description = "CATEGORY_DESCRIPTION",
         };
 
         var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION", new List<ProductId>());
@@ -135,7 +144,7 @@ public class CategoriesControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<CategoriesController, HttpPutAttribute>(
-            nameof(CategoriesController.Put), "{id}");
+            nameof(CategoriesController.Put), "{id:long}");
     }
 
     [Fact]
@@ -160,7 +169,7 @@ public class CategoriesControllerTests
         {
             Name = "CATEGORY_NAME",
             Description = "CATEGORY_DESCRIPTION",
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         CategoryService.UpdateCategory(id, categoryRequestModel).Throws(new CategoryServiceException("The provided product id is not valid."));
@@ -180,7 +189,7 @@ public class CategoriesControllerTests
         var categoryRequestModel = new RequestModels.Category
         {
             Name = "CATEGORY_NAME",
-            Description = "CATEGORY_DESCRIPTION"
+            Description = "CATEGORY_DESCRIPTION",
         };
 
         var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION", new List<ProductId>());
@@ -205,7 +214,7 @@ public class CategoriesControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<CategoriesController, HttpDeleteAttribute>(
-            nameof(CategoriesController.Retire), "{id}");
+            nameof(CategoriesController.Retire), "{id:long}");
     }
 
     [Fact]
@@ -258,19 +267,8 @@ public class CategoriesControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<CategoriesController, HttpGetAttribute>(
-            nameof(CategoriesController.GetProducts), "{id}/products");
+            nameof(CategoriesController.GetProducts), "{id:long}/products");
     }
 
     #endregion GetProducts
-
-    #region Setup
-
-    private static readonly ICategoryService CategoryService = Substitute.For<ICategoryService>();
-
-    private static readonly IProductService ProductService = Substitute.For<IProductService>();
-
-    private static readonly CategoriesController GetSubjectUnderTest =
-        new CategoriesController(CategoryService, ProductService);
-
-    #endregion Setup
 }

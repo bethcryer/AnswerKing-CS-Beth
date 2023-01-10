@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
+    <NoWarn>CA1707</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +29,10 @@
     <ProjectReference Include="..\..\src\Answer.King.Api\Answer.King.Api.csproj" />
     <ProjectReference Include="..\..\src\Answer.King.Domain\Answer.King.Domain.csproj" />
     <ProjectReference Include="..\..\src\Answer.King.Infrastructure\Answer.King.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Alba"/>
   </ItemGroup>
 
 </Project>

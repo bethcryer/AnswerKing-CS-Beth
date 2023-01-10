@@ -5,6 +5,8 @@ using Payment = Answer.King.Domain.Repositories.Models.Payment;
 
 namespace Answer.King.Api.Services;
 
+using System.Runtime.Serialization;
+
 public class PaymentService : IPaymentService
 {
     public PaymentService(
@@ -21,17 +23,17 @@ public class PaymentService : IPaymentService
 
     public async Task<IEnumerable<Payment>> GetPayments()
     {
-        return await this.Payments.Get();
+        return await this.Payments.GetAll();
     }
 
     public async Task<Payment?> GetPayment(long paymentId)
     {
-        return await this.Payments.Get(paymentId);
+        return await this.Payments.GetOne(paymentId);
     }
 
-    public async Task<Payment> MakePayment(Api.RequestModels.Payment makePayment)
+    public async Task<Payment> MakePayment(RequestModels.Payment makePayment)
     {
-        var order = await this.Orders.Get(makePayment.OrderId);
+        var order = await this.Orders.GetOne(makePayment.OrderId);
 
         if (order == null)
         {
@@ -65,17 +67,20 @@ public class PaymentService : IPaymentService
 }
 
 [Serializable]
-internal class PaymentServiceException : Exception
+public class PaymentServiceException : Exception
 {
-    public PaymentServiceException(string message) : base(message)
+    public PaymentServiceException(string message)
+        : base(message)
     {
     }
 
-    public PaymentServiceException(string message, Exception innerException) : base(message, innerException)
+    public PaymentServiceException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 
-    public PaymentServiceException() : base()
+    protected PaymentServiceException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        : base(serializationInfo, streamingContext)
     {
     }
 }

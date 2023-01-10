@@ -1,9 +1,8 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
-using Xunit;
 
 namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
 
@@ -11,13 +10,13 @@ namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
 [TestCategory(TestType.Unit)]
 public class ProductFactoryTests
 {
-    private static readonly ProductFactory productFactory = new();
+    private static readonly ProductFactory ProductFactory = new();
 
     [Fact]
     public Task CreateProduct_ConstructorExists_ReturnsProduct()
     {
         // Arrange / Act
-        var result = productFactory.CreateProduct(1, "NAME", "DESC", 1, new List<CategoryId>(), new List<TagId>(), false);
+        var result = ProductFactory.CreateProduct(1, "NAME", "DESC", 1, new List<CategoryId>(), new List<TagId>(), false);
 
         // Assert
         Assert.IsType<Product>(result);
@@ -31,17 +30,17 @@ public class ProductFactoryTests
         var productFactoryConstructorPropertyInfo =
         typeof(ProductFactory).GetField("<ProductConstructor>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        var constructor = productFactoryConstructorPropertyInfo?.GetValue(productFactory);
+        var constructor = productFactoryConstructorPropertyInfo?.GetValue(ProductFactory);
 
         var wrongConstructor = typeof(Category).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
             .SingleOrDefault(c => c.IsPrivate && c.GetParameters().Length > 0);
 
-        productFactoryConstructorPropertyInfo?.SetValue(productFactory, wrongConstructor);
+        productFactoryConstructorPropertyInfo?.SetValue(ProductFactory, wrongConstructor);
 
         // Act // Assert
         Assert.Throws<ArgumentException>(() =>
-            productFactory.CreateProduct(1, "NAME", "DESC", 1, new List<CategoryId>(), new List<TagId>(), false));
+            ProductFactory.CreateProduct(1, "NAME", "DESC", 1, new List<CategoryId>(), new List<TagId>(), false));
 
-        productFactoryConstructorPropertyInfo?.SetValue(productFactory, constructor);
+        productFactoryConstructorPropertyInfo?.SetValue(ProductFactory, constructor);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Answer.King.Api.Services;
+using Answer.King.Api.Services;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
@@ -13,9 +13,13 @@ namespace Answer.King.Api.UnitTests.Services;
 [TestCategory(TestType.Unit)]
 public class TagServiceTests
 {
-    private static readonly ProductFactory productFactory = new();
+    private static readonly ProductFactory ProductFactory = new();
 
-    private static readonly TagFactory tagFactory = new();
+    private static readonly TagFactory TagFactory = new();
+
+    private readonly ITagRepository tagRepository = Substitute.For<ITagRepository>();
+
+    private readonly IProductRepository productRepository = Substitute.For<IProductRepository>();
 
     #region Retire
 
@@ -23,7 +27,7 @@ public class TagServiceTests
     public async Task RetireTag_InvalidTagIdReceived_ReturnsNull()
     {
         // Arrange
-        this.TagRepository.Get(Arg.Any<long>()).Returns(null as Tag);
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(null as Tag);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
@@ -37,7 +41,7 @@ public class TagServiceTests
         var tag = new Tag("tag", "desc", new List<ProductId>());
         tag.AddProduct(new ProductId(1));
 
-        this.TagRepository.Get(tag.Id).Returns(tag);
+        this.tagRepository.GetOne(tag.Id).Returns(tag);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
@@ -51,7 +55,7 @@ public class TagServiceTests
         // Arrange
         var tag = new Tag("tag", "desc", new List<ProductId>());
         tag.RetireTag();
-        this.TagRepository.Get(tag.Id).Returns(tag);
+        this.tagRepository.GetOne(tag.Id).Returns(tag);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
@@ -64,7 +68,7 @@ public class TagServiceTests
     {
         // Arrange
         var tag = new Tag("tag", "desc", new List<ProductId>());
-        this.TagRepository.Get(tag.Id).Returns(tag);
+        this.tagRepository.GetOne(tag.Id).Returns(tag);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -85,15 +89,15 @@ public class TagServiceTests
         var tagRequest = new RequestModels.Tag
         {
             Name = "Vegan",
-            Description = "desc"
+            Description = "desc",
         };
 
         // Act
         var sut = this.GetServiceUnderTest();
         var actualTag = await sut.CreateTag(tagRequest);
 
-        //Assert
-        Assert.Equal(tagRequest.Name, actualTag!.Name);
+        // Assert
+        Assert.Equal(tagRequest.Name, actualTag.Name);
         Assert.Equal(tagRequest.Description, actualTag.Description);
     }
 
@@ -108,7 +112,7 @@ public class TagServiceTests
         var tag = new Tag("tag", "desc", new List<ProductId>());
         var id = tag.Id;
 
-        this.TagRepository.Get(id).Returns(tag);
+        this.tagRepository.GetOne(id).Returns(tag);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -116,7 +120,7 @@ public class TagServiceTests
 
         // Assert
         Assert.Equal(tag, actualTag);
-        await this.TagRepository.Received().Get(id);
+        await this.tagRepository.Received().GetOne(id);
     }
 
     [Fact]
@@ -126,10 +130,10 @@ public class TagServiceTests
         var tags = new[]
         {
             new Tag("tag 1", "desc", new List<ProductId>()),
-            new Tag("tag 2", "desc", new List<ProductId>())
+            new Tag("tag 2", "desc", new List<ProductId>()),
         };
 
-        this.TagRepository.Get().Returns(tags);
+        this.tagRepository.GetAll().Returns(tags);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -137,7 +141,7 @@ public class TagServiceTests
 
         // Assert
         Assert.Equal(tags, actualTags);
-        await this.TagRepository.Received().Get();
+        await this.tagRepository.Received().GetAll();
     }
 
     #endregion
@@ -169,10 +173,10 @@ public class TagServiceTests
         var updateTagRequest = new RequestModels.Tag
         {
             Name = "updated category",
-            Description = "updated desc"
+            Description = "updated desc",
         };
 
-        this.TagRepository.Get(tagId).Returns(oldTag);
+        this.tagRepository.GetOne(tagId).Returns(oldTag);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -182,8 +186,8 @@ public class TagServiceTests
         Assert.Equal(updateTagRequest.Name, actualTag!.Name);
         Assert.Equal(updateTagRequest.Description, actualTag.Description);
 
-        await this.TagRepository.Received().Get(tagId);
-        await this.TagRepository.Received().Save(Arg.Any<Tag>());
+        await this.tagRepository.Received().GetOne(tagId);
+        await this.tagRepository.Received().Save(Arg.Any<Tag>());
     }
 
     #endregion
@@ -217,11 +221,11 @@ public class TagServiceTests
 
         var addProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { productId }
+            Products = new List<long> { productId },
         };
 
-        this.ProductRepository.Get(productId).Returns(product);
-        this.TagRepository.Get(tagId).Returns(oldTag);
+        this.productRepository.GetOne(productId).Returns(product);
+        this.tagRepository.GetOne(tagId).Returns(oldTag);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -230,8 +234,8 @@ public class TagServiceTests
         // Assert
         Assert.Equal(addProducts.Products[0], actualTag!.Products.First().Value);
 
-        await this.TagRepository.Received().Get(tagId);
-        await this.TagRepository.Received().Save(Arg.Any<Tag>());
+        await this.tagRepository.Received().GetOne(tagId);
+        await this.tagRepository.Received().Save(Arg.Any<Tag>());
     }
 
     [Fact]
@@ -241,12 +245,12 @@ public class TagServiceTests
         var product = new List<ProductId> { new(1) };
         var tag = new Tag("tag", "desc", product);
 
-        this.TagRepository.Get(Arg.Any<long>()).Returns(tag);
-        this.ProductRepository.GetByCategoryId(tag.Id).Returns(Array.Empty<Product>());
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(tag);
+        this.productRepository.GetByCategoryId(tag.Id).Returns(Array.Empty<Product>());
 
         var addProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         // Act / Assert
@@ -260,18 +264,18 @@ public class TagServiceTests
     {
         // Arrange
         var oldProduct = CreateProduct(1, "product", "desc", 1.0);
-        var oldProducts = new Product[] { oldProduct };
+        var oldProducts = new[] { oldProduct };
         var oldTag = CreateTag(1, "tag", "desc", new List<ProductId> { new(1) });
 
         var updatedProduct = CreateProduct(2, "updated product", "desc", 1.0);
 
-        this.TagRepository.Get(Arg.Any<long>()).Returns(oldTag);
-        this.ProductRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
-        this.ProductRepository.Get(updatedProduct.Id).Returns(null as Product);
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
+        this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
+        this.productRepository.GetOne(updatedProduct.Id).Returns(null as Product);
 
         var addProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { updatedProduct.Id }
+            Products = new List<long> { updatedProduct.Id },
         };
 
         // Act / Assert
@@ -289,12 +293,12 @@ public class TagServiceTests
         var updatedProduct = CreateProduct(2, "updated product", "desc", 1.0);
         updatedProduct.Retire();
 
-        this.TagRepository.Get(Arg.Any<long>()).Returns(oldTag);
-        this.ProductRepository.Get(updatedProduct.Id).Returns(updatedProduct);
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
+        this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
 
         var addProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { updatedProduct.Id }
+            Products = new List<long> { updatedProduct.Id },
         };
 
         // Act / Assert
@@ -308,21 +312,21 @@ public class TagServiceTests
     {
         // Arrange
         var oldProduct = CreateProduct(1, "product", "desc", 1.0);
-        var oldProducts = new Product[]
+        var oldProducts = new[]
         {
-            oldProduct
+            oldProduct,
         };
         var oldTag = CreateTag(1, "tag", "desc", new List<ProductId> { new(1) });
 
         var updatedProduct = CreateProduct(2, "updated product", "desc", 10.0);
 
-        this.TagRepository.Get(Arg.Any<long>()).Returns(oldTag);
-        this.ProductRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
-        this.ProductRepository.Get(updatedProduct.Id).Returns(updatedProduct);
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
+        this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
+        this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
 
         var addProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { updatedProduct.Id }
+            Products = new List<long> { updatedProduct.Id },
         };
 
         // Act / Assert
@@ -363,21 +367,21 @@ public class TagServiceTests
 
         var removeProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { productId }
+            Products = new List<long> { productId },
         };
 
-        this.ProductRepository.Get(productId).Returns(product);
-        this.TagRepository.Get(tagId).Returns(oldTag);
+        this.productRepository.GetOne(productId).Returns(product);
+        this.tagRepository.GetOne(tagId).Returns(oldTag);
 
         // Act
         var sut = this.GetServiceUnderTest();
         var actualTag = await sut.RemoveProducts(tagId, removeProducts);
 
-        // Assert);
+        // Assert
         Assert.Empty(actualTag!.Products);
 
-        await this.TagRepository.Received().Get(tagId);
-        await this.TagRepository.Received().Save(Arg.Any<Tag>());
+        await this.tagRepository.Received().GetOne(tagId);
+        await this.tagRepository.Received().Save(Arg.Any<Tag>());
     }
 
     [Fact]
@@ -387,12 +391,12 @@ public class TagServiceTests
         var product = new List<ProductId> { new(1) };
         var tag = new Tag("tag", "desc", product);
 
-        this.TagRepository.Get(Arg.Any<long>()).Returns(tag);
-        this.ProductRepository.GetByCategoryId(tag.Id).Returns(Array.Empty<Product>());
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(tag);
+        this.productRepository.GetByCategoryId(tag.Id).Returns(Array.Empty<Product>());
 
         var removeProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         // Act / Assert
@@ -406,18 +410,18 @@ public class TagServiceTests
     {
         // Arrange
         var oldProduct = CreateProduct(1, "product", "desc", 1.0);
-        var oldProducts = new Product[] { oldProduct };
+        var oldProducts = new[] { oldProduct };
         var oldTag = CreateTag(1, "tag", "desc", new List<ProductId> { new(1) });
 
         var updatedProduct = CreateProduct(2, "updated product", "desc", 1.0);
 
-        this.TagRepository.Get(Arg.Any<long>()).Returns(oldTag);
-        this.ProductRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
-        this.ProductRepository.Get(updatedProduct.Id).Returns(null as Product);
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
+        this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
+        this.productRepository.GetOne(updatedProduct.Id).Returns(null as Product);
 
         var removeProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { updatedProduct.Id }
+            Products = new List<long> { updatedProduct.Id },
         };
 
         // Act / Assert
@@ -435,12 +439,12 @@ public class TagServiceTests
         var updatedProduct = CreateProduct(2, "updated product", "desc", 1.0);
         updatedProduct.Retire();
 
-        this.TagRepository.Get(Arg.Any<long>()).Returns(oldTag);
-        this.ProductRepository.Get(updatedProduct.Id).Returns(updatedProduct);
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
+        this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
 
         var removeProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { updatedProduct.Id }
+            Products = new List<long> { updatedProduct.Id },
         };
 
         // Act / Assert
@@ -454,21 +458,19 @@ public class TagServiceTests
     {
         // Arrange
         var oldProduct = CreateProduct(1, "product", "desc", 1.0);
-        var oldProducts = new Product[]
+        var oldProducts = new[]
         {
-            oldProduct
+            oldProduct,
         };
         var oldTag = CreateTag(1, "tag", "desc", new List<ProductId> { new(1) });
 
-        var updatedProduct = CreateProduct(2, "updated product", "desc", 10.0);
-
-        this.TagRepository.Get(Arg.Any<long>()).Returns(oldTag);
-        this.ProductRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
-        this.ProductRepository.Get(oldProduct.Id).Returns(oldProduct);
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
+        this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
+        this.productRepository.GetOne(oldProduct.Id).Returns(oldProduct);
 
         var removeProducts = new RequestModels.TagProducts
         {
-            Products = new List<long> { oldProduct.Id }
+            Products = new List<long> { oldProduct.Id },
         };
 
         // Act / Assert
@@ -481,27 +483,23 @@ public class TagServiceTests
 
     #region Helpers
 
-    public static Tag CreateTag(long id, string name, string description, IList<ProductId> products)
+    private static Tag CreateTag(long id, string name, string description, IList<ProductId> products)
     {
-        return tagFactory.CreateTag(id, name, description, DateTime.UtcNow, DateTime.UtcNow, products, false);
+        return TagFactory.CreateTag(id, name, description, DateTime.UtcNow, DateTime.UtcNow, products, false);
     }
 
-    public static Product CreateProduct(long id, string name, string description, double price)
+    private static Product CreateProduct(long id, string name, string description, double price)
     {
-        return productFactory.CreateProduct(id, name, description, price, new List<CategoryId>(), new List<TagId>(), false);
+        return ProductFactory.CreateProduct(id, name, description, price, new List<CategoryId>(), new List<TagId>(), false);
     }
 
     #endregion
 
     #region Setup
 
-    private readonly ITagRepository TagRepository = Substitute.For<ITagRepository>();
-
-    private readonly IProductRepository ProductRepository = Substitute.For<IProductRepository>();
-
     private ITagService GetServiceUnderTest()
     {
-        return new TagService(this.TagRepository, this.ProductRepository);
+        return new TagService(this.tagRepository, this.productRepository);
     }
 
     #endregion

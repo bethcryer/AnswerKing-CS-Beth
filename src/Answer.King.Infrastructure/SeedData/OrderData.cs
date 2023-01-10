@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Answer.King.Domain.Orders;
@@ -9,7 +9,7 @@ namespace Answer.King.Infrastructure.SeedData;
 
 internal static class OrderData
 {
-    private static readonly OrderFactory orderFactory = new();
+    private static readonly OrderFactory OrderFactory = new();
 
     public static IList<Order> Orders { get; } = GetOrders();
 
@@ -42,28 +42,26 @@ internal static class OrderData
         var lineItems = new List<LineItem>
         {
             lineItem1,
-            lineItem2
+            lineItem2,
         };
 
-        return orderFactory.CreateOrder(
+        return OrderFactory.CreateOrder(
             0,
             DateTime.UtcNow.AddHours(-1),
             DateTime.UtcNow.AddMinutes(-10),
             OrderStatus.Created,
-            lineItems
-        );
+            lineItems);
     }
 
     private static Order CancelledOrder()
     {
         var lineItems = new List<LineItem>();
 
-        return orderFactory.CreateOrder(
+        return OrderFactory.CreateOrder(
             0,
             DateTime.UtcNow.AddHours(-3),
             DateTime.UtcNow.AddMinutes(-50),
             OrderStatus.Cancelled,
-            lineItems
-        );
+            lineItems);
     }
 }

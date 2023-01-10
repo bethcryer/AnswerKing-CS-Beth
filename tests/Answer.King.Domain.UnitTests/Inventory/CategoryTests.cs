@@ -30,7 +30,7 @@ public class CategoryTests
     public void RenameCategory_WithBlankName_ThrowsException()
     {
         var category = new Category("Phones", "Electronics", new List<ProductId>());
-        Assert.Throws<Guard.EmptyStringException>(() => category.Rename("", "Electronics"));
+        Assert.Throws<Guard.EmptyStringException>(() => category.Rename(string.Empty, "Electronics"));
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class CategoryTests
     public void RenameCategory_WithBlankDescription_ThrowsException()
     {
         var category = new Category("Phones", "Electronics", new List<ProductId>());
-        Assert.Throws<Guard.EmptyStringException>(() => category.Rename("Phones", ""));
+        Assert.Throws<Guard.EmptyStringException>(() => category.Rename("Phones", string.Empty));
     }
 
     [Fact]

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using Answer.King.Domain.Orders;
@@ -9,15 +9,14 @@ namespace Answer.King.Infrastructure.Repositories.Mappings;
 
 public class OrderEntityMappings : IEntityMapping
 {
-    private static readonly OrderFactory orderFactory = new();
+    private static readonly OrderFactory OrderFactory = new();
 
-    private static readonly FieldInfo? orderIdFieldInfo =
+    private static readonly FieldInfo? OrderIdFieldInfo =
         typeof(Order).GetField($"<{nameof(Order.Id)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public void RegisterMapping(BsonMapper mapper)
     {
-        mapper.RegisterType
-        (
+        mapper.RegisterType(
             serialize: order =>
             {
                 var lineItems = order.LineItems.Select(li => new BsonDocument
@@ -27,9 +26,9 @@ public class OrderEntityMappings : IEntityMapping
                         ["_id"] = li.Product.Id,
                         ["name"] = li.Product.Name,
                         ["description"] = li.Product.Description,
-                        ["price"] = li.Product.Price
+                        ["price"] = li.Product.Price,
                     },
-                    ["quantity"] = li.Quantity
+                    ["quantity"] = li.Quantity,
                 });
 
                 var doc = new BsonDocument
@@ -38,7 +37,7 @@ public class OrderEntityMappings : IEntityMapping
                     ["createdOn"] = order.CreatedOn,
                     ["lastUpdated"] = order.LastUpdated,
                     ["orderStatus"] = $"{order.OrderStatus}",
-                    ["lineItems"] = new BsonArray(lineItems)
+                    ["lineItems"] = new BsonArray(lineItems),
                 };
 
                 return doc;
@@ -51,14 +50,13 @@ public class OrderEntityMappings : IEntityMapping
                     doc["lineItems"].AsArray.Select(this.ToLineItem)
                         .ToList();
 
-                return orderFactory.CreateOrder(
+                return OrderFactory.CreateOrder(
                     doc["_id"].AsInt64,
                     doc["createdOn"].AsDateTime,
                     doc["lastUpdated"].AsDateTime,
                     (OrderStatus)Enum.Parse(typeof(OrderStatus), doc["orderStatus"]),
                     lineItems);
-            }
-        );
+            });
     }
 
     public void ResolveMember(Type type, MemberInfo memberInfo, MemberMapper memberMapper)
@@ -66,7 +64,7 @@ public class OrderEntityMappings : IEntityMapping
         if (type == typeof(Order) && memberMapper.MemberName == "Id")
         {
             memberMapper.Setter =
-                (obj, value) => orderIdFieldInfo?.SetValue(obj, value);
+                (obj, value) => OrderIdFieldInfo?.SetValue(obj, value);
         }
     }
 
@@ -80,9 +78,7 @@ public class OrderEntityMappings : IEntityMapping
                 product["_id"].AsInt64,
                 product["name"].AsString,
                 product["description"].AsString,
-                product["price"].AsDouble
-            )
-        );
+                product["price"].AsDouble));
 
         result.AddQuantity(lineItem["quantity"].AsInt32);
 

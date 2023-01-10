@@ -1,10 +1,8 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Answer.King.Domain.Orders;
 using Answer.King.Domain.Orders.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
-using Xunit;
-using Product = Answer.King.Domain.Orders.Models.Product;
 
 namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
 
@@ -12,14 +10,14 @@ namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
 [TestCategory(TestType.Unit)]
 public class OrderFactoryTests
 {
-    private static readonly OrderFactory orderFactory = new();
+    private static readonly OrderFactory OrderFactory = new();
 
     [Fact]
     public Task CreateOrder_ConstructorExists_ReturnsOrder()
     {
         // Arrange / Act
         var now = DateTime.UtcNow;
-        var result = orderFactory.CreateOrder(1, now, now, OrderStatus.Created, new List<LineItem>());
+        var result = OrderFactory.CreateOrder(1, now, now, OrderStatus.Created, new List<LineItem>());
 
         // Assert
         Assert.IsType<Order>(result);
@@ -33,20 +31,20 @@ public class OrderFactoryTests
         var orderFactoryConstructorPropertyInfo =
         typeof(OrderFactory).GetField("<OrderConstructor>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        var constructor = orderFactoryConstructorPropertyInfo?.GetValue(orderFactory);
+        var constructor = orderFactoryConstructorPropertyInfo?.GetValue(OrderFactory);
 
         var wrongConstructor = typeof(Domain.Inventory.Category).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
             .SingleOrDefault(c => c.IsPrivate && c.GetParameters().Length > 0);
 
-        orderFactoryConstructorPropertyInfo?.SetValue(orderFactory, wrongConstructor);
+        orderFactoryConstructorPropertyInfo?.SetValue(OrderFactory, wrongConstructor);
 
         var now = DateTime.UtcNow;
 
         // Act // Assert
         Assert.Throws<TargetParameterCountException>(() =>
-            orderFactory.CreateOrder(1, now, now, OrderStatus.Created, new List<LineItem>()));
+            OrderFactory.CreateOrder(1, now, now, OrderStatus.Created, new List<LineItem>()));
 
-        //Reset static constructor to correct value
-        orderFactoryConstructorPropertyInfo?.SetValue(orderFactory, constructor);
+        // Reset static constructor to correct value
+        orderFactoryConstructorPropertyInfo?.SetValue(OrderFactory, constructor);
     }
 }

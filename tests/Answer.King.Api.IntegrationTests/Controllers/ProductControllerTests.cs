@@ -1,4 +1,3 @@
-﻿using Alba;
 using Answer.King.Api.IntegrationTests.Common;
 using Product = Answer.King.Api.IntegrationTests.Common.Models.Product;
 
@@ -7,12 +6,12 @@ namespace Answer.King.Api.IntegrationTests.Controllers;
 [UsesVerify]
 public class ProductControllerTests : WebFixtures
 {
-    private readonly VerifySettings _verifySettings;
+    private readonly VerifySettings verifySettings;
 
     public ProductControllerTests()
     {
-        this._verifySettings = new();
-        this._verifySettings.ScrubMembers("traceId");
+        this.verifySettings = new();
+        this.verifySettings.ScrubMembers("traceId");
     }
 
     #region Get
@@ -26,7 +25,7 @@ public class ProductControllerTests : WebFixtures
         });
 
         var products = result.ReadAsJson<IEnumerable<Product>>();
-        return await Verify(products, this._verifySettings);
+        return await Verify(products, this.verifySettings);
     }
 
     [Fact]
@@ -39,7 +38,7 @@ public class ProductControllerTests : WebFixtures
         });
 
         var products = result.ReadAsJson<Product>();
-        return await Verify(products, this._verifySettings);
+        return await Verify(products, this.verifySettings);
     }
 
     [Fact]
@@ -51,7 +50,7 @@ public class ProductControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -66,14 +65,14 @@ public class ProductControllerTests : WebFixtures
                 {
                     Name = "Burger",
                     Description = "Juicy",
-                    Price = 1.50
+                    Price = 1.50,
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
         });
 
         var products = result.ReadAsJson<Product>();
-        return await Verify(products, this._verifySettings);
+        return await Verify(products, this.verifySettings);
     }
 
     [Fact]
@@ -84,13 +83,13 @@ public class ProductControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Burger"
+                    Name = "Burger",
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -105,7 +104,7 @@ public class ProductControllerTests : WebFixtures
                 {
                     Name = "Burger",
                     Description = "Juicy",
-                    Price = 1.50
+                    Price = 1.50,
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -120,14 +119,14 @@ public class ProductControllerTests : WebFixtures
                 {
                     Name = "BBQ Burger",
                     Description = "Juicy",
-                    Price = 1.50
+                    Price = 1.50,
                 })
                 .ToUrl($"/api/products/{products?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
         });
 
         var updatedProduct = putResult.ReadAsJson<Product>();
-        return await Verify(updatedProduct, this._verifySettings);
+        return await Verify(updatedProduct, this.verifySettings);
     }
 
     [Fact]
@@ -138,13 +137,13 @@ public class ProductControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "BBQ Burger"
+                    Name = "BBQ Burger",
                 })
                 .ToUrl("/api/products/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -157,13 +156,13 @@ public class ProductControllerTests : WebFixtures
                 {
                     Name = "BBQ Burger",
                     Description = "Juicy",
-                    Price = 1.50
+                    Price = 1.50,
                 })
                 .ToUrl("/api/products/5");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -178,7 +177,7 @@ public class ProductControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -191,7 +190,7 @@ public class ProductControllerTests : WebFixtures
                 {
                     Name = "Burger",
                     Description = "Juicy",
-                    Price = 1.50
+                    Price = 1.50,
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -217,7 +216,7 @@ public class ProductControllerTests : WebFixtures
                 {
                     Name = "Burger",
                     Description = "Juicy",
-                    Price = 1.50
+                    Price = 1.50,
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -239,7 +238,7 @@ public class ProductControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Gone);
         });
 
-        return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 }

@@ -1,10 +1,8 @@
-﻿using Answer.King.Domain;
-
-namespace Answer.King.Api.IntegrationTests.Common.Models;
+﻿namespace Answer.King.Api.IntegrationTests.Common.Models;
 
 public class Product
 {
-    public Product(long id, string name, string description, double price, IList<long> categories, bool retired)
+    public Product(long id, string name, string description, double price, IList<long>? categories, bool retired)
     {
         this.Id = id;
         this.Name = name;
@@ -13,6 +11,7 @@ public class Product
         this.Categories = categories ?? new List<long>();
         this.Retired = retired;
     }
+
     public long Id { get; }
 
     public string Name { get; }

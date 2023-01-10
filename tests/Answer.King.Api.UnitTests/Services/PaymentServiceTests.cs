@@ -1,11 +1,9 @@
-﻿using Answer.King.Api.Services;
+using Answer.King.Api.Services;
 using Answer.King.Domain.Repositories;
 using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Xunit;
-using Category = Answer.King.Domain.Orders.Models.Category;
-using Tag = Answer.King.Domain.Orders.Models.Tag;
 using Order = Answer.King.Domain.Orders.Order;
 using Payment = Answer.King.Api.RequestModels.Payment;
 
@@ -14,13 +12,17 @@ namespace Answer.King.Api.UnitTests.Services;
 [TestCategory(TestType.Unit)]
 public class PaymentServiceTests
 {
+    private readonly IPaymentRepository paymentRepository = Substitute.For<IPaymentRepository>();
+
+    private readonly IOrderRepository orderRepository = Substitute.For<IOrderRepository>();
+
     #region MakePayment
 
     [Fact]
     public async Task MakePayment_InvalidOrderIdReceived_ThrowsException()
     {
         // Arrange
-        this.OrderRepository.Get(Arg.Any<long>()).ReturnsNull();
+        this.orderRepository.GetOne(Arg.Any<long>()).ReturnsNull();
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
@@ -37,7 +39,7 @@ public class PaymentServiceTests
 
         var makePayment = new Payment { OrderId = order.Id, Amount = 20.00 };
 
-        this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
+        this.orderRepository.GetOne(Arg.Any<long>()).Returns(order);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
@@ -55,7 +57,7 @@ public class PaymentServiceTests
 
         var makePayment = new Payment { OrderId = order.Id, Amount = 24.00 };
 
-        this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
+        this.orderRepository.GetOne(Arg.Any<long>()).Returns(order);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
@@ -72,7 +74,7 @@ public class PaymentServiceTests
 
         var makePayment = new Payment { OrderId = order.Id, Amount = 24.00 };
 
-        this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
+        this.orderRepository.GetOne(Arg.Any<long>()).Returns(order);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
@@ -90,15 +92,15 @@ public class PaymentServiceTests
         var makePayment = new Payment { OrderId = order.Id, Amount = 24.00 };
         var expectedPayment = new Domain.Repositories.Models.Payment(order.Id, makePayment.Amount, order.OrderTotal);
 
-        this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
+        this.orderRepository.GetOne(Arg.Any<long>()).Returns(order);
 
         // Act
         var sut = this.GetServiceUnderTest();
         var payment = await sut.MakePayment(makePayment);
 
         // Assert
-        await this.OrderRepository.Received().Save(order);
-        await this.PaymentRepository.Received().Add(payment);
+        await this.orderRepository.Received().Save(order);
+        await this.paymentRepository.Received().Add(payment);
 
         Assert.Equal(expectedPayment.Amount, payment.Amount);
         Assert.Equal(expectedPayment.Change, payment.Change);
@@ -117,10 +119,10 @@ public class PaymentServiceTests
         var payments = new[]
         {
             new Domain.Repositories.Models.Payment(1, 50.00, 35.00),
-            new Domain.Repositories.Models.Payment(1, 10.00, 7.95)
+            new Domain.Repositories.Models.Payment(1, 10.00, 7.95),
         };
 
-        this.PaymentRepository.Get().Returns(payments);
+        this.paymentRepository.GetAll().Returns(payments);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -128,7 +130,7 @@ public class PaymentServiceTests
 
         // Assert
         Assert.Equal(payments, actualPayments);
-        await this.PaymentRepository.Received().Get();
+        await this.paymentRepository.Received().GetAll();
     }
 
     [Fact]
@@ -137,7 +139,7 @@ public class PaymentServiceTests
         // Arrange
         var payment = new Domain.Repositories.Models.Payment(1, 50.00, 35.00);
 
-        this.PaymentRepository.Get(payment.Id).Returns(payment);
+        this.paymentRepository.GetOne(payment.Id).Returns(payment);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -145,19 +147,16 @@ public class PaymentServiceTests
 
         // Assert
         Assert.Equal(payment, actualPayment);
-        await this.PaymentRepository.Received().Get(payment.Id);
+        await this.paymentRepository.Received().GetOne(payment.Id);
     }
 
     #endregion
 
     #region Setup
 
-    private readonly IPaymentRepository PaymentRepository = Substitute.For<IPaymentRepository>();
-    private readonly IOrderRepository OrderRepository = Substitute.For<IOrderRepository>();
-
     private IPaymentService GetServiceUnderTest()
     {
-        return new PaymentService(this.PaymentRepository, this.OrderRepository);
+        return new PaymentService(this.paymentRepository, this.orderRepository);
     }
 
     #endregion

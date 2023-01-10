@@ -1,7 +1,6 @@
 ﻿using Answer.King.Api.RequestModels;
 using Answer.King.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Answer.King.Api.Controllers;
 
@@ -24,6 +23,7 @@ public class TagsController : ControllerBase
     /// Get all tags.
     /// </summary>
     /// <response code="200">When all the tags have been returned.</response>
+    /// <returns>All Tags.</returns>
     // GET api/tags
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Domain.Inventory.Tag>), StatusCodes.Status200OK)]
@@ -35,11 +35,12 @@ public class TagsController : ControllerBase
     /// <summary>
     /// Get a single tag.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Tag identifier.</param>
     /// <response code="200">When the tag with the provided <paramref name="id"/> has been found.</response>
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Tag if found.</returns>
     // GET api/tags/{ID}
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Domain.Inventory.Tag), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOne(long id)
@@ -56,9 +57,10 @@ public class TagsController : ControllerBase
     /// <summary>
     /// Create a new tag.
     /// </summary>
-    /// <param name="createTag"></param>
+    /// <param name="createTag">Tag to create.</param>
     /// <response code="201">When the tag has been created.</response>
     /// <response code="400">When invalid parameters are provided.</response>
+    /// <returns>Created Tag.</returns>
     // POST api/tags
     [HttpPost]
     [ProducesResponseType(typeof(Domain.Inventory.Tag), StatusCodes.Status201Created)]
@@ -73,13 +75,14 @@ public class TagsController : ControllerBase
     /// <summary>
     /// Update an existing tag.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="updateTag"></param>
+    /// <param name="id">Tag identifier.</param>
+    /// <param name="updateTag">Tag details.</param>
     /// <response code="200">When the tag has been updated.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Updated Tag.</returns>
     // PUT api/tags/{ID}
-    [HttpPut("{id}")]
+    [HttpPut("{id:long}")]
     [ProducesResponseType(typeof(Domain.Inventory.Tag), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -97,13 +100,14 @@ public class TagsController : ControllerBase
     /// <summary>
     /// Retire an existing tag.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Tag identifier.</param>
     /// <response code="204">When the tag has been retired.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
     /// <response code="410">When the tag with the given <paramref name="id"/> is already retired.</response>
+    /// <returns>Status of retirement request.</returns>
     // DELETE api/tags/{ID}
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -140,11 +144,12 @@ public class TagsController : ControllerBase
     /// <summary>
     /// Get all products in a tag.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Tag identifier.</param>
     /// <response code="200">When all the products have been returned.</response>
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Products associated with provided tag identifier.</returns>
     // GET api/tags/{ID}/products
-    [HttpGet("{id}/products")]
+    [HttpGet("{id:long}/products")]
     [ProducesResponseType(typeof(IEnumerable<Domain.Repositories.Models.Product>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProducts(long id)
@@ -166,13 +171,14 @@ public class TagsController : ControllerBase
     /// <summary>
     /// Assign products to an existing tag.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="addProducts"></param>
+    /// <param name="id">Tag identifier.</param>
+    /// <param name="addProducts">Tag details.</param>
     /// <response code="200">When the tag has been updated.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Updated tag, containing any additional product assignments.</returns>
     // PUT api/tags/{ID}/products
-    [HttpPut("{id}/products")]
+    [HttpPut("{id:long}/products")]
     [ProducesResponseType(typeof(Domain.Inventory.Tag), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -198,11 +204,12 @@ public class TagsController : ControllerBase
     /// <summary>
     /// Remove products from an existing tag.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="removeProducts"></param>
+    /// <param name="id">Tag identifier.</param>
+    /// <param name="removeProducts">Product identifiers.</param>
     /// <response code="200">When the tag has been updated.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Updated tag, without the removed product assignments.</returns>
     // DELETE api/tags/{ID}/products
     [HttpDelete("{id}/products")]
     [ProducesResponseType(typeof(Domain.Inventory.Tag), StatusCodes.Status200OK)]

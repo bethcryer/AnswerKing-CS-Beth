@@ -15,6 +15,7 @@ public class Payment
         this.Date = DateTime.UtcNow;
     }
 
+    // ReSharper disable once UnusedMember.Local
 #pragma warning disable IDE0051 // Remove unused private members
     private Payment(long id, long orderId, double amount, double orderTotal, DateTime date)
 #pragma warning restore IDE0051 // Remove unused private members

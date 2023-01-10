@@ -4,6 +4,8 @@ using Answer.King.Domain.Repositories.Models;
 
 namespace Answer.King.Api.Services;
 
+using System.Runtime.Serialization;
+
 public class ProductService : IProductService
 {
     public ProductService(
@@ -20,17 +22,17 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<Product>> GetProducts()
     {
-        return await this.Products.Get();
+        return await this.Products.GetAll();
     }
 
     public async Task<IEnumerable<Product>> GetProducts(IEnumerable<long> productIds)
     {
-        return await this.Products.Get(productIds);
+        return await this.Products.GetMany(productIds);
     }
 
     public async Task<Product?> GetProduct(long productId)
     {
-        return await this.Products.Get(productId);
+        return await this.Products.GetOne(productId);
     }
 
     public async Task<Product> CreateProduct(RequestModels.Product createProduct)
@@ -47,7 +49,7 @@ public class ProductService : IProductService
 
     public async Task<Product?> UpdateProduct(long productId, RequestModels.Product updateProduct)
     {
-        var product = await this.Products.Get(productId);
+        var product = await this.Products.GetOne(productId);
 
         if (product == null)
         {
@@ -65,7 +67,7 @@ public class ProductService : IProductService
 
     public async Task<Product?> RetireProduct(long productId)
     {
-        var product = await this.Products.Get(productId);
+        var product = await this.Products.GetOne(productId);
 
         if (product == null)
         {
@@ -93,17 +95,20 @@ public class ProductService : IProductService
 }
 
 [Serializable]
-internal class ProductServiceException : Exception
+public class ProductServiceException : Exception
 {
-    public ProductServiceException(string message) : base(message)
+    public ProductServiceException(string message)
+        : base(message)
     {
     }
 
-    public ProductServiceException() : base()
+    public ProductServiceException(string? message, Exception? innerException)
+        : base(message, innerException)
     {
     }
 
-    public ProductServiceException(string? message, Exception? innerException) : base(message, innerException)
+    protected ProductServiceException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        : base(serializationInfo, streamingContext)
     {
     }
 }

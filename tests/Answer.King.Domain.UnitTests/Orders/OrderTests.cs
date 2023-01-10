@@ -1,6 +1,5 @@
-﻿using System.Collections;
+using System.Collections;
 using Answer.King.Domain.Orders;
-using Answer.King.Domain.Orders.Models;
 using Answer.King.Test.Common.CustomTraits;
 using Xunit;
 
@@ -264,7 +263,10 @@ public class OrderStateConstantsData : IEnumerable<object[]>
         }.GetEnumerator();
     }
 
+    // ReSharper disable once ArrangeMethodOrOperatorBody
+#pragma warning disable IDE0022 // Use block body for methods
     IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+#pragma warning restore IDE0022 // Use block body for methods
 }
 
 #endregion ClassData

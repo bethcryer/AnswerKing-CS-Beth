@@ -19,12 +19,12 @@ public class CategoryRepository : ICategoryRepository
 
     private ILiteCollection<Category> Collection { get; }
 
-    public Task<IEnumerable<Category>> Get()
+    public Task<IEnumerable<Category>> GetAll()
     {
         return Task.FromResult(this.Collection.FindAll());
     }
 
-    public Task<Category?> Get(long id)
+    public Task<Category?> GetOne(long id)
     {
         return Task.FromResult(this.Collection.FindOne(c => c.Id == id))!;
     }
@@ -37,7 +37,7 @@ public class CategoryRepository : ICategoryRepository
     public Task<IEnumerable<Category>> GetByProductId(long productId)
     {
         var query = Query.EQ("products[*] ANY", productId);
-        return Task.FromResult(this.Collection.Find(query))!;
+        return Task.FromResult(this.Collection.Find(query));
     }
 
     public Task<IEnumerable<Category>> GetByProductId(params long[] productIds)

@@ -1,12 +1,12 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Answer.King.Domain.Inventory.Models;
-using Answer.King.Domain.Orders.Models;
 
 namespace Answer.King.Domain.Inventory;
 
-// Todo: look at custom deserialisation: https://stackoverflow.com/questions/42336751/custom-deserialization
 public class Category : IAggregateRoot
 {
+    private readonly HashSet<ProductId> products;
+
     public Category(string name, string description, IList<ProductId> products)
     {
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
@@ -17,7 +17,7 @@ public class Category : IAggregateRoot
         this.Name = name;
         this.Description = description;
         this.LastUpdated = this.CreatedOn = DateTime.UtcNow;
-        this._products = new HashSet<ProductId>(products);
+        this.products = new HashSet<ProductId>(products);
         this.Retired = false;
     }
 
@@ -45,7 +45,7 @@ public class Category : IAggregateRoot
         this.Description = description;
         this.CreatedOn = createdOn;
         this.LastUpdated = lastUpdated;
-        this._products = new HashSet<ProductId>(products);
+        this.products = new HashSet<ProductId>(products);
         this.Retired = retired;
     }
 
@@ -59,9 +59,7 @@ public class Category : IAggregateRoot
 
     public DateTime LastUpdated { get; private set; }
 
-    private HashSet<ProductId> _products { get; }
-
-    public IReadOnlyCollection<ProductId> Products => this._products;
+    public IReadOnlyCollection<ProductId> Products => this.products;
 
     public bool Retired { get; private set; }
 
@@ -79,10 +77,10 @@ public class Category : IAggregateRoot
     {
         if (this.Retired)
         {
-            throw new CategoryLifecycleException("Cannot add product to retired catgory.");
+            throw new CategoryLifecycleException("Cannot add product to retired category.");
         }
 
-        if (this._products.Add(productId))
+        if (this.products.Add(productId))
         {
             this.LastUpdated = DateTime.UtcNow;
         }
@@ -92,10 +90,10 @@ public class Category : IAggregateRoot
     {
         if (this.Retired)
         {
-            throw new CategoryLifecycleException("Cannot remove product from retired catgory.");
+            throw new CategoryLifecycleException("Cannot remove product from retired category.");
         }
 
-        if (this._products.Remove(productId))
+        if (this.products.Remove(productId))
         {
             this.LastUpdated = DateTime.UtcNow;
         }
@@ -108,7 +106,7 @@ public class Category : IAggregateRoot
             throw new CategoryLifecycleException("The category is already retired.");
         }
 
-        if (this._products.Count > 0)
+        if (this.products.Count > 0)
         {
             throw new CategoryLifecycleException(
                 $"Cannot retire category whilst there are still products assigned. {string.Join(',', this.Products.Select(p => p.Value))}");
@@ -123,19 +121,22 @@ public class Category : IAggregateRoot
 [Serializable]
 public class CategoryLifecycleException : Exception
 {
-    public CategoryLifecycleException(string message) : base(message)
+    public CategoryLifecycleException(string message)
+        : base(message)
     {
     }
 
-    public CategoryLifecycleException() : base()
+    public CategoryLifecycleException()
     {
     }
 
-    public CategoryLifecycleException(string? message, Exception? innerException) : base(message, innerException)
+    public CategoryLifecycleException(string? message, Exception? innerException)
+        : base(message, innerException)
     {
     }
 
-    protected CategoryLifecycleException(SerializationInfo info, StreamingContext context) : base(info, context)
+    protected CategoryLifecycleException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
     {
     }
 }

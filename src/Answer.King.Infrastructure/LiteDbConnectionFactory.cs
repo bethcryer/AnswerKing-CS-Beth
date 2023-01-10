@@ -1,5 +1,4 @@
-﻿using System;
-using LiteDB;
+﻿using LiteDB;
 using Microsoft.Extensions.Configuration;
 
 namespace Answer.King.Infrastructure;
@@ -24,21 +23,5 @@ public class LiteDbConnectionFactory : ILiteDbConnectionFactory
     public LiteDatabase GetConnection()
     {
         return this.Database;
-    }
-}
-
-[Serializable]
-public class LiteDbConnectionFactoryException : Exception
-{
-    public LiteDbConnectionFactoryException(string message) : base(message)
-    {
-    }
-
-    public LiteDbConnectionFactoryException() : base()
-    {
-    }
-
-    public LiteDbConnectionFactoryException(string? message, Exception? innerException) : base(message, innerException)
-    {
     }
 }

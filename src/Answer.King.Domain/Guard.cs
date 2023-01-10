@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -8,6 +8,7 @@ namespace Answer.King.Domain;
 /// <summary>
 ///     Provides guard clauses.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class Guard
 {
     /// <summary>
@@ -16,11 +17,10 @@ public static class Guard
     /// <typeparam name="TArgument">The type of the argument.</typeparam>
     /// <param name="parameterName">Name of the parameter.</param>
     /// <param name="argument">The argument.</param>
-    /// <exception cref="System.ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
     /// <remarks>
     ///     <typeparamref name="TArgument" /> is restricted to reference types to avoid boxing of value type objects.
     /// </remarks>
-    [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Source package.")]
     [DebuggerStepThrough]
     public static void AgainstNullArgument<TArgument>(string parameterName, [ValidatedNotNull] TArgument argument)
         where TArgument : class
@@ -39,11 +39,10 @@ public static class Guard
     /// <typeparam name="TArgument">The type of the argument.</typeparam>
     /// <param name="parameterName">Name of the parameter.</param>
     /// <param name="argument">The argument.</param>
-    /// <exception cref="System.ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
     /// <remarks>
     ///     Performs a type check to avoid boxing of value type objects.
     /// </remarks>
-    [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Source package.")]
     [DebuggerStepThrough]
     public static void AgainstNullArgumentIfNullable<TArgument>(
         string parameterName,
@@ -64,11 +63,10 @@ public static class Guard
     /// <param name="parameterName">Name of the parameter.</param>
     /// <param name="propertyName">Name of the property.</param>
     /// <param name="argumentProperty">The argument property.</param>
-    /// <exception cref="System.ArgumentException"><paramref name="argumentProperty" /> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="argumentProperty" /> is <c>null</c>.</exception>
     /// <remarks>
     ///     <typeparamref name="TProperty" /> is restricted to reference types to avoid boxing of value type objects.
     /// </remarks>
-    [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Source package.")]
     [DebuggerStepThrough]
     public static void AgainstNullArgumentProperty<TProperty>(
         string parameterName,
@@ -91,11 +89,10 @@ public static class Guard
     /// <param name="parameterName">Name of the parameter.</param>
     /// <param name="propertyName">Name of the property.</param>
     /// <param name="argumentProperty">The argument property.</param>
-    /// <exception cref="System.ArgumentException"><paramref name="argumentProperty" /> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="argumentProperty" /> is <c>null</c>.</exception>
     /// <remarks>
     ///     Performs a type check to avoid boxing of value type objects.
     /// </remarks>
-    [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Source package.")]
     [DebuggerStepThrough]
     public static void AgainstNullArgumentPropertyIfNullable<TProperty>(
         string parameterName,
@@ -115,8 +112,7 @@ public static class Guard
     /// </summary>
     /// <param name="parameterName">Name of the parameter.</param>
     /// <param name="argument">The argument.</param>
-    /// <exception cref="System.ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
-    [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Source package.")]
+    /// <exception cref="ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
     [DebuggerStepThrough]
     public static void AgainstNullOrEmptyArgument(string parameterName, [ValidatedNotNull] string argument)
     {
@@ -140,11 +136,10 @@ public static class Guard
     /// <typeparam name="T">The type of the argument.</typeparam>
     /// <param name="parameterName">Name of the parameter.</param>
     /// <param name="argument">The argument.</param>
-    /// <exception cref="System.ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
     /// <remarks>
     ///     <typeparamref name="T" /> is restricted to reference types to avoid boxing of value type objects.
     /// </remarks>
-    [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Source package.")]
     [DebuggerStepThrough]
     public static void AgainstNullOrEmptyArgument<T>(
         string parameterName,
@@ -169,9 +164,8 @@ public static class Guard
     /// </summary>
     /// <param name="parameterName">Name of the parameter.</param>
     /// <param name="argument">The argument.</param>
-    /// <exception cref="System.ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="argument" /> is <c>null</c>.</exception>
     /// <exception cref="WhitespaceException"><paramref name="argument" /> is not empty but only contains <c>whitespace</c>.</exception>
-    [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Source package.")]
     [DebuggerStepThrough]
     public static void AgainstNullOrWhitespaceArgument(string parameterName, [ValidatedNotNull] string argument)
     {
@@ -196,7 +190,8 @@ public static class Guard
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "Argument {0} exceeds {1} characters",
-                    parameterName, characterLimit));
+                    parameterName,
+                    characterLimit));
         }
     }
 
@@ -237,7 +232,8 @@ public static class Guard
     }
 
     [DebuggerStepThrough]
-    public static void AgainstDefaultValue<T>(string parameterName, T argument) where T : struct
+    public static void AgainstDefaultValue<T>(string parameterName, T argument)
+        where T : struct
     {
         var value = default(T);
 
@@ -248,14 +244,13 @@ public static class Guard
                     CultureInfo.InvariantCulture,
                     "Argument {0} is equal to its default value {1}.",
                     parameterName,
-                    value
-                )
-            );
+                    value));
         }
     }
 
     [DebuggerStepThrough]
-    public static void AgainstDefaultValues<T>(string parameterName, IEnumerable<T> argument) where T : struct
+    public static void AgainstDefaultValues<T>(string parameterName, IEnumerable<T> argument)
+        where T : struct
     {
         var value = default(T);
 
@@ -266,9 +261,7 @@ public static class Guard
                     CultureInfo.InvariantCulture,
                     "Argument {0} contains an element equal to its default value {1}.",
                     parameterName,
-                    value
-                )
-            );
+                    value));
         }
     }
 
@@ -279,7 +272,6 @@ public static class Guard
     /// <returns>
     ///     <c>true</c> if the specified type is a nullable type; otherwise, <c>false</c>.
     /// </returns>
-    [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Source package.")]
     private static bool IsNullableType(this Type type)
     {
         return !type.IsValueType || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>));
@@ -288,19 +280,22 @@ public static class Guard
     [Serializable]
     public class EmptyStringException : Exception
     {
-        public EmptyStringException(string message) : base(message)
+        public EmptyStringException(string message)
+            : base(message)
         {
         }
 
-        public EmptyStringException() : base()
+        public EmptyStringException()
         {
         }
 
-        public EmptyStringException(string? message, Exception? innerException) : base(message, innerException)
+        public EmptyStringException(string? message, Exception? innerException)
+            : base(message, innerException)
         {
         }
 
-        protected EmptyStringException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected EmptyStringException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }
@@ -308,19 +303,22 @@ public static class Guard
     [Serializable]
     public class WhitespaceException : Exception
     {
-        public WhitespaceException(string message) : base(message)
+        public WhitespaceException(string message)
+            : base(message)
         {
         }
 
-        public WhitespaceException() : base()
+        public WhitespaceException()
         {
         }
 
-        public WhitespaceException(string? message, Exception? innerException) : base(message, innerException)
+        public WhitespaceException(string? message, Exception? innerException)
+            : base(message, innerException)
         {
         }
 
-        protected WhitespaceException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected WhitespaceException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }
@@ -328,19 +326,22 @@ public static class Guard
     [Serializable]
     public class StringExceedsNCharactersException : Exception
     {
-        public StringExceedsNCharactersException(string message) : base(message)
+        public StringExceedsNCharactersException(string message)
+            : base(message)
         {
         }
 
-        public StringExceedsNCharactersException() : base()
+        public StringExceedsNCharactersException()
         {
         }
 
-        public StringExceedsNCharactersException(string? message, Exception? innerException) : base(message, innerException)
+        public StringExceedsNCharactersException(string? message, Exception? innerException)
+            : base(message, innerException)
         {
         }
 
-        protected StringExceedsNCharactersException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected StringExceedsNCharactersException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }
@@ -348,19 +349,22 @@ public static class Guard
     [Serializable]
     public class DefaultValueException : Exception
     {
-        public DefaultValueException(string message) : base(message)
+        public DefaultValueException(string message)
+            : base(message)
         {
         }
 
-        public DefaultValueException() : base()
+        public DefaultValueException()
         {
         }
 
-        public DefaultValueException(string? message, Exception? innerException) : base(message, innerException)
+        public DefaultValueException(string? message, Exception? innerException)
+            : base(message, innerException)
         {
         }
 
-        protected DefaultValueException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected DefaultValueException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }
@@ -368,19 +372,22 @@ public static class Guard
     [Serializable]
     public class EmptyListException : Exception
     {
-        public EmptyListException(string message) : base(message)
+        public EmptyListException(string message)
+            : base(message)
         {
         }
 
-        public EmptyListException() : base()
+        public EmptyListException()
         {
         }
 
-        public EmptyListException(string? message, Exception? innerException) : base(message, innerException)
+        public EmptyListException(string? message, Exception? innerException)
+            : base(message, innerException)
         {
         }
 
-        protected EmptyListException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected EmptyListException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

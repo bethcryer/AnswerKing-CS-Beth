@@ -27,6 +27,7 @@ public class PaymentsController : ControllerBase
     /// Gets all payments.
     /// </summary>
     /// <response code="200">When all the payments have been returned.</response>
+    /// <returns>All Payments.</returns>
     // GET: api/payments
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Domain.Repositories.Models.Payment>), StatusCodes.Status200OK)]
@@ -39,11 +40,12 @@ public class PaymentsController : ControllerBase
     /// <summary>
     /// Get a single payment.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Payment identifier.</param>
     /// <response code="200">When the payment with the provided <paramref name="id"/> has been found.</response>
     /// <response code="404">When the payment with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Payment if found.</returns>
     // GET: api/payments/5
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Domain.Repositories.Models.Payment), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOne(long id)
@@ -61,9 +63,10 @@ public class PaymentsController : ControllerBase
     /// <summary>
     /// Create a new payment.
     /// </summary>
-    /// <param name="makePayment"></param>
+    /// <param name="makePayment">Payment details.</param>
     /// <response code="201">When the payment has been created.</response>
     /// <response code="400">When invalid parameters are provided.</response>
+    /// <returns>Created Payment.</returns>
     // POST api/payments
     [HttpPost]
     [ProducesResponseType(typeof(Domain.Repositories.Models.Payment), StatusCodes.Status201Created)]
@@ -86,11 +89,12 @@ public class PaymentsController : ControllerBase
     /// <summary>
     /// Get order for payment.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Payment identifier.</param>
     /// <response code="200">When the order has been returned.</response>
     /// <response code="404">When the payment with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Order associated with payment identifier.</returns>
     // GET api/payments/{ID}/order
-    [HttpGet("{id}/order")]
+    [HttpGet("{id:long}/order")]
     [ProducesResponseType(typeof(IEnumerable<Order>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOrder(long id)

@@ -18,12 +18,12 @@ public class OrderRepository : IOrderRepository
 
     private ILiteCollection<Order> Collection { get; }
 
-    public Task<IEnumerable<Order>> Get()
+    public Task<IEnumerable<Order>> GetAll()
     {
         return Task.FromResult(this.Collection.FindAll());
     }
 
-    public Task<Order?> Get(long id)
+    public Task<Order?> GetOne(long id)
     {
         return Task.FromResult(this.Collection.FindOne(c => c.Id == id))!;
     }

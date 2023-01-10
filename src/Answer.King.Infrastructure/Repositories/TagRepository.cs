@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Repositories;
@@ -19,12 +18,12 @@ public class TagRepository : ITagRepository
 
     private ILiteCollection<Tag> Collection { get; }
 
-    public Task<IEnumerable<Tag>> Get()
+    public Task<IEnumerable<Tag>> GetAll()
     {
         return Task.FromResult(this.Collection.FindAll());
     }
 
-    public Task<Tag?> Get(long id)
+    public Task<Tag?> GetOne(long id)
     {
         return Task.FromResult(this.Collection.FindOne(c => c.Id == id))!;
     }

@@ -1,9 +1,8 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
-using Xunit;
 
 namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
 
@@ -11,13 +10,13 @@ namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
 [TestCategory(TestType.Unit)]
 public class PaymentFactoryTests
 {
-    private static readonly PaymentFactory paymentFactory = new();
+    private static readonly PaymentFactory PaymentFactory = new();
 
     [Fact]
     public Task CreatePayment_ConstructorExists_ReturnsPayment()
     {
         // Arrange / Act
-        var result = paymentFactory.CreatePayment(1, 1, 1, 1, DateTime.UtcNow);
+        var result = PaymentFactory.CreatePayment(1, 1, 1, 1, DateTime.UtcNow);
 
         // Assert
         Assert.IsType<Payment>(result);
@@ -31,17 +30,17 @@ public class PaymentFactoryTests
         var paymentFactoryConstructorPropertyInfo =
         typeof(PaymentFactory).GetField("<PaymentConstructor>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        var constructor = paymentFactoryConstructorPropertyInfo?.GetValue(paymentFactory);
+        var constructor = paymentFactoryConstructorPropertyInfo?.GetValue(PaymentFactory);
 
         var wrongConstructor = typeof(Category).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
             .SingleOrDefault(c => c.IsPrivate && c.GetParameters().Length > 0);
 
-        paymentFactoryConstructorPropertyInfo?.SetValue(paymentFactory, wrongConstructor);
+        paymentFactoryConstructorPropertyInfo?.SetValue(PaymentFactory, wrongConstructor);
 
         // Act // Assert
         Assert.Throws<TargetParameterCountException>(() =>
-            paymentFactory.CreatePayment(1, 1, 1, 1, DateTime.UtcNow));
+            PaymentFactory.CreatePayment(1, 1, 1, 1, DateTime.UtcNow));
 
-        paymentFactoryConstructorPropertyInfo?.SetValue(paymentFactory, constructor);
+        paymentFactoryConstructorPropertyInfo?.SetValue(PaymentFactory, constructor);
     }
 }

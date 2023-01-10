@@ -30,7 +30,7 @@ public class TagTests
     public void RenameTag_WithBlankName_ThrowsException()
     {
         var tag = new Tag("Vegan", "Non-animal products", new List<ProductId>());
-        Assert.Throws<Guard.EmptyStringException>(() => tag.Rename("", "Buy one get one free!"));
+        Assert.Throws<Guard.EmptyStringException>(() => tag.Rename(string.Empty, "Buy one get one free!"));
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class TagTests
     public void RenameTag_WithBlankDescription_ThrowsException()
     {
         var tag = new Tag("Vegan", "Non-animal products", new List<ProductId>());
-        Assert.Throws<Guard.EmptyStringException>(() => tag.Rename("BOGOF", ""));
+        Assert.Throws<Guard.EmptyStringException>(() => tag.Rename("BOGOF", string.Empty));
     }
 
     [Fact]

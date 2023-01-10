@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace Answer.King.Domain.Orders.Models;
 
@@ -23,6 +23,7 @@ public class LineItem
         {
             throw new LineItemException("Cannot add less than 1 to the quantity.");
         }
+
         this.Quantity += quantity;
     }
 
@@ -45,19 +46,22 @@ public class LineItem
 [Serializable]
 public class LineItemException : Exception
 {
-    public LineItemException(string message) : base(message)
+    public LineItemException(string message)
+        : base(message)
     {
     }
 
-    public LineItemException() : base()
+    public LineItemException()
     {
     }
 
-    public LineItemException(string? message, Exception? innerException) : base(message, innerException)
+    public LineItemException(string? message, Exception? innerException)
+        : base(message, innerException)
     {
     }
 
-    protected LineItemException(SerializationInfo info, StreamingContext context) : base(info, context)
+    protected LineItemException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
     {
     }
 }

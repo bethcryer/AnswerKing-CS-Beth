@@ -1,9 +1,5 @@
-﻿using Alba;
 using Answer.King.Api.IntegrationTests.Common;
 using Answer.King.Api.RequestModels;
-using VerifyTests;
-using VerifyXunit;
-using Xunit;
 using Category = Answer.King.Api.IntegrationTests.Common.Models.Category;
 
 namespace Answer.King.Api.IntegrationTests.Controllers;
@@ -11,12 +7,12 @@ namespace Answer.King.Api.IntegrationTests.Controllers;
 [UsesVerify]
 public class CategoryControllerTests : WebFixtures
 {
-    private readonly VerifySettings _verifySettings;
+    private readonly VerifySettings verifySettings;
 
     public CategoryControllerTests()
     {
-        this._verifySettings = new();
-        this._verifySettings.ScrubMembers("traceId");
+        this.verifySettings = new();
+        this.verifySettings.ScrubMembers("traceId");
     }
 
     #region Get
@@ -36,14 +32,14 @@ public class CategoryControllerTests : WebFixtures
     [Fact]
     public async Task<VerifyResult> GetCategory_CategoryExists_ReturnsCategory()
     {
-        var newCategory = await this.AlbaHost.Scenario(_ =>
+        await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -68,7 +64,7 @@ public class CategoryControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -77,14 +73,14 @@ public class CategoryControllerTests : WebFixtures
     [Fact]
     public async Task<VerifyResult> GetProducts_TagExists_ReturnsProducts()
     {
-        var newCategory = await this.AlbaHost.Scenario(_ =>
+        await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -109,7 +105,7 @@ public class CategoryControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -124,7 +120,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -142,13 +138,13 @@ public class CategoryControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Seafood"
+                    Name = "Seafood",
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -161,13 +157,13 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { 5 }
+                    Products = new List<long> { 5 },
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -182,7 +178,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -197,7 +193,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans and the high seas and also the puddles maybe",
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl($"/api/categories/{category?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
@@ -215,13 +211,13 @@ public class CategoryControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "Seafood"
+                    Name = "Seafood",
                 })
                 .ToUrl("/api/categories/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -234,13 +230,13 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/categories/50");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -253,13 +249,13 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { 5 }
+                    Products = new List<long> { 5 },
                 })
                 .ToUrl("/api/categories/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -274,7 +270,7 @@ public class CategoryControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -287,7 +283,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -313,7 +309,7 @@ public class CategoryControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -335,7 +331,7 @@ public class CategoryControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Gone);
         });
 
-        return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 }

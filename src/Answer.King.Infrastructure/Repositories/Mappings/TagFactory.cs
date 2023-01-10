@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
-using Answer.King.Domain.Repositories.Models;
 
 namespace Answer.King.Infrastructure.Repositories.Mappings;
 
@@ -31,7 +30,7 @@ internal class TagFactory
             createdOn,
             lastUpdated,
             products,
-            retired
+            retired,
         };
 
         /* invoking a private constructor will wrap up any exception into a

@@ -24,6 +24,7 @@ public class CategoriesController : ControllerBase
     /// Get all categories.
     /// </summary>
     /// <response code="200">When all the categories have been returned.</response>
+    /// <returns>All Categories.</returns>
     // GET api/categories
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Domain.Inventory.Category>), StatusCodes.Status200OK)]
@@ -36,11 +37,12 @@ public class CategoriesController : ControllerBase
     /// <summary>
     /// Get a single category.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Category identifier.</param>
     /// <response code="200">When the category with the provided <paramref name="id"/> has been found.</response>
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Category if found.</returns>
     // GET api/categories/{ID}
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(Tags = new[] { "Inventory" })]
@@ -58,9 +60,10 @@ public class CategoriesController : ControllerBase
     /// <summary>
     /// Create a new category.
     /// </summary>
-    /// <param name="createCategory"></param>
+    /// <param name="createCategory">Category details.</param>
     /// <response code="201">When the category has been created.</response>
     /// <response code="400">When invalid parameters are provided.</response>
+    /// <returns>Created Category.</returns>
     // POST api/categories
     [HttpPost]
     [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status201Created)]
@@ -84,13 +87,14 @@ public class CategoriesController : ControllerBase
     /// <summary>
     /// Update an existing category.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="updateCategory"></param>
+    /// <param name="id">Category identifier.</param>
+    /// <param name="updateCategory">Category details.</param>
     /// <response code="200">When the category has been updated.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Updated Category.</returns>
     // PUT api/categories/{ID}
-    [HttpPut("{id}")]
+    [HttpPut("{id:long}")]
     [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -117,13 +121,14 @@ public class CategoriesController : ControllerBase
     /// <summary>
     /// Retire an existing category.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Category identifier.</param>
     /// <response code="204">When the category has been retired.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
     /// <response code="410">When the category with the given <paramref name="id"/> is already retired.</response>
+    /// <returns>Status of retirement request.</returns>
     // DELETE api/categories/{ID}
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -161,11 +166,12 @@ public class CategoriesController : ControllerBase
     /// <summary>
     /// Get all products in a category.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Category identifier.</param>
     /// <response code="200">When all the products have been returned.</response>
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Products associated with provided category identifier.</returns>
     // GET api/categories/{ID}/products
-    [HttpGet("{id}/products")]
+    [HttpGet("{id:long}/products")]
     [ProducesResponseType(typeof(IEnumerable<Domain.Repositories.Models.Product>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(Tags = new[] { "Inventory" })]

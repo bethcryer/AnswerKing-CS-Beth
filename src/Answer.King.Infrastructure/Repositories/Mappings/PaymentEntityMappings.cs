@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using Answer.King.Domain.Repositories.Models;
 using LiteDB;
@@ -7,15 +7,14 @@ namespace Answer.King.Infrastructure.Repositories.Mappings;
 
 public class PaymentEntityMappings : IEntityMapping
 {
-    private static readonly PaymentFactory paymentFactory = new();
+    private static readonly PaymentFactory PaymentFactory = new();
 
-    private static readonly FieldInfo? paymentIdFieldInfo =
+    private static readonly FieldInfo? PaymentIdFieldInfo =
         typeof(Payment).GetField($"<{nameof(Payment.Id)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public void RegisterMapping(BsonMapper mapper)
     {
-        mapper.RegisterType
-        (
+        mapper.RegisterType(
             serialize: payment =>
             {
                 var doc = new BsonDocument
@@ -24,7 +23,7 @@ public class PaymentEntityMappings : IEntityMapping
                     ["orderId"] = payment.OrderId,
                     ["amount"] = payment.Amount,
                     ["orderTotal"] = payment.OrderTotal,
-                    ["date"] = payment.Date
+                    ["date"] = payment.Date,
                 };
 
                 return doc;
@@ -33,14 +32,13 @@ public class PaymentEntityMappings : IEntityMapping
             {
                 var doc = bson.AsDocument;
 
-                return paymentFactory.CreatePayment(
+                return PaymentFactory.CreatePayment(
                     doc["_id"].AsInt64,
                     doc["orderId"].AsInt64,
                     doc["amount"].AsDouble,
                     doc["orderTotal"].AsDouble,
                     doc["date"].AsDateTime);
-            }
-        );
+            });
     }
 
     public void ResolveMember(Type type, MemberInfo memberInfo, MemberMapper memberMapper)
@@ -48,7 +46,7 @@ public class PaymentEntityMappings : IEntityMapping
         if (type == typeof(Payment) && memberMapper.MemberName == "Id")
         {
             memberMapper.Setter =
-                (obj, value) => paymentIdFieldInfo?.SetValue(obj, value);
+                (obj, value) => PaymentIdFieldInfo?.SetValue(obj, value);
         }
     }
 }

@@ -20,6 +20,7 @@ public class OrdersController : ControllerBase
     /// Get all orders.
     /// </summary>
     /// <response code="200">When all the orders have been returned.</response>
+    /// <returns>All Orders.</returns>
     // GET api/orders
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Order>), StatusCodes.Status200OK)]
@@ -31,11 +32,12 @@ public class OrdersController : ControllerBase
     /// <summary>
     /// Get a single order.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Order identifier.</param>
     /// <response code="200">When the order with the provided <paramref name="id"/> has been found.</response>
     /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Order if found.</returns>
     // GET api/orders/{ID}
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOne(long id)
@@ -52,9 +54,10 @@ public class OrdersController : ControllerBase
     /// <summary>
     /// Create a new order.
     /// </summary>
-    /// <param name="createOrder"></param>
+    /// <param name="createOrder">Order details.</param>
     /// <response code="201">When the order has been created.</response>
     /// <response code="400">When invalid parameters are provided.</response>
+    /// <returns>Created Order.</returns>
     // POST api/orders
     [HttpPost]
     [ProducesResponseType(typeof(Order), StatusCodes.Status201Created)]
@@ -77,13 +80,14 @@ public class OrdersController : ControllerBase
     /// <summary>
     /// Update an existing order.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="updateOrder"></param>
+    /// <param name="id">Order identifier.</param>
+    /// <param name="updateOrder">Order details.</param>
     /// <response code="200">When the order has been updated.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Updated Order.</returns>
     // PUT api/orders/{ID}
-    [HttpPut("{id}")]
+    [HttpPut("{id:long}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -113,14 +117,15 @@ public class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// Cancel an existind order.
+    /// Cancel an existing order.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Order identifier.</param>
     /// <response code="204">When the order has been cancelled.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Status of cancel request.</returns>
     // DELETE api/orders/{ID}
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

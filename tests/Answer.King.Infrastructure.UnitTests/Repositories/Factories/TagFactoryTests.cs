@@ -1,10 +1,9 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
-using Xunit;
 
 namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
 
@@ -12,14 +11,14 @@ namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
 [TestCategory(TestType.Unit)]
 public class TagFactoryTests
 {
-    private static readonly TagFactory tagFactory = new();
+    private static readonly TagFactory TagFactory = new();
 
     [Fact]
     public Task CreateTag_ConstructorExists_ReturnsTag()
     {
         // Arrange / Act
         var now = DateTime.UtcNow;
-        var result = tagFactory.CreateTag(1, "NAME", "DESC", now, now, new List<ProductId>(), false);
+        var result = TagFactory.CreateTag(1, "NAME", "DESC", now, now, new List<ProductId>(), false);
 
         // Assert
         Assert.IsType<Tag>(result);
@@ -33,19 +32,19 @@ public class TagFactoryTests
         var tagFactoryConstructorPropertyInfo =
         typeof(TagFactory).GetField("<TagConstructor>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        var constructor = tagFactoryConstructorPropertyInfo?.GetValue(tagFactory);
+        var constructor = tagFactoryConstructorPropertyInfo?.GetValue(TagFactory);
 
         var wrongConstructor = typeof(Product).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
             .SingleOrDefault(c => c.IsPrivate && c.GetParameters().Length > 0);
 
-        tagFactoryConstructorPropertyInfo?.SetValue(tagFactory, wrongConstructor);
+        tagFactoryConstructorPropertyInfo?.SetValue(TagFactory, wrongConstructor);
 
         var now = DateTime.UtcNow;
 
         // Act // Assert
         Assert.Throws<ArgumentException>(() =>
-            tagFactory.CreateTag(1, "NAME", "DESC", now, now, new List<ProductId>(), false));
+            TagFactory.CreateTag(1, "NAME", "DESC", now, now, new List<ProductId>(), false));
 
-        tagFactoryConstructorPropertyInfo?.SetValue(tagFactory, constructor);
+        tagFactoryConstructorPropertyInfo?.SetValue(TagFactory, constructor);
     }
 }
