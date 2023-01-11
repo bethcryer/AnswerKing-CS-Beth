@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using System.Reflection;
 using Answer.King.Domain.Repositories.Models;
 using LiteDB;
@@ -7,7 +8,9 @@ namespace Answer.King.Infrastructure.Repositories.Mappings;
 
 public class ProductEntityMappings : IEntityMapping
 {
-    private static readonly FieldInfo? ProductIdFieldInfo =
+    private static readonly ProductFactory productFactory = new();
+
+    private static readonly FieldInfo? productIdFieldInfo =
         typeof(Product).GetField($"<{nameof(Product.Id)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public void RegisterMapping(BsonMapper mapper)
@@ -16,19 +19,18 @@ public class ProductEntityMappings : IEntityMapping
         (
             serialize: product =>
             {
+                var categories = product.Categories.Select(c => new BsonValue(c.Value));
+                var tags = product.Tags.Select(c => new BsonValue(c.Value));
+
                 var doc = new BsonDocument
                 {
                     ["_id"] = product.Id,
-                    ["Name"] = product.Name,
-                    ["Description"] = product.Description,
-                    ["Price"] = product.Price,
-                    ["Category"] = new BsonDocument
-                    {
-                        ["_id"] = product.Category.Id,
-                        ["Name"] = product.Category.Name,
-                        ["Description"] = product.Category.Description
-                    },
-                    ["Retired"] = product.Retired
+                    ["name"] = product.Name,
+                    ["description"] = product.Description,
+                    ["price"] = product.Price,
+                    ["categories"] = new BsonArray(categories),
+                    ["tags"] = new BsonArray(tags),
+                    ["retired"] = product.Retired
                 };
 
                 return doc;
@@ -36,19 +38,17 @@ public class ProductEntityMappings : IEntityMapping
             deserialize: bson =>
             {
                 var doc = bson.AsDocument;
-                var cat = doc["Category"].AsDocument;
-                var category = new Category(
-                    cat["_id"].AsInt64,
-                    cat["Name"].AsString,
-                    cat["Description"].AsString);
+                var categories = doc["categories"].AsArray.Select(c => new CategoryId(c)).ToList();
+                var tags = doc["tags"].AsArray.Select(c => new TagId(c)).ToList();
 
-                return ProductFactory.CreateProduct(
+                return productFactory.CreateProduct(
                     doc["_id"].AsInt64,
-                    doc["Name"].AsString,
-                    doc["Description"].AsString,
-                    doc["Price"].AsDouble,
-                    category,
-                    doc["Retired"].AsBoolean);
+                    doc["name"].AsString,
+                    doc["description"].AsString,
+                    doc["price"].AsDouble,
+                    categories,
+                    tags,
+                    doc["retired"].AsBoolean);
             }
         );
     }
@@ -58,7 +58,7 @@ public class ProductEntityMappings : IEntityMapping
         if (type == typeof(Product) && memberMapper.MemberName == "Id")
         {
             memberMapper.Setter =
-                (obj, value) => ProductIdFieldInfo?.SetValue(obj, value);
+                (obj, value) => productIdFieldInfo?.SetValue(obj, value);
         }
     }
 }

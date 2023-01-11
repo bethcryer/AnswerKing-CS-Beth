@@ -1,0 +1,7 @@
+﻿{
+  Id: 1,
+  OrderId: 1,
+  Amount: 1.0,
+  OrderTotal: 1.0,
+  Date: DateTime_1
+}

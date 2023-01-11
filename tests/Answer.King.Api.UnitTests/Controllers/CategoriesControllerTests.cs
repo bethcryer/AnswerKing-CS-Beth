@@ -1,10 +1,12 @@
 ﻿using Answer.King.Api.Controllers;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory.Models;
 using Answer.King.Test.Common.CustomAsserts;
 using Answer.King.Test.Common.CustomTraits;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Answer.King.Api.UnitTests.Controllers;
@@ -19,7 +21,7 @@ public class CategoriesControllerTests
     {
         // Assert
         AssertController.HasRouteAttribute<CategoriesController>("api/[controller]");
-        Assert.Equal(nameof(CategoriesController), "CategoriesController");
+        Assert.Equal("CategoriesController", nameof(CategoriesController));
     }
 
     #endregion GenericControllerTests
@@ -35,7 +37,7 @@ public class CategoriesControllerTests
     }
 
     [Fact]
-    public async void GetAll_ValidRequest_ReturnsOkObjectResult()
+    public async Task GetAll_ValidRequest_ReturnsOkObjectResult()
     {
         // Arrange
         var data = new List<Category>();
@@ -74,18 +76,19 @@ public class CategoriesControllerTests
         Assert.IsType<NotFoundResult>(result);
     }
 
-    [Fact(Skip = "Solve access issue for private Category - WIP")]
-    public void GetOne_ValidRequestWithResult_ReturnsOkObjectResult()
+    [Fact]
+    public async Task GetOne_ValidRequestWithResult_ReturnsOkObjectResult()
     {
         // Arrange
-        //var data = new Category();
-        //CategoryService.GetCategory(Arg.Any<long>()).Returns(data);
+        const long id = 1;
+        var data = new Category("name", "description", new List<ProductId>());
+        CategoryService.GetCategory(Arg.Is(id)).Returns(data);
 
         // Act
-        //var result = await GetSubjectUnderTest.GetOne((Arg.Any<long>()));
+        var result = await GetSubjectUnderTest.GetOne(id);
 
         // Assert
-        //Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<OkObjectResult>(result);
     }
 
     #endregion GetOne
@@ -100,14 +103,27 @@ public class CategoriesControllerTests
             nameof(CategoriesController.Post));
     }
 
-    [Fact(Skip = "This test needs to be written, but not sure due best way due to Domain.Inventory.Category protection level")]
-    public void Post_ValidRequestCallsGetAction_ReturnsNewCategory()
+    [Fact]
+    public async Task Post_ValidRequestCallsGetAction_ReturnsNewCategory()
     {
         // Arrange
+        var categoryRequestModel = new RequestModels.Category
+        {
+            Name = "CATEGORY_NAME",
+            Description = "CATEGORY_DESCRIPTION"
+        };
+
+        var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION", new List<ProductId>());
+
+        CategoryService.CreateCategory(categoryRequestModel).Returns(category);
 
         // Act
+        var result = await GetSubjectUnderTest.Post(categoryRequestModel);
 
         // Assert
+        Assert.Equal(categoryRequestModel.Name, categoryRequestModel.Name);
+        Assert.Equal(categoryRequestModel.Description, categoryRequestModel.Description);
+        Assert.IsType<CreatedAtActionResult>(result);
     }
 
     #endregion Post
@@ -123,10 +139,10 @@ public class CategoriesControllerTests
     }
 
     [Fact]
-    public async void Put_NullCategory_ReturnsNotFoundResult()
+    public async Task Put_NullCategory_ReturnsNotFoundResult()
     {
         // Arrange
-        var id = 1;
+        const int id = 1;
 
         // Act
         var result = await GetSubjectUnderTest.Put(id, null!);
@@ -136,17 +152,38 @@ public class CategoriesControllerTests
     }
 
     [Fact]
-    public async void Put_ValidRequest_ReturnsOkObjectResult()
+    public async Task Put_ProductIdNotValid_ReturnsValidationProblem()
     {
         // Arrange
-        var id = 1;
-        var categoryRequestModel = new RequestModels.CategoryDto
+        const int id = 1;
+        var categoryRequestModel = new RequestModels.Category
+        {
+            Name = "CATEGORY_NAME",
+            Description = "CATEGORY_DESCRIPTION",
+            Products = new List<long> { 1 }
+        };
+
+        CategoryService.UpdateCategory(id, categoryRequestModel).Throws(new CategoryServiceException("The provided product id is not valid."));
+
+        // Act
+        var result = await GetSubjectUnderTest.Put(id, categoryRequestModel);
+
+        // Assert
+        Assert.IsType<ObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Put_ValidRequest_ReturnsOkObjectResult()
+    {
+        // Arrange
+        const int id = 1;
+        var categoryRequestModel = new RequestModels.Category
         {
             Name = "CATEGORY_NAME",
             Description = "CATEGORY_DESCRIPTION"
         };
 
-        var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION");
+        var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION", new List<ProductId>());
 
         CategoryService.UpdateCategory(id, categoryRequestModel).Returns(category);
 
@@ -172,12 +209,9 @@ public class CategoriesControllerTests
     }
 
     [Fact]
-    public async void Retire_NullCategory_ReturnsNotFound()
+    public async Task Retire_NullCategory_ReturnsNotFound()
     {
-        // Arrange
-        var category = null as RequestModels.CategoryDto;
-
-        // Act
+        // Arrange / Act
         var result = await GetSubjectUnderTest.Retire(Arg.Any<long>());
 
         // Assert
@@ -185,11 +219,26 @@ public class CategoriesControllerTests
     }
 
     [Fact]
-    public async void Retire_ValidRequest_ReturnsOkObjectResult()
+    public async Task Retire_ProductsStillAssigned_ReturnsValidationProblem()
     {
         // Arrange
-        var id = 1;
-        var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION");
+        const int id = 1;
+
+        CategoryService.RetireCategory(id).ThrowsAsync(new CategoryServiceException("Cannot retire category whilst there are still products assigned."));
+
+        // Act
+        var result = await GetSubjectUnderTest.Retire(id);
+
+        // Assert
+        Assert.IsType<ObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Retire_ValidRequest_ReturnsNoContentResult()
+    {
+        // Arrange
+        const int id = 1;
+        var category = new Category("CATEGORY_NAME", "CATEGORY_DESCRIPTION", new List<ProductId>());
 
         CategoryService.RetireCategory(id).Returns(category);
 
@@ -197,7 +246,7 @@ public class CategoriesControllerTests
         var result = await GetSubjectUnderTest.Retire(id);
 
         // Assert
-        Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<NoContentResult>(result);
     }
 
     #endregion Retire

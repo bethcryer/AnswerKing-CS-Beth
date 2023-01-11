@@ -9,7 +9,9 @@ namespace Answer.King.Infrastructure.Repositories.Mappings;
 
 public class CategoryEntityMappings : IEntityMapping
 {
-    private static readonly FieldInfo? CategoryIdFieldInfo =
+    private static readonly CategoryFactory categoryFactory = new();
+
+    private static readonly FieldInfo? categoryIdFieldInfo =
         typeof(Category).GetField($"<{nameof(Category.Id)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public void RegisterMapping(BsonMapper mapper)
@@ -18,17 +20,17 @@ public class CategoryEntityMappings : IEntityMapping
         (
             serialize: category =>
             {
-                var products = category.Products.Select(p => new BsonDocument { ["_id"] = p.Id });
+                var productsIds = category.Products.Select(p => new BsonValue(p.Value));
 
                 var doc = new BsonDocument
                 {
                     ["_id"] = category.Id,
-                    ["Name"] = category.Name,
-                    ["Description"] = category.Description,
-                    ["CreatedOn"] = category.CreatedOn,
-                    ["LastUpdated"] = category.LastUpdated,
-                    ["Products"] = new BsonArray(products),
-                    ["Retired"] = category.Retired
+                    ["name"] = category.Name,
+                    ["description"] = category.Description,
+                    ["createdOn"] = category.CreatedOn,
+                    ["lastUpdated"] = category.LastUpdated,
+                    ["products"] = new BsonArray(productsIds.ToArray()),
+                    ["retired"] = category.Retired
                 };
 
                 return doc;
@@ -37,15 +39,15 @@ public class CategoryEntityMappings : IEntityMapping
             {
                 var doc = bson.AsDocument;
 
-                return CategoryFactory.CreateCategory(
+                return categoryFactory.CreateCategory(
                     doc["_id"].AsInt64,
-                    doc["Name"].AsString,
-                    doc["Description"].AsString,
-                    doc["CreatedOn"].AsDateTime,
-                    doc["LastUpdated"].AsDateTime,
-                    doc["Products"].AsArray.Select(
-                        p => new ProductId(p.AsDocument["_id"].AsInt64)).ToList(),
-                    doc["Retired"].AsBoolean);
+                    doc["name"].AsString,
+                    doc["description"].AsString,
+                    doc["createdOn"].AsDateTime,
+                    doc["lastUpdated"].AsDateTime,
+                    doc["products"].AsArray.Select(
+                        p => new ProductId(p.AsInt64)).ToList(),
+                    doc["retired"].AsBoolean);
             }
         );
     }
@@ -55,7 +57,7 @@ public class CategoryEntityMappings : IEntityMapping
         if (type == typeof(Category) && memberMapper.MemberName == "Id")
         {
             memberMapper.Setter =
-                (obj, value) => CategoryIdFieldInfo?.SetValue(obj, value);
+                (obj, value) => categoryIdFieldInfo?.SetValue(obj, value);
         }
     }
 }

@@ -1,14 +1,7 @@
 ﻿{
-  Id: 6,
+  Id: 3,
   Name: BBQ Burger,
   Description: Juicy,
   Price: 1.5,
-  Category: {
-    Name: Seafood,
-    Description: Food from the oceans,
-    CreatedOn: DateTime_1,
-    LastUpdated: DateTime_1,
-    Retired: false
-  },
   Retired: false
 }

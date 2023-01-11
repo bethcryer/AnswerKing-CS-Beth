@@ -8,9 +8,11 @@ namespace Answer.King.Infrastructure.SeedData;
 
 public static class CategoryData
 {
+    private static readonly CategoryFactory categoryFactory = new();
+
     public static IList<Category> Categories { get; } = new List<Category>
     {
-        CategoryFactory.CreateCategory(
+        categoryFactory.CreateCategory(
             1,
             "Seafood",
             "Food from the oceans",
@@ -18,10 +20,10 @@ public static class CategoryData
             DateTime.UtcNow.AddHours(-10),
             new List<ProductId>
             {
-                new ProductId(1)
+                new(1)
             },
             false),
-        CategoryFactory.CreateCategory(
+        categoryFactory.CreateCategory(
             2,
             "Sundries",
             "Things that go with things.",
@@ -29,7 +31,7 @@ public static class CategoryData
             DateTime.UtcNow.AddHours(-30),
             new List<ProductId>
             {
-                new ProductId(2)
+                new(2)
             },
             false)
     };

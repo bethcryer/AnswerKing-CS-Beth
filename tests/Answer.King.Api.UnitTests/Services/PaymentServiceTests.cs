@@ -1,13 +1,13 @@
-﻿using Answer.King.Api.RequestModels;
-using Answer.King.Api.Services;
+﻿using Answer.King.Api.Services;
 using Answer.King.Domain.Repositories;
-using Answer.King.Domain.Repositories.Models;
 using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Xunit;
 using Category = Answer.King.Domain.Orders.Models.Category;
+using Tag = Answer.King.Domain.Orders.Models.Tag;
 using Order = Answer.King.Domain.Orders.Order;
+using Payment = Answer.King.Api.RequestModels.Payment;
 
 namespace Answer.King.Api.UnitTests.Services;
 
@@ -17,7 +17,7 @@ public class PaymentServiceTests
     #region MakePayment
 
     [Fact]
-    public async void MakePayment_InvalidOrderIdReceived_ThrowsException()
+    public async Task MakePayment_InvalidOrderIdReceived_ThrowsException()
     {
         // Arrange
         this.OrderRepository.Get(Arg.Any<long>()).ReturnsNull();
@@ -25,18 +25,17 @@ public class PaymentServiceTests
         // Act / Assert
         var sut = this.GetServiceUnderTest();
         await Assert.ThrowsAsync<PaymentServiceException>(() =>
-            sut.MakePayment(new MakePayment()));
+            sut.MakePayment(new Payment()));
     }
 
     [Fact]
-    public async void MakePayment_PaymentAmountLessThanOrderTotal_ThrowsException()
+    public async Task MakePayment_PaymentAmountLessThanOrderTotal_ThrowsException()
     {
         // Arrange
         var order = new Order();
-        order.AddLineItem(1, "product", "desc", 12.00,
-            new Category(1, "category", "desc"), 2);
+        order.AddLineItem(1, "product", "desc", 12.00, 2);
 
-        var makePayment = new MakePayment { OrderId = order.Id, Amount = 20.00 };
+        var makePayment = new Payment { OrderId = order.Id, Amount = 20.00 };
 
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
@@ -47,15 +46,14 @@ public class PaymentServiceTests
     }
 
     [Fact]
-    public async void MakePayment_PaidOrder_ThrowsException()
+    public async Task MakePayment_PaidOrder_ThrowsException()
     {
         // Arrange
         var order = new Order();
-        order.AddLineItem(1, "product", "desc", 12.00,
-            new Category(1, "category", "desc"), 2);
+        order.AddLineItem(1, "product", "desc", 12.00, 2);
         order.CompleteOrder();
 
-        var makePayment = new MakePayment { OrderId = order.Id, Amount = 24.00 };
+        var makePayment = new Payment { OrderId = order.Id, Amount = 24.00 };
 
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
@@ -66,13 +64,13 @@ public class PaymentServiceTests
     }
 
     [Fact]
-    public async void MakePayment_CancelledOrder_ThrowsException()
+    public async Task MakePayment_CancelledOrder_ThrowsException()
     {
         // Arrange
         var order = new Order();
         order.CancelOrder();
 
-        var makePayment = new MakePayment { OrderId = order.Id, Amount = 24.00 };
+        var makePayment = new Payment { OrderId = order.Id, Amount = 24.00 };
 
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
@@ -83,15 +81,14 @@ public class PaymentServiceTests
     }
 
     [Fact]
-    public async void MakePayment_ValidPaymentRequest_ReturnsPayment()
+    public async Task MakePayment_ValidPaymentRequest_ReturnsPayment()
     {
         // Arrange
         var order = new Order();
-        order.AddLineItem(1, "product", "desc", 12.00,
-            new Category(1, "category", "desc"), 2);
+        order.AddLineItem(1, "product", "desc", 12.00, 2);
 
-        var makePayment = new MakePayment { OrderId = order.Id, Amount = 24.00 };
-        var expectedPayment = new Payment(order.Id, makePayment.Amount, order.OrderTotal);
+        var makePayment = new Payment { OrderId = order.Id, Amount = 24.00 };
+        var expectedPayment = new Domain.Repositories.Models.Payment(order.Id, makePayment.Amount, order.OrderTotal);
 
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
@@ -114,13 +111,13 @@ public class PaymentServiceTests
     #region Get
 
     [Fact]
-    public async void GetPayments_ReturnsAllPayments()
+    public async Task GetPayments_ReturnsAllPayments()
     {
         // Arrange
         var payments = new[]
         {
-            new Payment(1, 50.00, 35.00),
-            new Payment(1, 10.00, 7.95)
+            new Domain.Repositories.Models.Payment(1, 50.00, 35.00),
+            new Domain.Repositories.Models.Payment(1, 10.00, 7.95)
         };
 
         this.PaymentRepository.Get().Returns(payments);
@@ -135,10 +132,10 @@ public class PaymentServiceTests
     }
 
     [Fact]
-    public async void GetPayment_ValidPaymentId_ReturnsPayment()
+    public async Task GetPayment_ValidPaymentId_ReturnsPayment()
     {
         // Arrange
-        var payment = new Payment(1, 50.00, 35.00);
+        var payment = new Domain.Repositories.Models.Payment(1, 50.00, 35.00);
 
         this.PaymentRepository.Get(payment.Id).Returns(payment);
 

@@ -1,0 +1,19 @@
+﻿{
+  Id: 4,
+  CreatedOn: DateTimeOffset_1,
+  LastUpdated: DateTimeOffset_2,
+  OrderStatus: Created,
+  OrderTotal: 11.98,
+  LineItems: [
+    {
+      Product: {
+        Id: 1,
+        Name: Fish,
+        Description: Delicious and satisfying.,
+        Price: 5.99
+      },
+      Quantity: 2,
+      SubTotal: 11.98
+    }
+  ]
+}

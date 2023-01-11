@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Answer.King.Api.UnitTests" />
+    <InternalsVisibleTo Include="$(AssemblyName).UnitTests" />
   </ItemGroup>
   
 </Project>

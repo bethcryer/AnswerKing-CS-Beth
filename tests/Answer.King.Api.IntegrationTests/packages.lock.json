@@ -780,6 +780,14 @@
           "Swashbuckle.AspNetCore.SwaggerUI": "6.4.0"
         }
       },
+      "Swashbuckle.AspNetCore.Annotations": {
+        "type": "Transitive",
+        "resolved": "6.4.0",
+        "contentHash": "frMa+jf9YVpCiMN+mFehfEdgQ7QEqLrhNssNmPwAgfXbdLwedQiVpBpoq+20dImdeNbN7RgY12soH2DvEzSaqw==",
+        "dependencies": {
+          "Swashbuckle.AspNetCore.SwaggerGen": "6.4.0"
+        }
+      },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
         "resolved": "6.4.0",
@@ -1688,7 +1696,8 @@
           "Answer.King.Domain": "[1.0.0, )",
           "Answer.King.Infrastructure": "[1.0.0, )",
           "FluentValidation.AspNetCore": "[11.2.2, )",
-          "Swashbuckle.AspNetCore": "[6.4.0, )"
+          "Swashbuckle.AspNetCore": "[6.4.0, )",
+          "Swashbuckle.AspNetCore.Annotations": "[6.4.0, )"
         }
       },
       "answer.king.domain": {

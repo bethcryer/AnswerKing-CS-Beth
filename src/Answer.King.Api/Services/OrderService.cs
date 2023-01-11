@@ -1,5 +1,6 @@
 ﻿using Answer.King.Api.Services.Extensions;
 using Answer.King.Domain.Orders;
+using Answer.King.Domain.Orders.Models;
 using Answer.King.Domain.Repositories;
 
 
@@ -29,9 +30,9 @@ public class OrderService : IOrderService
         return await this.Orders.Get();
     }
 
-    public async Task<Order> CreateOrder(RequestModels.OrderDto createOrder)
+    public async Task<Order> CreateOrder(RequestModels.Order createOrder)
     {
-        var submittedProductIds = createOrder.LineItems.Select(l => l.Product.Id).ToList();
+        var submittedProductIds = createOrder.LineItems.Select(l => l.ProductId).ToList();
 
         var matchingProducts =
             (await this.Products.Get(submittedProductIds)).ToList();
@@ -54,7 +55,7 @@ public class OrderService : IOrderService
         return order;
     }
 
-    public async Task<Order?> UpdateOrder(long orderId, RequestModels.OrderDto updateOrder)
+    public async Task<Order?> UpdateOrder(long orderId, RequestModels.Order updateOrder)
     {
         var order = await this.Orders.Get(orderId);
 
@@ -63,7 +64,7 @@ public class OrderService : IOrderService
             return null;
         }
 
-        var submittedProductIds = updateOrder.LineItems.Select(l => l.Product.Id).ToList();
+        var submittedProductIds = updateOrder.LineItems.Select(l => l.ProductId).ToList();
 
         var matchingProducts =
             (await this.Products.Get(submittedProductIds)).ToList();

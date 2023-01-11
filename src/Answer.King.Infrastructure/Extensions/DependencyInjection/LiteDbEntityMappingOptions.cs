@@ -8,9 +8,9 @@ namespace Answer.King.Infrastructure.Extensions.DependencyInjection;
 
 public class LiteDbOptions
 {
-    internal List<Type> EntityMappers { get; } = new List<Type>();
+    internal List<Type> EntityMappers { get; } = new();
 
-    internal List<Type> DataSeeders { get; } = new List<Type>();
+    internal List<Type> DataSeeders { get; } = new();
 
     public void RegisterEntityMappingsFromAssemblyContaining<T>()
     {

@@ -12,11 +12,10 @@ public class ProductTests
     public void Product_InitWithDefaultId_ThrowsDefaultValueException()
     {
         // Arrange
-        var id = 0;
-        var name = "name";
-        var description = "description";
-        var price = 142;
-        var category = new Category(1, "name", "description");
+        const int id = 0;
+        const string name = "name";
+        const string description = "description";
+        const int price = 142;
 
         // Act / Assert
 
@@ -24,8 +23,7 @@ public class ProductTests
             id,
             name,
             description,
-            price,
-            category)
+            price)
         );
     }
 
@@ -33,19 +31,17 @@ public class ProductTests
     public void Product_InitWithNegativePrice_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
-        var id = 1;
-        var name = "name";
-        var description = "description";
-        var price = -1;
-        var category = new Category(1, "name", "description");
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
+        const int price = -1;
 
         // Act Assert
         Assert.Throws<ArgumentOutOfRangeException>(() => new Product(
             id,
             name,
             description,
-            price,
-            category)
+            price)
         );
     }
 }

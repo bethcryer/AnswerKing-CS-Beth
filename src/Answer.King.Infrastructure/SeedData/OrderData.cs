@@ -9,6 +9,8 @@ namespace Answer.King.Infrastructure.SeedData;
 
 internal static class OrderData
 {
+    private static readonly OrderFactory orderFactory = new();
+
     public static IList<Order> Orders { get; } = GetOrders();
 
     private static IList<Order> GetOrders()
@@ -23,20 +25,18 @@ internal static class OrderData
 
     private static Order OrderWithLineItems()
     {
-        var fish = ProductData.Products
-            .Where(p => p.Id == 1)
-            .Select(x => new Product(x.Id, x.Name, x.Description, x.Price, new Category(x.Category.Id, x.Category.Name, x.Category.Description)))
-            .SingleOrDefault();
+        var fish = ProductData.Products.SingleOrDefault(p => p.Id == 1);
 
-        var lineItem1 = new LineItem(fish!);
+        var fishOrder = new Product(fish!.Id, fish.Name, fish.Description, fish.Price);
+
+        var lineItem1 = new LineItem(fishOrder);
         lineItem1.AddQuantity(1);
 
-        var chips = ProductData.Products
-            .Where(p => p.Id == 2)
-            .Select(x => new Product(x.Id, x.Name, x.Description, x.Price, new Category(x.Category.Id, x.Category.Name, x.Category.Description)))
-            .SingleOrDefault();
+        var chips = ProductData.Products.SingleOrDefault(p => p.Id == 2);
 
-        var lineItem2 = new LineItem(chips!);
+        var chipsOrder = new Product(chips!.Id, chips.Name, chips.Description, chips.Price);
+
+        var lineItem2 = new LineItem(chipsOrder);
         lineItem2.AddQuantity(2);
 
         var lineItems = new List<LineItem>
@@ -45,7 +45,7 @@ internal static class OrderData
             lineItem2
         };
 
-        return OrderFactory.CreateOrder(
+        return orderFactory.CreateOrder(
             0,
             DateTime.UtcNow.AddHours(-1),
             DateTime.UtcNow.AddMinutes(-10),
@@ -58,7 +58,7 @@ internal static class OrderData
     {
         var lineItems = new List<LineItem>();
 
-        return OrderFactory.CreateOrder(
+        return orderFactory.CreateOrder(
             0,
             DateTime.UtcNow.AddHours(-3),
             DateTime.UtcNow.AddMinutes(-50),

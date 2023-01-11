@@ -1,5 +1,5 @@
-﻿using Answer.King.Api.RequestModels;
-using Answer.King.Api.Services;
+﻿using Answer.King.Api.Services;
+using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
@@ -7,31 +7,38 @@ using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;
 using Xunit;
 using Category = Answer.King.Domain.Inventory.Category;
+using Product = Answer.King.Domain.Repositories.Models.Product;
 
 namespace Answer.King.Api.UnitTests.Services;
 
 [TestCategory(TestType.Unit)]
 public class ProductServiceTests
 {
+    private static readonly CategoryFactory categoryFactory = new();
+
+    private static readonly ProductFactory productFactory = new();
+
     #region Create
 
     [Fact]
-    public async void CreateProduct_InvalidCategoryIdInProduct_ThrowsException()
+    public async Task CreateProduct_ValidProduct_ReturnsNewlyCreatedProduct()
     {
         // Arrange
-        var productRequest = new ProductDto
+        var request = new RequestModels.Product
         {
-            Name = "Laptop",
+            Name = "product",
             Description = "desc",
-            Price = 1500.00,
-            Category = new CategoryId { Id = 1 }
         };
 
-        this.CategoryRepository.Get(Arg.Any<long>()).Returns(null as Category);
-
-        // Act / Assert
+        // Act
         var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<ProductServiceException>(() => sut.CreateProduct(productRequest));
+        var category = await sut.CreateProduct(request);
+
+        // Assert
+        Assert.Equal(request.Name, category.Name);
+        Assert.Equal(request.Description, category.Description);
+
+        await this.ProductRepository.Received().AddOrUpdate(Arg.Any<Product>());
     }
 
     #endregion
@@ -39,7 +46,7 @@ public class ProductServiceTests
     #region Retire
 
     [Fact]
-    public async void RetireProduct_InvalidProductId_ReturnsNull()
+    public async Task RetireProduct_InvalidProductId_ReturnsNull()
     {
         // Arrange
         this.ProductRepository.Get(Arg.Any<long>()).Returns(null as Domain.Repositories.Models.Product);
@@ -50,17 +57,19 @@ public class ProductServiceTests
     }
 
     [Fact]
-    public async void RetireProduct_ValidProductId_ReturnsProductAsRetired()
+    public async Task RetireProduct_ValidProductId_ReturnsProductAsRetired()
     {
         // Arrange
-        var product = ProductFactory.CreateProduct(1,
-            "product", "desc", 12.00, new Domain.Repositories.Models.Category(1, "category", "desc"), false);
+        var product = productFactory.CreateProduct(1,
+            "product", "desc", 12.00, new List<CategoryId> { new(1) }, new List<TagId> { new(1) }, false);
 
         this.ProductRepository.Get(product.Id).Returns(product);
 
-        var category = new Category("category", "desc");
+        var category = new Category("category", "desc", new List<ProductId>());
+        var categories = new Category[] { category };
+
         this.CategoryRepository.GetByProductId(product.Id)
-            .Returns(category);
+            .Returns(categories);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -80,57 +89,14 @@ public class ProductServiceTests
     #region Update
 
     [Fact]
-    public async void UpdateProduct_InvalidProductId_ReturnsNull()
+    public async Task UpdateProduct_InvalidProductId_ReturnsNull()
     {
         // Arrange
-        this.ProductRepository.Get(Arg.Any<long>()).Returns(null as Domain.Repositories.Models.Product);
+        this.ProductRepository.Get(Arg.Any<long>()).Returns(null as Product);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
-        Assert.Null(await sut.UpdateProduct(1, new ProductDto()));
-    }
-
-    [Fact]
-    public async void UpdateProduct_InvalidProductNotAssociatedWithCategory_ThrowsException()
-    {
-        // Arrange
-        var category = new Domain.Repositories.Models.Category(1, "category", "desc");
-        var product = new Domain.Repositories.Models.Product("product", "desc", 10.00, category);
-
-        this.ProductRepository.Get(Arg.Any<long>()).Returns(product);
-        this.CategoryRepository.GetByProductId(product.Id).Returns(null as Category);
-
-        // Act / Assert
-        var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<ProductServiceException>(() =>
-            sut.UpdateProduct(product.Id, new ProductDto()));
-    }
-
-    [Fact]
-    public async void UpdateProduct_InvalidUpdatedCategory_ThrowsException()
-    {
-        // Arrange
-        var oldCategory = this.CreateCategory(1, "category", "desc");
-
-        var product = new Product(
-            "product",
-            "desc",
-            10.00,
-            new Domain.Repositories.Models.Category(oldCategory.Id, "category", "desc")
-            );
-
-        var updatedCategory = this.CreateCategory(2, "updated category", "desc");
-
-        this.ProductRepository.Get(Arg.Any<long>()).Returns(product);
-        this.CategoryRepository.GetByProductId(product.Id).Returns(oldCategory);
-        this.CategoryRepository.Get(updatedCategory.Id).Returns(null as Category);
-
-        var updatedProduct = new ProductDto { Category = new CategoryId { Id = updatedCategory.Id } };
-
-        // Act / Assert
-        var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<ProductServiceException>(() =>
-            sut.UpdateProduct(product.Id, updatedProduct));
+        Assert.Null(await sut.UpdateProduct(1, new RequestModels.Product()));
     }
 
     #endregion
@@ -138,14 +104,13 @@ public class ProductServiceTests
     #region Get
 
     [Fact]
-    public async void GetProducts_ReturnsAllProducts()
+    public async Task GetProducts_ReturnsAllProducts()
     {
         // Arrange
-        var category = new Domain.Repositories.Models.Category(1, "category", "desc");
         var products = new[]
         {
-            new Domain.Repositories.Models.Product("product 1", "desc", 10.00, category),
-            new Domain.Repositories.Models.Product("product 2", "desc", 5.00, category)
+            new Product("product 1", "desc", 10.00),
+            new Product("product 2", "desc", 5.00)
         };
 
         this.ProductRepository.Get().Returns(products);
@@ -160,11 +125,11 @@ public class ProductServiceTests
     }
 
     [Fact]
-    public async void GetProduct_ValidProductId_ReturnsProduct()
+    public async Task GetProduct_ValidProductId_ReturnsProduct()
     {
         // Arrange
-        var category = new Domain.Repositories.Models.Category(1, "category", "desc");
-        var product = new Domain.Repositories.Models.Product("product 1", "desc", 10.00, category);
+        var categories = new List<Domain.Repositories.Models.CategoryId> { new(1) };
+        var product = new Domain.Repositories.Models.Product("product 1", "desc", 10.00);
 
         this.ProductRepository.Get(product.Id).Returns(product);
 
@@ -181,9 +146,9 @@ public class ProductServiceTests
 
     #region Helpers
 
-    public Category CreateCategory(long id, string name, string description)
+    public static Category CreateCategory(long id, string name, string description)
     {
-        return CategoryFactory.CreateCategory(id, name, description, DateTime.UtcNow, DateTime.UtcNow, new List<Answer.King.Domain.Inventory.Models.ProductId>(), false);
+        return categoryFactory.CreateCategory(id, name, description, DateTime.UtcNow, DateTime.UtcNow, new List<Answer.King.Domain.Inventory.Models.ProductId>(), false);
     }
 
     #endregion

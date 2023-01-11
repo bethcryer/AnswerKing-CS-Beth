@@ -1,7 +1,6 @@
 ﻿using Answer.King.Api.Services;
 using Answer.King.Domain.Orders;
 using Microsoft.AspNetCore.Mvc;
-using OrderDto = Answer.King.Api.RequestModels.OrderDto;
 
 namespace Answer.King.Api.Controllers;
 
@@ -20,7 +19,6 @@ public class OrdersController : ControllerBase
     /// <summary>
     /// Get all orders.
     /// </summary>
-    /// <returns></returns>
     /// <response code="200">When all the orders have been returned.</response>
     // GET api/orders
     [HttpGet]
@@ -34,9 +32,8 @@ public class OrdersController : ControllerBase
     /// Get a single order.
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
     /// <response code="200">When the order with the provided <paramref name="id"/> has been found.</response>
-    /// <response code="404">When the order with the given <paramref name="id"/> does not exist</response>
+    /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
     // GET api/orders/{ID}
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
@@ -61,8 +58,8 @@ public class OrdersController : ControllerBase
     // POST api/orders
     [HttpPost]
     [ProducesResponseType(typeof(Order), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromBody] OrderDto createOrder)
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Post([FromBody] RequestModels.Order createOrder)
     {
         try
         {
@@ -73,7 +70,7 @@ public class OrdersController : ControllerBase
         catch (ProductInvalidException ex)
         {
             this.ModelState.AddModelError("LineItems.ProductId", ex.Message);
-            return this.BadRequest(this.ModelState);
+            return this.ValidationProblem();
         }
     }
 
@@ -88,9 +85,9 @@ public class OrdersController : ControllerBase
     // PUT api/orders/{ID}
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Put(long id, [FromBody] OrderDto updateOrder)
+    public async Task<IActionResult> Put(long id, [FromBody] RequestModels.Order updateOrder)
     {
         try
         {
@@ -106,12 +103,12 @@ public class OrdersController : ControllerBase
         catch (ProductInvalidException ex)
         {
             this.ModelState.AddModelError("LineItems.ProductId", ex.Message);
-            return this.BadRequest(this.ModelState);
+            return this.ValidationProblem();
         }
         catch (OrderLifeCycleException ex)
         {
-            this.ModelState.AddModelError("Order", ex.Message);
-            return this.BadRequest(this.ModelState);
+            this.ModelState.AddModelError("order", ex.Message);
+            return this.ValidationProblem();
         }
     }
 
@@ -119,31 +116,30 @@ public class OrdersController : ControllerBase
     /// Cancel an existind order.
     /// </summary>
     /// <param name="id"></param>
-    /// <response code="200">When the order has been cancelled.</response>
+    /// <response code="204">When the order has been cancelled.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
     // DELETE api/orders/{ID}
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Cancel(long id)
     {
         try
         {
             var order = await this.Orders.CancelOrder(id);
-
             if (order == null)
             {
                 return this.NotFound();
             }
 
-            return this.Ok(order);
+            return this.NoContent();
         }
         catch (OrderLifeCycleException ex)
         {
-            this.ModelState.AddModelError("Order", ex.Message);
-            return this.BadRequest(this.ModelState);
+            this.ModelState.AddModelError("order", ex.Message);
+            return this.ValidationProblem();
         }
     }
 }

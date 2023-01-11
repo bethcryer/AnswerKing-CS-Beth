@@ -1,0 +1,8 @@
+﻿{
+  Id: 3,
+  Name: Vegan,
+  Description: Edited Non-animal products,
+  CreatedOn: DateTime_1,
+  LastUpdated: DateTime_2,
+  Retired: false
+}

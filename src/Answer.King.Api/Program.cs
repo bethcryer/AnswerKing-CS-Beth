@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
-using Answer.King.Api.OpenApi;
 using System.Text.Json.Serialization;
-using Answer.King.Api.Common.Filters;
+using Answer.King.Api.Common.JsonConverters;
+using Answer.King.Api.Common.Validators;
 using Answer.King.Api.Extensions.DependencyInjection;
+using Answer.King.Api.OpenApi;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Repositories;
-using Answer.King.Infrastructure;
 using Answer.King.Infrastructure.Extensions.DependencyInjection;
 using Answer.King.Infrastructure.Repositories;
 using Answer.King.Infrastructure.Repositories.Mappings;
@@ -29,7 +29,12 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers().AddJsonOptions(options =>
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.Converters.Add(new ProductIdJsonConverter());
+    options.JsonSerializerOptions.Converters.Add(new CategoryIdJsonConverter());
+    options.JsonSerializerOptions.Converters.Add(new TagIdJsonConverter());
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -38,19 +43,23 @@ builder.Services.AddSwaggerGen(options =>
     options.UseCustomSchemaIdSelectorStrategy();
 
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Answer King API", Version = "v1" });
+    options.DocumentFilter<TagDescriptionsDocumentFilter>();
     options.SchemaFilter<ValidationProblemDetailsSchemaFilter>();
-    options.SchemaFilter<ProblemDetailsSchemaFilter>();
     options.SchemaFilter<EnumSchemaFilter>();
+    options.SchemaFilter<ProductCategorySchemaFilter>();
+    options.SchemaFilter<RemoveSchemasFilter>();
 
     // Set the comments path for the Swagger JSON and UI.
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
     options.IncludeXmlComments(xmlPath);
+    options.EnableAnnotations();
 });
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationAutoValidation(
+    _ => ValidatorOptions.Global.PropertyNameResolver = CamelCasePropertyNameResolver.ResolvePropertyName);
 
 builder.Services.ConfigureLiteDb(options =>
 {
@@ -61,12 +70,13 @@ builder.Services.ConfigureLiteDb(options =>
 builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<ITagRepository, TagRepository>();
 builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
-builder.Services.AddSingleton<ILiteDbConnectionFactory, LiteDbConnectionFactory>();
+builder.Services.AddTransient<ITagService, TagService>();
 
 var app = builder.Build();
 

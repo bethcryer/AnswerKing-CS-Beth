@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Answer.King.Api.Validators;
 
-public class MakePaymentValidator : AbstractValidator<MakePayment>
+public class MakePaymentValidator : AbstractValidator<Payment>
 {
     public MakePaymentValidator()
     {

@@ -1,12 +1,14 @@
 ﻿using Answer.King.Api.RequestModels;
 using Answer.King.Api.Services;
+using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
 using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Xunit;
-using Category = Answer.King.Domain.Repositories.Models.Category;
+using CategoryId = Answer.King.Domain.Repositories.Models.CategoryId;
+using TagId = Answer.King.Domain.Repositories.Models.TagId;
 using Order = Answer.King.Domain.Orders.Order;
 using Product = Answer.King.Domain.Repositories.Models.Product;
 
@@ -15,27 +17,31 @@ namespace Answer.King.Api.UnitTests.Services;
 [TestCategory(TestType.Unit)]
 public class OrderServiceTests
 {
+    private static CategoryFactory CategoryFactory { get; } = new();
+
+    private static ProductFactory ProductFactory { get; } = new();
+
     #region Create
 
     [Fact]
-    public async void CreateOrder_InvalidProductsSubmitted_ThrowsException()
+    public async Task CreateOrder_InvalidProductsSubmitted_ThrowsException()
     {
         // Arrange
-        var lineItem1 = new LineItemDto
+        var lineItem1 = new LineItem
         {
-            Product = new ProductId { Id = 1 },
+            ProductId = 1,
             Quantity = 1
         };
 
-        var lineItem2 = new LineItemDto
+        var lineItem2 = new LineItem
         {
-            Product = new ProductId { Id = 1 },
+            ProductId = 1,
             Quantity = 1
         };
 
-        var orderRequest = new RequestModels.OrderDto
+        var orderRequest = new RequestModels.Order
         {
-            LineItems = new List<LineItemDto>(new[] { lineItem1, lineItem2 })
+            LineItems = new List<LineItem>(new[] { lineItem1, lineItem2 })
         };
 
         // Act / Assert
@@ -46,26 +52,41 @@ public class OrderServiceTests
 
 
     [Fact]
-    public async void CreateOrder_ValidOrderRequestRecieved_ReturnsOrder()
+    public async Task CreateOrder_ValidOrderRequestRecieved_ReturnsOrder()
     {
         // Arrange
-        var category = new Category(1, "Cat 1", "desc");
+        var categoryIds = new List<CategoryId> { new(1) };
+        var tagIds = new List<TagId> { new(1) };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, category, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, category, false)
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categoryIds, tagIds, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categoryIds, tagIds, false)
         };
 
-        var orderRequest = new RequestModels.OrderDto
+        var orderRequest = new RequestModels.Order
         {
-            LineItems = new List<LineItemDto>(new[]
+            LineItems = new List<LineItem>(new[]
             {
-                new LineItemDto {Product = new ProductId {Id = products[0].Id}, Quantity = 4},
-                new LineItemDto {Product = new ProductId {Id = products[1].Id}, Quantity = 1}
+                new LineItem { ProductId = products[0].Id, Quantity = 4 },
+                new LineItem { ProductId = products[1].Id, Quantity = 1 }
             })
         };
 
+        var now = DateTime.UtcNow;
+        var categories = new[]
+        {
+            CategoryFactory.CreateCategory(
+                1,
+                "category 1",
+                "desc",
+                now,
+                now,
+                new[] { new ProductId(1) },
+                false)
+        };
+
         this.ProductRepository.Get(Arg.Any<IList<long>>()).Returns(products);
+        this.CategoryRepository.GetByProductId(Arg.Any<long[]>()).Returns(categories);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -81,39 +102,54 @@ public class OrderServiceTests
     #region Update
 
     [Fact]
-    public async void UpdateOrder_InvalidOrderIdReceived_ReturnsNull()
+    public async Task UpdateOrder_InvalidOrderIdReceived_ReturnsNull()
     {
         // Arrange
         this.OrderRepository.Get(Arg.Any<long>()).ReturnsNull();
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
-        Assert.Null(await sut.UpdateOrder(1, new RequestModels.OrderDto()));
+        Assert.Null(await sut.UpdateOrder(1, new RequestModels.Order()));
     }
 
     [Fact]
-    public async void UpdateOrder_ValidOrderRequestReceived_ReturnsUpdatedOrder()
+    public async Task UpdateOrder_ValidOrderRequestReceived_ReturnsUpdatedOrder()
     {
         // Arrange
         var order = new Order();
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
-        var category = new Category(1, "Cat 1", "desc");
+        var categoryIds = new List<CategoryId> { new(1) };
+        var tagIds = new List<TagId> { new(1) };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, category, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, category, false)
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categoryIds, tagIds, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categoryIds, tagIds, false)
         };
 
-        var orderRequest = new RequestModels.OrderDto
+        var orderRequest = new RequestModels.Order
         {
-            LineItems = new List<LineItemDto>(new[]
+            LineItems = new List<LineItem>(new[]
             {
-                new LineItemDto {Product = new ProductId {Id = products[0].Id}, Quantity = 4},
+                new LineItem {ProductId = products[0].Id , Quantity = 4},
             })
         };
 
+        var now = DateTime.UtcNow;
+        var categories = new[]
+        {
+            CategoryFactory.CreateCategory(
+                1,
+                "category 1",
+                "desc",
+                now,
+                now,
+                new[] { new ProductId(1) },
+                false)
+        };
+
         this.ProductRepository.Get(Arg.Any<IList<long>>()).Returns(products);
+        this.CategoryRepository.GetByProductId(Arg.Any<long[]>()).Returns(categories);
 
         // Act
         var sut = this.GetServiceUnderTest();
@@ -127,24 +163,23 @@ public class OrderServiceTests
     }
 
     [Fact]
-    public async void UpdateOrder_InvalidProductReceivedInOrder_ThrowsException()
+    public async Task UpdateOrder_InvalidProductReceivedInOrder_ThrowsException()
     {
         // Arrange
         var order = new Order();
         this.OrderRepository.Get(Arg.Any<long>()).Returns(order);
 
-        var category = new Category(1, "Cat 1", "desc");
         var products = new[]
         {
-            new Product("product 1", "desc", 2.0, category),
-            new Product("product 2", "desc", 4.0, category)
+            new Product("product 1", "desc", 2.0),
+            new Product("product 2", "desc", 4.0)
         };
 
-        var orderRequest = new RequestModels.OrderDto
+        var orderRequest = new RequestModels.Order
         {
-            LineItems = new List<LineItemDto>(new[]
+            LineItems = new List<LineItem>(new[]
             {
-                new LineItemDto {Product = new ProductId {Id = 1}, Quantity = 4}
+                new LineItem { ProductId = 1, Quantity = 4 }
             })
         };
 
@@ -161,7 +196,7 @@ public class OrderServiceTests
     #region Get
 
     [Fact]
-    public async void GetOrder_ValidOrderId_ReturnsOrder()
+    public async Task GetOrder_ValidOrderId_ReturnsOrder()
     {
         // Arrange
         var order = new Order();
@@ -177,7 +212,7 @@ public class OrderServiceTests
     }
 
     [Fact]
-    public async void GetOrders_ReturnsAllOrders()
+    public async Task GetOrders_ReturnsAllOrders()
     {
         // Arrange
         var orders = new[]
@@ -201,7 +236,7 @@ public class OrderServiceTests
     #region Cancel
 
     [Fact]
-    public async void CancelOrder_InvalidOrderIdReceived_ReturnsNull()
+    public async Task CancelOrder_InvalidOrderIdReceived_ReturnsNull()
     {
         // Arrange
         this.OrderRepository.Get(Arg.Any<long>()).ReturnsNull();
@@ -220,6 +255,7 @@ public class OrderServiceTests
 
     private readonly IOrderRepository OrderRepository = Substitute.For<IOrderRepository>();
     private readonly IProductRepository ProductRepository = Substitute.For<IProductRepository>();
+    private readonly ICategoryRepository CategoryRepository = Substitute.For<ICategoryRepository>();
 
     private IOrderService GetServiceUnderTest()
     {

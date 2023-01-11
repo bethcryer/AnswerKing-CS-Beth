@@ -6,22 +6,22 @@ public class CategoryDataSeeder : ISeedData
 {
     public void SeedData(ILiteDbConnectionFactory connections)
     {
-        var db = connections.GetConnection();
-        var collection = db.GetCollection<Category>();
-
-        if (DataSeeded)
+        if (this.DataSeeded)
         {
             return;
         }
 
+        var db = connections.GetConnection();
+        var collection = db.GetCollection<Category>();
+
         var none = collection.Count() < 1;
         if (none)
         {
-            collection.Insert(CategoryData.Categories);
+            collection.InsertBulk(CategoryData.Categories);
         }
 
-        DataSeeded = true;
+        this.DataSeeded = true;
     }
 
-    private static bool DataSeeded { get; set; }
+    private bool DataSeeded { get; set; }
 }

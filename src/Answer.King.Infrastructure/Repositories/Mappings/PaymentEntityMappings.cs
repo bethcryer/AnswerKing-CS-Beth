@@ -7,7 +7,9 @@ namespace Answer.King.Infrastructure.Repositories.Mappings;
 
 public class PaymentEntityMappings : IEntityMapping
 {
-    private static readonly FieldInfo? PaymentIdFieldInfo =
+    private static readonly PaymentFactory paymentFactory = new();
+
+    private static readonly FieldInfo? paymentIdFieldInfo =
         typeof(Payment).GetField($"<{nameof(Payment.Id)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public void RegisterMapping(BsonMapper mapper)
@@ -19,9 +21,9 @@ public class PaymentEntityMappings : IEntityMapping
                 var doc = new BsonDocument
                 {
                     ["_id"] = payment.Id,
-                    ["OrderId"] = payment.OrderId,
-                    ["Amount"] = payment.Amount,
-                    ["OrderTotal"] = payment.OrderTotal,
+                    ["orderId"] = payment.OrderId,
+                    ["amount"] = payment.Amount,
+                    ["orderTotal"] = payment.OrderTotal,
                     ["date"] = payment.Date
                 };
 
@@ -31,11 +33,11 @@ public class PaymentEntityMappings : IEntityMapping
             {
                 var doc = bson.AsDocument;
 
-                return PaymentFactory.CreatePayment(
+                return paymentFactory.CreatePayment(
                     doc["_id"].AsInt64,
-                    doc["OrderId"].AsInt64,
-                    doc["Amount"].AsDouble,
-                    doc["OrderTotal"].AsDouble,
+                    doc["orderId"].AsInt64,
+                    doc["amount"].AsDouble,
+                    doc["orderTotal"].AsDouble,
                     doc["date"].AsDateTime);
             }
         );
@@ -46,7 +48,7 @@ public class PaymentEntityMappings : IEntityMapping
         if (type == typeof(Payment) && memberMapper.MemberName == "Id")
         {
             memberMapper.Setter =
-                (obj, value) => PaymentIdFieldInfo?.SetValue(obj, value);
+                (obj, value) => paymentIdFieldInfo?.SetValue(obj, value);
         }
     }
 }

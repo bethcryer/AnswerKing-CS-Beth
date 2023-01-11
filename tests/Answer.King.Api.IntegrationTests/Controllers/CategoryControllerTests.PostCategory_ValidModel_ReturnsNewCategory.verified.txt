@@ -1,0 +1,8 @@
+﻿{
+  Id: 3,
+  Name: Seafood,
+  Description: Food from the oceans,
+  CreatedOn: DateTime_1,
+  LastUpdated: DateTime_1,
+  Retired: false
+}

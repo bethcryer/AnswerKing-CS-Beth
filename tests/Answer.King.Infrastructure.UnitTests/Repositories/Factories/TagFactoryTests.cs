@@ -1,0 +1,51 @@
+﻿using System.Reflection;
+using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory.Models;
+using Answer.King.Domain.Repositories.Models;
+using Answer.King.Infrastructure.Repositories.Mappings;
+using Answer.King.Test.Common.CustomTraits;
+using Xunit;
+
+namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
+
+[UsesVerify]
+[TestCategory(TestType.Unit)]
+public class TagFactoryTests
+{
+    private static readonly TagFactory tagFactory = new();
+
+    [Fact]
+    public Task CreateTag_ConstructorExists_ReturnsTag()
+    {
+        // Arrange / Act
+        var now = DateTime.UtcNow;
+        var result = tagFactory.CreateTag(1, "NAME", "DESC", now, now, new List<ProductId>(), false);
+
+        // Assert
+        Assert.IsType<Tag>(result);
+        return Verify(result);
+    }
+
+    [Fact]
+    public void CreateTag_ConstructorNotFound_ReturnsException()
+    {
+        // Arrange
+        var tagFactoryConstructorPropertyInfo =
+        typeof(TagFactory).GetField("<TagConstructor>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        var constructor = tagFactoryConstructorPropertyInfo?.GetValue(tagFactory);
+
+        var wrongConstructor = typeof(Product).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+            .SingleOrDefault(c => c.IsPrivate && c.GetParameters().Length > 0);
+
+        tagFactoryConstructorPropertyInfo?.SetValue(tagFactory, wrongConstructor);
+
+        var now = DateTime.UtcNow;
+
+        // Act // Assert
+        Assert.Throws<ArgumentException>(() =>
+            tagFactory.CreateTag(1, "NAME", "DESC", now, now, new List<ProductId>(), false));
+
+        tagFactoryConstructorPropertyInfo?.SetValue(tagFactory, constructor);
+    }
+}

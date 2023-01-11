@@ -1,0 +1,7 @@
+﻿[
+  {
+    Name: Fish,
+    Description: Delicious and satisfying.,
+    Price: 5.99
+  }
+]

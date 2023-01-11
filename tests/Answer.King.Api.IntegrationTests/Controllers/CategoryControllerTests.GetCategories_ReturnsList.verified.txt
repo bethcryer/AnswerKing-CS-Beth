@@ -1,0 +1,28 @@
+﻿[
+  {
+    Id: 1,
+    Name: Seafood,
+    Description: Food from the oceans,
+    CreatedOn: DateTime_1,
+    LastUpdated: DateTime_2,
+    Products: [
+      {
+        Value: 1
+      }
+    ],
+    Retired: false
+  },
+  {
+    Id: 2,
+    Name: Sundries,
+    Description: Things that go with things.,
+    CreatedOn: DateTime_3,
+    LastUpdated: DateTime_4,
+    Products: [
+      {
+        Value: 2
+      }
+    ],
+    Retired: false
+  }
+]

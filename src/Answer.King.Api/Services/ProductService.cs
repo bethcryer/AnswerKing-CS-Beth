@@ -33,31 +33,19 @@ public class ProductService : IProductService
         return await this.Products.Get(productId);
     }
 
-    public async Task<Product> CreateProduct(RequestModels.ProductDto createProduct)
+    public async Task<Product> CreateProduct(RequestModels.Product createProduct)
     {
-        var category = await this.Categories.Get(createProduct.Category.Id);
-
-        if (category == null)
-        {
-            throw new ProductServiceException("The provided category id is not valid.");
-        }
-
         var product = new Product(
             createProduct.Name,
             createProduct.Description,
-            createProduct.Price,
-            new Category(category.Id, category.Name, category.Description));
+            createProduct.Price);
 
         await this.Products.AddOrUpdate(product);
-
-        category.AddProduct(new ProductId(product.Id));
-
-        await this.Categories.Save(category);
 
         return product;
     }
 
-    public async Task<Product?> UpdateProduct(long productId, RequestModels.ProductDto updateProduct)
+    public async Task<Product?> UpdateProduct(long productId, RequestModels.Product updateProduct)
     {
         var product = await this.Products.Get(productId);
 
@@ -66,37 +54,9 @@ public class ProductService : IProductService
             return null;
         }
 
-        var oldCategory = await this.Categories.GetByProductId(productId);
-
-        if (oldCategory == null)
-        {
-            throw new ProductServiceException("Could not find a category for this product id.");
-        }
-
-        var categoryChanged = oldCategory.Id != updateProduct.Category.Id;
-
-        var category = categoryChanged
-            ? await this.Categories.Get(updateProduct.Category.Id)
-            : oldCategory;
-
-        if (category == null)
-        {
-            throw new ProductServiceException("The provided category id is not valid.");
-        }
-
-        if (categoryChanged)
-        {
-            oldCategory.RemoveProduct(new ProductId(productId));
-            await this.Categories.Save(oldCategory);
-
-            category.AddProduct(new ProductId(productId));
-            await this.Categories.Save(category);
-        }
-
         product.Name = updateProduct.Name;
         product.Description = updateProduct.Description;
         product.Price = updateProduct.Price;
-        product.Category = new Category(category.Id, category.Name, category.Description);
 
         await this.Products.AddOrUpdate(product);
 
@@ -117,8 +77,8 @@ public class ProductService : IProductService
             throw new ProductServiceException("The product is already retired.");
         }
 
-        var category = await this.Categories.GetByProductId(productId);
-        if (category != null)
+        var categories = await this.Categories.GetByProductId(productId);
+        foreach (var category in categories.ToList())
         {
             category.RemoveProduct(new ProductId(productId));
             await this.Categories.Save(category);

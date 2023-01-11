@@ -43,18 +43,17 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
-        var category = new Category(1, "name", "description");
-        var price = 1.24;
-        var quantity = 2;
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
+        const double price = 1.24;
+        const int quantity = 2;
 
         order.CompleteOrder();
 
         // Act / Assert
         Assert.Throws<OrderLifeCycleException>(() =>
-            order.AddLineItem(id, name, description, price, category, quantity));
+            order.AddLineItem(id, name, description, price, quantity));
     }
 
     [Fact]
@@ -62,18 +61,17 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
-        var category = new Category(1, "name", "description");
-        var price = 1.24;
-        var quantity = 2;
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
+        const double price = 1.24;
+        const int quantity = 2;
 
         order.CancelOrder();
 
         // Act / Assert
         Assert.Throws<OrderLifeCycleException>(() =>
-            order.AddLineItem(id, name, description, price, category, quantity));
+            order.AddLineItem(id, name, description, price, quantity));
     }
 
     [Fact]
@@ -81,24 +79,23 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
-        var category = new Category(1, "name", "description");
-        var price = 1.24;
-        var quantity = 2;
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
+        const double price = 1.24;
+        const int quantity = 2;
 
         // Act
-        order.AddLineItem(id, name, description, price, category, quantity);
+        order.AddLineItem(id, name, description, price, quantity);
 
         var lineItem = order.LineItems.FirstOrDefault();
 
         // Assert
         Assert.NotNull(lineItem);
-        Assert.Equal(lineItem.Quantity, quantity);
+        Assert.Equal(quantity, lineItem.Quantity);
         Assert.NotNull(lineItem.Product);
-        Assert.Equal(lineItem.Product.Id, id);
-        Assert.Equal(lineItem.Product.Price, price);
+        Assert.Equal(id, lineItem.Product.Id);
+        Assert.Equal(price, lineItem.Product.Price);
     }
 
     [Fact]
@@ -106,21 +103,20 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
-        var category = new Category(1, "name", "description");
-        var price = 1.24;
-        var quantity = 2;
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
+        const double price = 1.24;
+        const int quantity = 2;
 
         // Act
-        order.AddLineItem(id, name, description, price, category, quantity);
+        order.AddLineItem(id, name, description, price, quantity);
 
         var lineItem = order.LineItems.FirstOrDefault();
 
         // Assert
         Assert.NotNull(lineItem);
-        Assert.Equal(lineItem.SubTotal, quantity * price);
+        Assert.Equal(quantity * price, lineItem.SubTotal);
     }
 
     [Fact]
@@ -128,22 +124,21 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var name = "name";
-        var description = "description";
-        var category = new Category(1, "name", "description");
-        var price = 1.24;
-        var quantity = 2;
+        const int id = 1;
+        const string name = "name";
+        const string description = "description";
+        const double price = 1.24;
+        const int quantity = 2;
 
         // Act
-        order.AddLineItem(id, name, description, price, category, quantity);
+        order.AddLineItem(id, name, description, price, quantity);
 
         var lineItem = order.LineItems.FirstOrDefault();
 
         // Assert
         Assert.NotNull(lineItem);
         Assert.NotNull(lineItem.Product);
-        Assert.Equal(lineItem.Product.Price, price);
+        Assert.Equal(price, lineItem.Product.Price);
     }
 
     #endregion AddLineItem
@@ -155,8 +150,8 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var quantity = 2;
+        const int id = 1;
+        const int quantity = 2;
 
         order.CompleteOrder();
 
@@ -170,8 +165,8 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var quantity = 2;
+        const int id = 1;
+        const int quantity = 2;
 
         order.CancelOrder();
 
@@ -185,8 +180,8 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var quantity = 3;
+        const int id = 1;
+        const int quantity = 3;
 
         // Act
         order.RemoveLineItem(id, quantity);
@@ -200,18 +195,13 @@ public class OrderTests
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var productName = "PRODUCT_NAME";
-        var productDescription = "PRODUCT_DESCRIPTION";
-        var category = new Category(
-            1,
-            "CATEGORY_NAME",
-            "CATEGORY_DESCRIPTION"
-        );
-        var quantity = 5;
-        var price = 1.25;
+        const int id = 1;
+        const string productName = "PRODUCT_NAME";
+        const string productDescription = "PRODUCT_DESCRIPTION";
+        const int quantity = 5;
+        const double price = 1.25;
 
-        order.AddLineItem(id, productName, productDescription, price, category, quantity);
+        order.AddLineItem(id, productName, productDescription, price, quantity);
 
         // Act
         order.RemoveLineItem(id, 3);
@@ -224,22 +214,17 @@ public class OrderTests
     }
 
     [Fact]
-    public void RemoveLineItem_LineItemExistsInOrder_RemovedFromOrderIfQuantityGteCurrent()
+    public void RemoveLineItem_LineItemExistsInOrder_RemovedFromOrderIfQuantityGetCurrent()
     {
         // Arrange
         var order = new Order();
-        var id = 1;
-        var productName = "PRODUCT_NAME";
-        var productDescription = "PRODUCT_DESCRIPTION";
-        var category = new Category(
-            1,
-            "CATEGORY_NAME",
-            "CATEGORY_DESCRIPTION"
-        );
-        var quantity = 3;
-        var price = 1.25;
+        const int id = 1;
+        const string productName = "PRODUCT_NAME";
+        const string productDescription = "PRODUCT_DESCRIPTION";
+        const int quantity = 3;
+        const double price = 1.25;
 
-        order.AddLineItem(id, productName, productDescription, price, category, quantity);
+        order.AddLineItem(id, productName, productDescription, price, quantity);
 
         // Act
         order.RemoveLineItem(id, 3);

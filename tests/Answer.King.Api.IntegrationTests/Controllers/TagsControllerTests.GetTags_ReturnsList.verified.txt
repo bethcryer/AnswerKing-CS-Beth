@@ -1,0 +1,28 @@
+﻿[
+  {
+    Id: 1,
+    Name: Vegan,
+    Description: Non-animal products,
+    CreatedOn: DateTime_1,
+    LastUpdated: DateTime_2,
+    Products: [
+      {
+        Value: 1
+      }
+    ],
+    Retired: false
+  },
+  {
+    Id: 2,
+    Name: BOGOF,
+    Description: Buy one get one free!,
+    CreatedOn: DateTime_3,
+    LastUpdated: DateTime_4,
+    Products: [
+      {
+        Value: 2
+      }
+    ],
+    Retired: false
+  }
+]

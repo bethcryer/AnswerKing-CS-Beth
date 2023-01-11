@@ -9,7 +9,9 @@ namespace Answer.King.Infrastructure.Repositories.Mappings;
 
 public class OrderEntityMappings : IEntityMapping
 {
-    private static readonly FieldInfo? OrderIdFieldInfo =
+    private static readonly OrderFactory orderFactory = new();
+
+    private static readonly FieldInfo? orderIdFieldInfo =
         typeof(Order).GetField($"<{nameof(Order.Id)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public void RegisterMapping(BsonMapper mapper)
@@ -20,29 +22,23 @@ public class OrderEntityMappings : IEntityMapping
             {
                 var lineItems = order.LineItems.Select(li => new BsonDocument
                 {
-                    ["Product"] = new BsonDocument
+                    ["product"] = new BsonDocument
                     {
                         ["_id"] = li.Product.Id,
-                        ["Name"] = li.Product.Name,
-                        ["Description"] = li.Product.Description,
-                        ["Category"] = new BsonDocument
-                        {
-                            ["_id"] = li.Product.Category.Id,
-                            ["Name"] = li.Product.Category.Name,
-                            ["Description"] = li.Product.Category.Description
-                        },
-                        ["Price"] = li.Product.Price
+                        ["name"] = li.Product.Name,
+                        ["description"] = li.Product.Description,
+                        ["price"] = li.Product.Price
                     },
-                    ["Quantity"] = li.Quantity
+                    ["quantity"] = li.Quantity
                 });
 
                 var doc = new BsonDocument
                 {
                     ["_id"] = order.Id,
-                    ["CreatedOn"] = order.CreatedOn,
-                    ["LastUpdated"] = order.LastUpdated,
-                    ["OrderStatus"] = $"{order.OrderStatus}",
-                    ["LineItems"] = new BsonArray(lineItems)
+                    ["createdOn"] = order.CreatedOn,
+                    ["lastUpdated"] = order.LastUpdated,
+                    ["orderStatus"] = $"{order.OrderStatus}",
+                    ["lineItems"] = new BsonArray(lineItems)
                 };
 
                 return doc;
@@ -52,14 +48,14 @@ public class OrderEntityMappings : IEntityMapping
                 var doc = bson.AsDocument;
 
                 var lineItems =
-                    doc["LineItems"].AsArray.Select(this.ToLineItem)
+                    doc["lineItems"].AsArray.Select(this.ToLineItem)
                         .ToList();
 
-                return OrderFactory.CreateOrder(
+                return orderFactory.CreateOrder(
                     doc["_id"].AsInt64,
-                    doc["CreatedOn"].AsDateTime,
-                    doc["LastUpdated"].AsDateTime,
-                    (OrderStatus)Enum.Parse(typeof(OrderStatus), doc["OrderStatus"]),
+                    doc["createdOn"].AsDateTime,
+                    doc["lastUpdated"].AsDateTime,
+                    (OrderStatus)Enum.Parse(typeof(OrderStatus), doc["orderStatus"]),
                     lineItems);
             }
         );
@@ -70,30 +66,25 @@ public class OrderEntityMappings : IEntityMapping
         if (type == typeof(Order) && memberMapper.MemberName == "Id")
         {
             memberMapper.Setter =
-                (obj, value) => OrderIdFieldInfo?.SetValue(obj, value);
+                (obj, value) => orderIdFieldInfo?.SetValue(obj, value);
         }
     }
 
     private LineItem ToLineItem(BsonValue item)
     {
         var lineItem = item.AsDocument;
-        var product = lineItem["Product"].AsDocument;
-        var category = product["Category"].AsDocument;
+        var product = lineItem["product"].AsDocument;
 
         var result = new LineItem(
             new Product(
                 product["_id"].AsInt64,
-                product["Name"].AsString,
-                product["Description"].AsString,
-                product["Price"].AsDouble,
-                new Category(
-                    category["_id"].AsInt64,
-                    category["Name"].AsString,
-                    category["Description"].AsString)
+                product["name"].AsString,
+                product["description"].AsString,
+                product["price"].AsDouble
             )
         );
 
-        result.AddQuantity(lineItem["Quantity"].AsInt32);
+        result.AddQuantity(lineItem["quantity"].AsInt32);
 
         return result;
     }

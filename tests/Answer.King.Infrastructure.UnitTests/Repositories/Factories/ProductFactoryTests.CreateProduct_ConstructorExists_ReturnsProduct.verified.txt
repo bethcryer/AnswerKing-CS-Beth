@@ -1,0 +1,7 @@
+﻿{
+  Id: 1,
+  Name: NAME,
+  Description: DESC,
+  Price: 1.0,
+  Retired: false
+}
