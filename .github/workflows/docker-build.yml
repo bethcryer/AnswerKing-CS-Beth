@@ -2,7 +2,7 @@ name: Build and publish docker
 
 on:
   push:
-    branches: "release-*"
+    branches: "develop"
 
 env:
   REGISTRY: ghcr.io
