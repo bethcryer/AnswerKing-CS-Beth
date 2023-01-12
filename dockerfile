@@ -7,7 +7,7 @@ COPY . .
 
 RUN dotnet restore && dotnet publish -c Release -o out
 
-#build runtime image  
+#build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 
 WORKDIR /app
@@ -16,4 +16,4 @@ COPY --from=build /app/out .
 
 ENTRYPOINT ["dotnet", "Answer.King.Api.dll"]
 
-EXPOSE 8000
+EXPOSE 80
