@@ -18,5 +18,15 @@
       2
     ],
     Retired: false
+  },
+  {
+    Id: 3,
+    Name: Gravy,
+    Description: Side,
+    Price: 0.99,
+    Categories: [
+      2
+    ],
+    Retired: true
   }
 ]

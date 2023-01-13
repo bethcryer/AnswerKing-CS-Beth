@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Alba"/>
+    <Using Include="Alba" />
   </ItemGroup>
 
 </Project>

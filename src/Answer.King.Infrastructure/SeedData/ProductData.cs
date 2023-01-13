@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Answer.King.Domain.Repositories.Models;
@@ -27,6 +28,14 @@ internal static class ProductData
             Categories(2),
             Tags(2),
             false),
+        ProductFactory.CreateProduct(
+            3,
+            "Gravy",
+            "Side",
+            0.99,
+            Categories(2),
+            Array.Empty<TagId>(),
+            true),
     };
 
     private static IList<CategoryId> Categories(long id)

@@ -1,4 +1,4 @@
-﻿using Answer.King.Api.Services;
+using Answer.King.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Order = Answer.King.Domain.Orders.Order;
 using Payment = Answer.King.Api.RequestModels.Payment;
@@ -45,7 +45,7 @@ public class PaymentsController : ControllerBase
     /// <response code="404">When the payment with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Payment if found.</returns>
     // GET: api/payments/5
-    [HttpGet("{id:long}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(typeof(Domain.Repositories.Models.Payment), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOne(long id)
@@ -94,7 +94,7 @@ public class PaymentsController : ControllerBase
     /// <response code="404">When the payment with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Order associated with payment identifier.</returns>
     // GET api/payments/{ID}/order
-    [HttpGet("{id:long}/order")]
+    [HttpGet("{id}/order")]
     [ProducesResponseType(typeof(IEnumerable<Order>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOrder(long id)

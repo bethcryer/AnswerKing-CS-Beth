@@ -4,11 +4,11 @@ using Product = Answer.King.Api.IntegrationTests.Common.Models.Product;
 namespace Answer.King.Api.IntegrationTests.Controllers;
 
 [UsesVerify]
-public class ProductControllerTests : WebFixtures
+public class ProductsControllerTests : WebFixtures
 {
     private readonly VerifySettings verifySettings;
 
-    public ProductControllerTests()
+    public ProductsControllerTests()
     {
         this.verifySettings = new();
         this.verifySettings.ScrubMembers("traceId");
@@ -52,6 +52,18 @@ public class ProductControllerTests : WebFixtures
 
         return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
+
+    [Fact]
+    public async Task<VerifyResult> GetProduct_UsingInvalidID_Returns400()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Get.Url("/api/products/invalidid");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
+    }
     #endregion
 
     #region Post
@@ -87,6 +99,20 @@ public class ProductControllerTests : WebFixtures
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PostProduct_InValidJSONFormat_Fails()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+            .Text("InvalidJSON")
+            .ToUrl("/api/products");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.UnsupportedMediaType);
         });
 
         return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
@@ -147,7 +173,7 @@ public class ProductControllerTests : WebFixtures
     }
 
     [Fact]
-    public async Task<VerifyResult> PutProduct_InvalidId_ReturnsNotFound()
+    public async Task<VerifyResult> PutProduct_NonExistentID_ReturnsNotFound()
     {
         var putResult = await this.AlbaHost.Scenario(_ =>
         {
@@ -164,6 +190,61 @@ public class ProductControllerTests : WebFixtures
 
         return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
+
+    [Fact]
+    public async Task<VerifyResult> PutProduct_InvalidID_ReturnsBadRequest()
+    {
+        var putResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Put
+                .Json(new
+                {
+                    Name = "BBQ Burger",
+                    Description = "Juicy",
+                    Price = 1.50,
+                    Categories = new List<long> { 1 },
+                })
+                .ToUrl("/api/products/InvalidID");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PutProduct_InvalidJSON_Returns415()
+    {
+        var putResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Put
+                .Text("InvalidJSON")
+                .ToUrl("/api/products/InvalidID");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.UnsupportedMediaType);
+        });
+
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PutProduct_RetiredProduct_ReturnsBadRequest()
+    {
+        var putResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Put
+                .Json(new
+                {
+                    Name = "BBQ Burger",
+                    Description = "Juicy",
+                    Price = 1.50,
+                    Categories = new List<long> { 1 },
+                })
+                .ToUrl("/api/products/3");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
+    }
+
     #endregion
 
     #region Retire

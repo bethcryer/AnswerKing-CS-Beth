@@ -1,4 +1,4 @@
-﻿using Answer.King.Api.RequestModels;
+using Answer.King.Api.RequestModels;
 using Answer.King.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -42,7 +42,7 @@ public class CategoriesController : ControllerBase
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Category if found.</returns>
     // GET api/categories/{ID}
-    [HttpGet("{id:long}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(Tags = new[] { "Inventory" })]
@@ -94,7 +94,7 @@ public class CategoriesController : ControllerBase
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Updated Category.</returns>
     // PUT api/categories/{ID}
-    [HttpPut("{id:long}")]
+    [HttpPut("{id}")]
     [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -128,7 +128,7 @@ public class CategoriesController : ControllerBase
     /// <response code="410">When the category with the given <paramref name="id"/> is already retired.</response>
     /// <returns>Status of retirement request.</returns>
     // DELETE api/categories/{ID}
-    [HttpDelete("{id:long}")]
+    [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -171,7 +171,7 @@ public class CategoriesController : ControllerBase
     /// <response code="404">When the category with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Products associated with provided category identifier.</returns>
     // GET api/categories/{ID}/products
-    [HttpGet("{id:long}/products")]
+    [HttpGet("{id}/products")]
     [ProducesResponseType(typeof(IEnumerable<Domain.Repositories.Models.Product>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(Tags = new[] { "Inventory" })]

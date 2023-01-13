@@ -5,11 +5,11 @@ using RMLineItems = Answer.King.Api.RequestModels.LineItem;
 namespace Answer.King.Api.IntegrationTests.Controllers;
 
 [UsesVerify]
-public class OrderControllerTests : WebFixtures
+public class OrdersControllerTests : WebFixtures
 {
     private readonly VerifySettings verifySettings;
 
-    public OrderControllerTests()
+    public OrdersControllerTests()
     {
         this.verifySettings = new();
         this.verifySettings.ScrubMembers("traceId");

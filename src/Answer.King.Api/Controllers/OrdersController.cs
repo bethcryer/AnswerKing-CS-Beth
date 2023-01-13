@@ -37,7 +37,7 @@ public class OrdersController : ControllerBase
     /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Order if found.</returns>
     // GET api/orders/{ID}
-    [HttpGet("{id:long}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOne(long id)
@@ -87,7 +87,7 @@ public class OrdersController : ControllerBase
     /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Updated Order.</returns>
     // PUT api/orders/{ID}
-    [HttpPut("{id:long}")]
+    [HttpPut("{id}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -125,7 +125,7 @@ public class OrdersController : ControllerBase
     /// <response code="404">When the order with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Status of cancel request.</returns>
     // DELETE api/orders/{ID}
-    [HttpDelete("{id:long}")]
+    [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

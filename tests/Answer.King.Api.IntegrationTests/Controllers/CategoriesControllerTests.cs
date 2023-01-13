@@ -5,11 +5,11 @@ using Category = Answer.King.Api.IntegrationTests.Common.Models.Category;
 namespace Answer.King.Api.IntegrationTests.Controllers;
 
 [UsesVerify]
-public class CategoryControllerTests : WebFixtures
+public class CategoriesControllerTests : WebFixtures
 {
     private readonly VerifySettings verifySettings;
 
-    public CategoryControllerTests()
+    public CategoriesControllerTests()
     {
         this.verifySettings = new();
         this.verifySettings.ScrubMembers("traceId");

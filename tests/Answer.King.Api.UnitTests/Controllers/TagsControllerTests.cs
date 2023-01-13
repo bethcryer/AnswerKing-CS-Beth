@@ -68,7 +68,7 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpGetAttribute>(
-            nameof(TagsController.GetOne), "{id:long}");
+            nameof(TagsController.GetOne), "{id}");
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpPutAttribute>(
-            nameof(TagsController.Put), "{id:long}");
+            nameof(TagsController.Put), "{id}");
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpPutAttribute>(
-            nameof(TagsController.AddProducts), "{id:long}/products");
+            nameof(TagsController.AddProducts), "{id}/products");
     }
 
     [Fact]
@@ -325,7 +325,7 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpDeleteAttribute>(
-            nameof(TagsController.Retire), "{id:long}");
+            nameof(TagsController.Retire), "{id}");
     }
 
     [Fact]
@@ -378,7 +378,7 @@ public class TagsControllerTests
     {
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpGetAttribute>(
-            nameof(TagsController.GetProducts), "{id:long}/products");
+            nameof(TagsController.GetProducts), "{id}/products");
     }
 
     #endregion GetProducts

@@ -1,4 +1,4 @@
-﻿using Answer.King.Domain.Inventory.Models;
+using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Repositories.Models;
 
@@ -54,6 +54,11 @@ public class ProductService : IProductService
         if (product == null)
         {
             return null;
+        }
+
+        if (product.Retired)
+        {
+            throw new ProductServiceException("The product is retired.");
         }
 
         product.Name = updateProduct.Name;

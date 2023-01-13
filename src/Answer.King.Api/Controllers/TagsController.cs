@@ -1,4 +1,4 @@
-﻿using Answer.King.Api.RequestModels;
+using Answer.King.Api.RequestModels;
 using Answer.King.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,7 +40,7 @@ public class TagsController : ControllerBase
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Tag if found.</returns>
     // GET api/tags/{ID}
-    [HttpGet("{id:long}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(typeof(Domain.Inventory.Tag), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOne(long id)
@@ -82,7 +82,7 @@ public class TagsController : ControllerBase
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Updated Tag.</returns>
     // PUT api/tags/{ID}
-    [HttpPut("{id:long}")]
+    [HttpPut("{id}")]
     [ProducesResponseType(typeof(Domain.Inventory.Tag), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -107,7 +107,7 @@ public class TagsController : ControllerBase
     /// <response code="410">When the tag with the given <paramref name="id"/> is already retired.</response>
     /// <returns>Status of retirement request.</returns>
     // DELETE api/tags/{ID}
-    [HttpDelete("{id:long}")]
+    [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -149,7 +149,7 @@ public class TagsController : ControllerBase
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Products associated with provided tag identifier.</returns>
     // GET api/tags/{ID}/products
-    [HttpGet("{id:long}/products")]
+    [HttpGet("{id}/products")]
     [ProducesResponseType(typeof(IEnumerable<Domain.Repositories.Models.Product>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProducts(long id)
@@ -178,7 +178,7 @@ public class TagsController : ControllerBase
     /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
     /// <returns>Updated tag, containing any additional product assignments.</returns>
     // PUT api/tags/{ID}/products
-    [HttpPut("{id:long}/products")]
+    [HttpPut("{id}/products")]
     [ProducesResponseType(typeof(Domain.Inventory.Tag), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
