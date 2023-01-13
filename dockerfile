@@ -16,4 +16,4 @@ COPY --from=build /app/out .
 
 ENTRYPOINT ["dotnet", "Answer.King.Api.dll"]
 
-EXPOSE 8000
+EXPOSE 80
