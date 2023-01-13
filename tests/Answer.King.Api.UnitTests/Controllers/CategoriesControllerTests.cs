@@ -130,8 +130,7 @@ public class CategoriesControllerTests
         var result = await GetSubjectUnderTest.Post(categoryRequestModel);
 
         // Assert
-        Assert.Equal(categoryRequestModel.Name, categoryRequestModel.Name);
-        Assert.Equal(categoryRequestModel.Description, categoryRequestModel.Description);
+        await CategoryService.Received().CreateCategory(categoryRequestModel);
         Assert.IsType<CreatedAtActionResult>(result);
     }
 

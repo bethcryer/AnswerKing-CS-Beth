@@ -130,8 +130,7 @@ public class TagsControllerTests
         var result = await GetSubjectUnderTest.Post(tagRequestModel);
 
         // Assert
-        Assert.Equal(tagRequestModel.Name, tag.Name);
-        Assert.Equal(tagRequestModel.Description, tag.Description);
+        await TagService.Received().CreateTag(tagRequestModel);
         Assert.IsType<CreatedAtActionResult>(result);
     }
 

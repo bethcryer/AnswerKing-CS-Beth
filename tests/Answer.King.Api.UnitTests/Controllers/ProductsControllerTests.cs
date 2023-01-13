@@ -2,12 +2,14 @@ using Answer.King.Api.Controllers;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Test.Common.CustomAsserts;
+using Answer.King.Test.Common.CustomTraits;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Xunit;
 
 namespace Answer.King.Api.UnitTests.Controllers;
 
+[TestCategory(TestType.Unit)]
 public class ProductsControllerTests
 {
     #region Setup
@@ -100,6 +102,29 @@ public class ProductsControllerTests
         // Assert
         AssertController.MethodHasVerb<ProductsController, HttpPostAttribute>(
             nameof(ProductsController.Post));
+    }
+
+    [Fact]
+    public async Task Post_ValidRequestCallsGetAction_ReturnsNewProduct()
+    {
+        // Arrange
+        var productRequestModel = new RequestModels.Product
+        {
+            Name = "PRODUCT_NAME",
+            Description = "PRODUCT_DESCRIPTION",
+            Price = 0,
+        };
+
+        var product = new Product("PRODUCT_NAME", "PRODUCT_DESCRIPTION", 0);
+
+        ProductService.CreateProduct(productRequestModel).Returns(product);
+
+        // Act
+        var result = await GetSubjectUnderTest.Post(productRequestModel);
+
+        // Assert
+        await ProductService.Received().CreateProduct(productRequestModel);
+        Assert.IsType<CreatedAtActionResult>(result);
     }
 
     #endregion Post
