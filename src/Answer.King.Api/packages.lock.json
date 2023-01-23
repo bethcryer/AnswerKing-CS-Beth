@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0": {
+    "net7.0": {
       "FluentValidation.AspNetCore": {
         "type": "Direct",
         "requested": "[11.2.2, )",

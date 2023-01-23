@@ -23,7 +23,7 @@ public class OrderTests
         var order = new Order();
         order.CancelOrder();
 
-        Assert.Throws<OrderLifeCycleException>(() => order.CompleteOrder());
+        Assert.Throws<OrderLifeCycleException>(order.CompleteOrder);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class OrderTests
         var order = new Order();
         order.CompleteOrder();
 
-        Assert.Throws<OrderLifeCycleException>(() => order.CancelOrder());
+        Assert.Throws<OrderLifeCycleException>(order.CancelOrder);
     }
 
     #region AddLineItem

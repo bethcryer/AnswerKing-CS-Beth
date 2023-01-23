@@ -1,4 +1,4 @@
-﻿using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Test.Common.CustomTraits;
 using Xunit;
@@ -53,7 +53,7 @@ public class TagTests
         var tag = new Tag("Vegan", "Non-animal products", new List<ProductId>());
         tag.AddProduct(new ProductId(1));
 
-        Assert.Throws<TagLifecycleException>(() => tag.RetireTag());
+        Assert.Throws<TagLifecycleException>(tag.RetireTag);
     }
 
     [Fact]

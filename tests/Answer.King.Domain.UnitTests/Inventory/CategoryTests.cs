@@ -1,4 +1,4 @@
-﻿using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Test.Common.CustomTraits;
 using Xunit;
@@ -53,7 +53,7 @@ public class CategoryTests
         var category = new Category("Phones", "Electronics", new List<ProductId>());
         category.AddProduct(new ProductId(1));
 
-        Assert.Throws<CategoryLifecycleException>(() => category.RetireCategory());
+        Assert.Throws<CategoryLifecycleException>(category.RetireCategory);
     }
 
     [Fact]

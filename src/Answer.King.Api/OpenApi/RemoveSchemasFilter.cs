@@ -16,6 +16,6 @@ public class RemoveSchemasFilter : ISchemaFilter
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
         _ = context.SchemaRepository.Schemas.Keys.Where(schemasKey => this.schemasToRemove.Contains(schemasKey))
-            .Select(schemasKey => context.SchemaRepository.Schemas.Remove(schemasKey));
+            .Select(context.SchemaRepository.Schemas.Remove);
     }
 }

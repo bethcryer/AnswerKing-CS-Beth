@@ -1,4 +1,4 @@
-﻿using LiteDB;
+using LiteDB;
 using Microsoft.Extensions.Configuration;
 
 namespace Answer.King.Infrastructure;
@@ -18,9 +18,9 @@ public class LiteDbConnectionFactory : ILiteDbConnectionFactory
         this.Database = new LiteDatabase(connectionString, mapper);
     }
 
-    private LiteDatabase Database { get; }
+    private ILiteDatabase Database { get; }
 
-    public LiteDatabase GetConnection()
+    public ILiteDatabase GetConnection()
     {
         return this.Database;
     }

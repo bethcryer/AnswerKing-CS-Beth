@@ -9,15 +9,15 @@ Dotnet implementation of the Answer King Api
 
 ## Running the solution
 
-Ensure you have the latest [.NET 6 SDK (v6.0.401)](https://www.microsoft.com/net/download/) installed.
+Ensure you have the latest [.NET 7 SDK (v7.0.102)](https://dotnet.microsoft.com/download) installed.
 
 Clone the project:
 
-`$ git clone git@gitlab.com:AnswerAcademy/Answer.King.git`
+`$ git clone git@github.com:AnswerConsulting/AnswerKing-CS.git`
 
 CD into the newly cloned repository:
 
-`$ cd Answer.King`
+`$ cd Answer.King-CS`
 
 Now run the project:
 

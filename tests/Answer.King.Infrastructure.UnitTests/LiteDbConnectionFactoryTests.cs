@@ -1,4 +1,4 @@
-﻿namespace Answer.King.Infrastructure.UnitTests;
+namespace Answer.King.Infrastructure.UnitTests;
 
 using Answer.King.Test.Common.CustomTraits;
 using LiteDB;
@@ -32,7 +32,7 @@ public class LiteDbConnectionFactoryTests : IDisposable
         // Arrange
         var configuration =
             new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string>
+                .AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     { "ConnectionStrings:AnswerKing", $"filename={this.TestDbName};Connection=Shared;" },
                 })
@@ -55,7 +55,7 @@ public class LiteDbConnectionFactoryTests : IDisposable
         // Arrange
         var configuration =
             new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string>
+                .AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     { "ConnectionStrings:AnswerKing", $"filename={this.TestDbName};Connection=Shared;" },
                 })
