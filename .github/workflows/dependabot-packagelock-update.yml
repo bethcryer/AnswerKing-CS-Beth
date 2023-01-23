@@ -9,7 +9,7 @@ env:
 jobs:
   restore:
     name: Update packages.lock.json files
-    if: contains(github.head_ref, 'dependabot')
+    if: contains(github.head_ref, 'dependabot') && contains(github.actor, 'dependabot[bot]')
     runs-on: ubuntu-latest
     steps:
       - run: echo "$ACTOR"
