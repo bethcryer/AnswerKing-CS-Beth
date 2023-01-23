@@ -5,11 +5,9 @@ on:
 
 jobs:
   restore:
-    name: Update packages-lock.json files
-    if: contains(github.head_ref, 'dependabot') && !endsWith(github.event.head_commit.message, 'update packages-lock.json')
+    name: Update packages.lock.json files
+    if: contains(github.head_ref, 'dependabot') && equals(github.actor, 'dependabot[bot]')
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -30,5 +28,5 @@ jobs:
           git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
           git config user.name "dependabot[bot]"
           git add .
-          git commit -m "chore(deps): update packages-lock.json"
+          git commit -m "chore(deps): update packages.lock.json"
           git push
