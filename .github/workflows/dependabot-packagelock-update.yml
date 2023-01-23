@@ -3,16 +3,12 @@ name: Restore package-lock on Dependabot PR
 on:
   pull_request:
 
-env:
-  ACTOR: ${{ github.actor }}
-
 jobs:
   restore:
     name: Update packages.lock.json files
     if: contains(github.head_ref, 'dependabot') && contains(github.actor, 'dependabot[bot]')
     runs-on: ubuntu-latest
     steps:
-      - run: echo "$ACTOR"
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
