@@ -4,11 +4,10 @@
     "net7.0": {
       "Alba": {
         "type": "Direct",
-        "requested": "[7.0.1, )",
-        "resolved": "7.0.1",
-        "contentHash": "SBkbI361cVYEdr7kpH3bgNmxTkEMYtsTTCsfaBBuDoFfD2iuvdOdX4flchtPBNTca9/lzZH9wtw5yX0KnrhQyw==",
+        "requested": "[7.3.0, )",
+        "resolved": "7.3.0",
+        "contentHash": "eO3xOfP9kzF+ZENdy+GZ3Xi7T+aqQkyNmm9fCNxFIFvXeAyPOheSVcGeUG3IpUZjVls9H1rzRfO6KZ0YjgUghQ==",
         "dependencies": {
-          "Baseline": "4.1.0",
           "IdentityModel": "6.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.0",
           "Microsoft.AspNetCore.Mvc.Testing": "7.0.0"
@@ -104,14 +103,6 @@
         "resolved": "0.1.0",
         "contentHash": "TYJwenjm6RTjs3hEphb4mL3h4jdSMWSvoRkuNRGXXD6ZcuMNWOR4UTzf6OGF+ReTYsE2c1Q3brLSD3cfIPjfdw=="
       },
-      "Baseline": {
-        "type": "Transitive",
-        "resolved": "4.1.0",
-        "contentHash": "uM4EJYhrn9OmjLOTI0nJuT6WwqsH/+ZM+d8uwLS1o/SX8MRp5xj/83Zoms7ffwi8D3AMK+qDyUJ4cx4jgVY9gg==",
-        "dependencies": {
-          "ImTools": "4.0.0"
-        }
-      },
       "DiffEngine": {
         "type": "Transitive",
         "resolved": "11.0.0",
@@ -153,11 +144,6 @@
         "type": "Transitive",
         "resolved": "6.0.0",
         "contentHash": "eVHCR7a6m/dm5RFcBzE3qs/Jg5j9R5Rjpu8aTOv9e4AFvaQtBXb5ah7kmwU+YwA0ufRwz4wf1hnIvsD2hSnI4g=="
-      },
-      "ImTools": {
-        "type": "Transitive",
-        "resolved": "4.0.0",
-        "contentHash": "dms0JfLKC9AQbQX/EdpRjn59EjEvaCxIgv1z9YxbEQb5SiOVoo7vlIKdEySeEwUkWhN05rZnNpUpG+aw5VqPVQ=="
       },
       "LiteDB": {
         "type": "Transitive",
