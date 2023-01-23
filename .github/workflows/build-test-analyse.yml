@@ -47,7 +47,9 @@ jobs:
     needs: [build]
     permissions:
       id-token: write
+      contents: read
       checks: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
 
