@@ -70,18 +70,6 @@
           "StyleCop.Analyzers.Unstable": "1.2.0.435"
         }
       },
-      "Verify": {
-        "type": "Direct",
-        "requested": "[19.1.0, )",
-        "resolved": "19.1.0",
-        "contentHash": "DO7AY9H+9X8CBvU3P9u9HDDW5swxEo5evPXpLxy/bueWjl8Zsmeqe8NiVrlC/CIoDDe2Tc8UHOuSBMz5wFPJ0A==",
-        "dependencies": {
-          "Argon": "0.1.0",
-          "DiffEngine": "11.0.0",
-          "EmptyFiles": "4.1.0",
-          "SimpleInfoName": "2.0.0"
-        }
-      },
       "Verify.Xunit": {
         "type": "Direct",
         "requested": "[19.1.0, )",
@@ -1584,6 +1572,17 @@
           "System.Text.Encoding": "4.3.0",
           "System.Threading": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0"
+        }
+      },
+      "Verify": {
+        "type": "Transitive",
+        "resolved": "19.1.0",
+        "contentHash": "DO7AY9H+9X8CBvU3P9u9HDDW5swxEo5evPXpLxy/bueWjl8Zsmeqe8NiVrlC/CIoDDe2Tc8UHOuSBMz5wFPJ0A==",
+        "dependencies": {
+          "Argon": "0.1.0",
+          "DiffEngine": "11.0.0",
+          "EmptyFiles": "4.1.0",
+          "SimpleInfoName": "2.0.0"
         }
       },
       "xunit.abstractions": {

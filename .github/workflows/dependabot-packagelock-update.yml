@@ -9,7 +9,6 @@ jobs:
     if: contains(github.head_ref, 'dependabot')
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write
       contents: write
     steps:
       - uses: actions/checkout@v3
@@ -28,8 +27,8 @@ jobs:
           git diff --name-only --exit-code
       - if: steps.diff.outcome == 'failure'
         run: |
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git config user.name "github-actions[bot]"
+          git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
+          git config user.name "dependabot[bot]"
           git add .
           git commit -m "chore(deps): update NuGet lock file"
           git push
