@@ -58,8 +58,8 @@
       },
       "LiteDB": {
         "type": "Transitive",
-        "resolved": "5.0.12",
-        "contentHash": "HaOjSIGS9BRm7dw42qcHd5NGYl5wdjsFB31pImt3QQNLKUNEmRAr7ADos5VsujwBc9c4otJgb+G6NA4MlzKyAw=="
+        "resolved": "5.0.15",
+        "contentHash": "nucyfCOGSATH553BxplxExP3BOqEwmHt0B57426EIaQjD3CC1Odb52VVCGgTxyYaD2oe3B/cJk8jDo6XiBJqPg=="
       },
       "Microsoft.Extensions.ApiDescription.Server": {
         "type": "Transitive",
@@ -109,7 +109,7 @@
         "type": "Project",
         "dependencies": {
           "Answer.King.Domain": "[1.0.0, )",
-          "LiteDB": "[5.0.12, )"
+          "LiteDB": "[5.0.15, )"
         }
       }
     }
