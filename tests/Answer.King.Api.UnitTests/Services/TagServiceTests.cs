@@ -7,6 +7,8 @@ using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;
 using Xunit;
+using TagProductsRequest = Answer.King.Api.RequestModels.TagProducts;
+using TagRequest = Answer.King.Api.RequestModels.Tag;
 
 namespace Answer.King.Api.UnitTests.Services;
 
@@ -86,7 +88,7 @@ public class TagServiceTests
     public async Task CreateTag_ValidTag_ReturnsNewTag()
     {
         // Arrange
-        var tagRequest = new RequestModels.Tag
+        var tagRequest = new TagRequest
         {
             Name = "Vegan",
             Description = "desc",
@@ -152,7 +154,7 @@ public class TagServiceTests
     public async Task UpdateTag_InvalidTagId_ReturnsNull()
     {
         // Arrange
-        var updateTagRequest = new RequestModels.Tag();
+        var updateTagRequest = new TagRequest();
         const int tagId = 1;
 
         // Act
@@ -170,7 +172,7 @@ public class TagServiceTests
         var oldTag = new Tag("old tag", "old desc", new List<ProductId>());
         var tagId = oldTag.Id;
 
-        var updateTagRequest = new RequestModels.Tag
+        var updateTagRequest = new TagRequest
         {
             Name = "updated category",
             Description = "updated desc",
@@ -198,7 +200,7 @@ public class TagServiceTests
     public async Task AddTagProducts_InvalidTagId_ReturnsNull()
     {
         // Arrange
-        var updateTagRequest = new RequestModels.TagProducts();
+        var updateTagRequest = new TagProductsRequest();
         const int tagId = 1;
 
         // Act
@@ -219,7 +221,7 @@ public class TagServiceTests
         var product = CreateProduct(1, "Product", "desc", 1);
         var productId = product.Id;
 
-        var addProducts = new RequestModels.TagProducts
+        var addProducts = new TagProductsRequest
         {
             Products = new List<long> { productId },
         };
@@ -248,7 +250,7 @@ public class TagServiceTests
         this.tagRepository.GetOne(Arg.Any<long>()).Returns(tag);
         this.productRepository.GetByCategoryId(tag.Id).Returns(Array.Empty<Product>());
 
-        var addProducts = new RequestModels.TagProducts
+        var addProducts = new TagProductsRequest
         {
             Products = new List<long> { 1 },
         };
@@ -273,7 +275,7 @@ public class TagServiceTests
         this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
         this.productRepository.GetOne(updatedProduct.Id).Returns(null as Product);
 
-        var addProducts = new RequestModels.TagProducts
+        var addProducts = new TagProductsRequest
         {
             Products = new List<long> { updatedProduct.Id },
         };
@@ -296,7 +298,7 @@ public class TagServiceTests
         this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
         this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
 
-        var addProducts = new RequestModels.TagProducts
+        var addProducts = new TagProductsRequest
         {
             Products = new List<long> { updatedProduct.Id },
         };
@@ -324,7 +326,7 @@ public class TagServiceTests
         this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
         this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
 
-        var addProducts = new RequestModels.TagProducts
+        var addProducts = new TagProductsRequest
         {
             Products = new List<long> { updatedProduct.Id },
         };
@@ -344,7 +346,7 @@ public class TagServiceTests
     public async Task RemoveTagProducts_InvalidTagId_ReturnsNull()
     {
         // Arrange
-        var updateTagRequest = new RequestModels.TagProducts();
+        var updateTagRequest = new TagProductsRequest();
         const int tagId = 1;
 
         // Act
@@ -365,7 +367,7 @@ public class TagServiceTests
         var oldTag = CreateTag(1, "old tag", "old desc", new List<ProductId> { new(productId) });
         var tagId = oldTag.Id;
 
-        var removeProducts = new RequestModels.TagProducts
+        var removeProducts = new TagProductsRequest
         {
             Products = new List<long> { productId },
         };
@@ -394,7 +396,7 @@ public class TagServiceTests
         this.tagRepository.GetOne(Arg.Any<long>()).Returns(tag);
         this.productRepository.GetByCategoryId(tag.Id).Returns(Array.Empty<Product>());
 
-        var removeProducts = new RequestModels.TagProducts
+        var removeProducts = new TagProductsRequest
         {
             Products = new List<long> { 1 },
         };
@@ -419,7 +421,7 @@ public class TagServiceTests
         this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
         this.productRepository.GetOne(updatedProduct.Id).Returns(null as Product);
 
-        var removeProducts = new RequestModels.TagProducts
+        var removeProducts = new TagProductsRequest
         {
             Products = new List<long> { updatedProduct.Id },
         };
@@ -442,7 +444,7 @@ public class TagServiceTests
         this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
         this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
 
-        var removeProducts = new RequestModels.TagProducts
+        var removeProducts = new TagProductsRequest
         {
             Products = new List<long> { updatedProduct.Id },
         };
@@ -468,7 +470,7 @@ public class TagServiceTests
         this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
         this.productRepository.GetOne(oldProduct.Id).Returns(oldProduct);
 
-        var removeProducts = new RequestModels.TagProducts
+        var removeProducts = new TagProductsRequest
         {
             Products = new List<long> { oldProduct.Id },
         };
@@ -490,7 +492,7 @@ public class TagServiceTests
 
     private static Product CreateProduct(long id, string name, string description, double price)
     {
-        return ProductFactory.CreateProduct(id, name, description, price, new List<CategoryId>(), new List<TagId>(), false);
+        return ProductFactory.CreateProduct(id, name, description, price, new ProductCategory(1, "category", "desc"), new List<TagId>(), false);
     }
 
     #endregion

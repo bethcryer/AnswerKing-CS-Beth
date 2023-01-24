@@ -8,6 +8,7 @@ using NSubstitute;
 using Xunit;
 using Category = Answer.King.Domain.Inventory.Category;
 using Product = Answer.King.Domain.Repositories.Models.Product;
+using ProductRequest = Answer.King.Api.RequestModels.Product;
 
 namespace Answer.King.Api.UnitTests.Services;
 
@@ -23,24 +24,21 @@ public class ProductServiceTests
     #region Create
 
     [Fact]
-    public async Task CreateProduct_ValidProduct_ReturnsNewlyCreatedProduct()
+    public async Task CreateProduct_InValidCategoryId_ThrowsException()
     {
         // Arrange
-        var request = new RequestModels.Product
+        var request = new ProductRequest
         {
             Name = "product",
             Description = "desc",
+            Price = 1500.00,
+            CategoryId = new Api.RequestModels.CategoryId(2),
         };
+        this.categoryRepository.GetOne(Arg.Any<long>()).Returns(null as Category);
 
-        // Act
+        // Act / Assert
         var sut = this.GetServiceUnderTest();
-        var category = await sut.CreateProduct(request);
-
-        // Assert
-        Assert.Equal(request.Name, category.Name);
-        Assert.Equal(request.Description, category.Description);
-
-        await this.productRepository.Received().AddOrUpdate(Arg.Any<Product>());
+        await Assert.ThrowsAsync<ProductServiceException>(() => sut.CreateProduct(request));
     }
 
     #endregion
@@ -63,7 +61,7 @@ public class ProductServiceTests
     {
         // Arrange
         var product = ProductFactory.CreateProduct(
-            1, "product", "desc", 12.00, new List<CategoryId> { new(1) }, new List<TagId> { new(1) }, false);
+            1, "product", "desc", 12.00, new ProductCategory(1, "category", "desc"), new List<TagId> { new(1) }, false);
 
         this.productRepository.GetOne(product.Id).Returns(product);
 
@@ -98,7 +96,7 @@ public class ProductServiceTests
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
-        Assert.Null(await sut.UpdateProduct(1, new RequestModels.Product()));
+        Assert.Null(await sut.UpdateProduct(1, new ProductRequest()));
     }
 
     #endregion
@@ -111,8 +109,8 @@ public class ProductServiceTests
         // Arrange
         var products = new[]
         {
-            new Product("product 1", "desc", 10.00),
-            new Product("product 2", "desc", 5.00),
+            new Product("product 1", "desc", 10.00, new ProductCategory(1, "category", "desc")),
+            new Product("product 2", "desc", 5.00, new ProductCategory(2, "category", "desc")),
         };
 
         this.productRepository.GetAll().Returns(products);
@@ -130,7 +128,7 @@ public class ProductServiceTests
     public async Task GetProduct_ValidProductId_ReturnsProduct()
     {
         // Arrange
-        var product = new Product("product 1", "desc", 10.00);
+        var product = new Product("product 1", "desc", 10.00, new ProductCategory(2, "category", "desc"));
 
         this.productRepository.GetOne(product.Id).Returns(product);
 

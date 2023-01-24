@@ -6,6 +6,9 @@
   errors: {
     id: [
       The value 'InvalidID' is not valid.
+    ],
+    CategoryId: [
+      The CategoryId field is required.
     ]
   }
 }

@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
@@ -55,7 +55,6 @@ public class CategoryService : ICategoryService
 
         foreach (var product in products)
         {
-            product.AddCategory(new CategoryId(category.Id));
             await this.Products.AddOrUpdate(product);
         }
 
@@ -77,7 +76,6 @@ public class CategoryService : ICategoryService
         {
             if (!productsToCheck.Contains(oldProduct.Id))
             {
-                oldProduct.RemoveCategory(new CategoryId(categoryId));
                 await this.Products.AddOrUpdate(oldProduct);
 
                 category.RemoveProduct(new ProductId(oldProduct.Id));
@@ -97,7 +95,7 @@ public class CategoryService : ICategoryService
 
             category.AddProduct(new ProductId(product.Id));
 
-            product.AddCategory(new CategoryId(categoryId));
+            product.SetCategory(new ProductCategory(category.Id, category.Name, category.Description));
             await this.Products.AddOrUpdate(product);
         }
 

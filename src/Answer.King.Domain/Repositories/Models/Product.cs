@@ -4,11 +4,9 @@ namespace Answer.King.Domain.Repositories.Models;
 
 public class Product
 {
-    private readonly HashSet<CategoryId> categories;
-
     private readonly HashSet<TagId> tags;
 
-    public Product(string name, string description, double price)
+    public Product(string name, string description, double price, ProductCategory category)
     {
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
@@ -18,7 +16,7 @@ public class Product
         this.Name = name;
         this.Description = description;
         this.Price = price;
-        this.categories = new HashSet<CategoryId>();
+        this.Category = category;
         this.tags = new HashSet<TagId>();
     }
 
@@ -29,7 +27,7 @@ public class Product
         string name,
         string description,
         double price,
-        IList<CategoryId> categories,
+        ProductCategory category,
         IList<TagId> tags,
         bool retired)
     {
@@ -38,14 +36,14 @@ public class Product
         Guard.AgainstNullOrEmptyArgument(nameof(name), name);
         Guard.AgainstNullOrEmptyArgument(nameof(description), description);
         Guard.AgainstNegativeValue(nameof(price), price);
-        Guard.AgainstNullArgument(nameof(categories), categories);
+        Guard.AgainstNullArgument(nameof(category), category);
         Guard.AgainstNullArgument(nameof(tags), tags);
 
         this.Id = id;
         this.Name = name;
         this.Description = description;
         this.Price = price;
-        this.categories = new HashSet<CategoryId>(categories);
+        this.Category = category;
         this.tags = new HashSet<TagId>(tags);
         this.Retired = retired;
     }
@@ -58,31 +56,11 @@ public class Product
 
     public double Price { get; set; }
 
-    public IReadOnlyCollection<CategoryId> Categories => this.categories;
+    public ProductCategory Category { get; private set; }
 
     public IReadOnlyCollection<TagId> Tags => this.tags;
 
     public bool Retired { get; private set; }
-
-    public void AddCategory(CategoryId category)
-    {
-        if (this.Retired)
-        {
-            throw new ProductLifecycleException("Cannot add category to retired product.");
-        }
-
-        this.categories.Add(category);
-    }
-
-    public void RemoveCategory(CategoryId category)
-    {
-        if (this.Retired)
-        {
-            throw new ProductLifecycleException("Cannot remove category from retired product.");
-        }
-
-        this.categories.Remove(category);
-    }
 
     public void AddTag(TagId tag)
     {
@@ -107,6 +85,16 @@ public class Product
     public void Retire()
     {
         this.Retired = true;
+    }
+
+    public void SetCategory(ProductCategory newCategory)
+    {
+        if (this.Retired)
+        {
+            throw new ProductLifecycleException("Can't add product to category. Product is retired");
+        }
+
+        this.Category = newCategory;
     }
 }
 

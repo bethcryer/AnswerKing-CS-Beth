@@ -3,5 +3,10 @@
   Name: NAME,
   Description: DESC,
   Price: 1.0,
+  Category: {
+    Id: 1,
+    Name: name,
+    Description: desc
+  },
   Retired: false
 }

@@ -18,7 +18,6 @@ public class ProductEntityMappings : IEntityMapping
         mapper.RegisterType(
             serialize: product =>
             {
-                var categories = product.Categories.Select(c => new BsonValue(c.Value));
                 var tags = product.Tags.Select(c => new BsonValue(c.Value));
 
                 var doc = new BsonDocument
@@ -27,7 +26,12 @@ public class ProductEntityMappings : IEntityMapping
                     ["name"] = product.Name,
                     ["description"] = product.Description,
                     ["price"] = product.Price,
-                    ["categories"] = new BsonArray(categories),
+                    ["Category"] = new BsonDocument
+                    {
+                        ["_id"] = product.Category.Id,
+                        ["Name"] = product.Category.Name,
+                        ["Description"] = product.Category.Description,
+                    },
                     ["tags"] = new BsonArray(tags),
                     ["retired"] = product.Retired,
                 };
@@ -37,7 +41,11 @@ public class ProductEntityMappings : IEntityMapping
             deserialize: bson =>
             {
                 var doc = bson.AsDocument;
-                var categories = doc["categories"].AsArray.Select(c => new CategoryId(c)).ToList();
+                var cat = doc["Category"].AsDocument;
+                var category = new ProductCategory(
+                    cat["_id"].AsInt64,
+                    cat["Name"].AsString,
+                    cat["Description"].AsString);
                 var tags = doc["tags"].AsArray.Select(c => new TagId(c)).ToList();
 
                 return ProductFactory.CreateProduct(
@@ -45,7 +53,7 @@ public class ProductEntityMappings : IEntityMapping
                     doc["name"].AsString,
                     doc["description"].AsString,
                     doc["price"].AsDouble,
-                    categories,
+                    category,
                     tags,
                     doc["retired"].AsBoolean);
             });

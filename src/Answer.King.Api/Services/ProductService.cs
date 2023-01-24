@@ -37,12 +37,23 @@ public class ProductService : IProductService
 
     public async Task<Product> CreateProduct(RequestModels.Product createProduct)
     {
+        var category = await this.Categories.GetOne(createProduct.CategoryId);
+
+        if (category == null)
+        {
+            throw new ProductServiceException("The provided product category Id is not valid.");
+        }
+
         var product = new Product(
             createProduct.Name,
             createProduct.Description,
-            createProduct.Price);
+            createProduct.Price,
+            new ProductCategory(category.Id, category.Name, category.Description));
 
         await this.Products.AddOrUpdate(product);
+        category.AddProduct(new ProductId(product.Id));
+
+        await this.Categories.Save(category);
 
         return product;
     }
@@ -64,6 +75,29 @@ public class ProductService : IProductService
         product.Name = updateProduct.Name;
         product.Description = updateProduct.Description;
         product.Price = updateProduct.Price;
+
+        if (product.Category.Id != updateProduct.CategoryId)
+        {
+            var category = await this.Categories.GetOne(updateProduct.CategoryId);
+
+            if (category == null)
+            {
+                throw new ProductServiceException("The provided product category Id is not valid.");
+            }
+
+            var currentCategory = await this.Categories.GetOne(product.Category.Id);
+
+            if (currentCategory == null)
+            {
+                throw new ProductServiceException("The current category is not valid");
+            }
+
+            currentCategory.RemoveProduct(new ProductId(product.Id));
+
+            await this.Categories.Save(currentCategory);
+
+            product.SetCategory(new ProductCategory(category.Id, category.Name, category.Description));
+        }
 
         await this.Products.AddOrUpdate(product);
 

@@ -6,6 +6,7 @@ using Answer.King.Test.Common.CustomTraits;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Xunit;
+using ProductRequest = Answer.King.Api.RequestModels.Product;
 
 namespace Answer.King.Api.UnitTests.Controllers;
 
@@ -82,7 +83,7 @@ public class ProductsControllerTests
     {
         // Arrange
         const long id = 1;
-        var products = new Product("name", "description", 1.99);
+        var products = new Product("name", "description", 1.99, new ProductCategory(1, "name", "description"));
         ProductService.GetProduct(Arg.Is(id)).Returns(products);
 
         // Act
@@ -108,14 +109,14 @@ public class ProductsControllerTests
     public async Task Post_ValidRequestCallsGetAction_ReturnsNewProduct()
     {
         // Arrange
-        var productRequestModel = new RequestModels.Product
+        var productRequestModel = new ProductRequest
         {
             Name = "PRODUCT_NAME",
             Description = "PRODUCT_DESCRIPTION",
             Price = 0,
         };
 
-        var product = new Product("PRODUCT_NAME", "PRODUCT_DESCRIPTION", 0);
+        var product = new Product("PRODUCT_NAME", "PRODUCT_DESCRIPTION", 0, new ProductCategory(1, "name", "description"));
 
         ProductService.CreateProduct(productRequestModel).Returns(product);
 

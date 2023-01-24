@@ -3,5 +3,10 @@
   Name: BBQ Burger,
   Description: Juicy,
   Price: 1.5,
+  Category: {
+    Id: 2,
+    Name: Sundries,
+    Description: Things that go with things.
+  },
   Retired: false
 }

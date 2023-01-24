@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
+using CategoryRequest = Answer.King.Api.RequestModels.Category;
 
 namespace Answer.King.Api.UnitTests.Controllers;
 
@@ -116,7 +117,7 @@ public class CategoriesControllerTests
     public async Task Post_ValidRequestCallsGetAction_ReturnsNewCategory()
     {
         // Arrange
-        var categoryRequestModel = new RequestModels.Category
+        var categoryRequestModel = new CategoryRequest
         {
             Name = "CATEGORY_NAME",
             Description = "CATEGORY_DESCRIPTION",
@@ -164,7 +165,7 @@ public class CategoriesControllerTests
     {
         // Arrange
         const int id = 1;
-        var categoryRequestModel = new RequestModels.Category
+        var categoryRequestModel = new CategoryRequest
         {
             Name = "CATEGORY_NAME",
             Description = "CATEGORY_DESCRIPTION",
@@ -185,7 +186,7 @@ public class CategoriesControllerTests
     {
         // Arrange
         const int id = 1;
-        var categoryRequestModel = new RequestModels.Category
+        var categoryRequestModel = new CategoryRequest
         {
             Name = "CATEGORY_NAME",
             Description = "CATEGORY_DESCRIPTION",

@@ -1,5 +1,5 @@
 using Answer.King.Api.IntegrationTests.Common;
-using Answer.King.Api.RequestModels;
+using Answer.King.Api.IntegrationTests.Common.Models;
 using Category = Answer.King.Api.IntegrationTests.Common.Models.Category;
 
 namespace Answer.King.Api.IntegrationTests.Controllers;

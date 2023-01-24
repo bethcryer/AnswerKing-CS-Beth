@@ -1,7 +1,14 @@
 ﻿[
   {
+    Id: 1,
     Name: Fish,
     Description: Delicious and satisfying.,
-    Price: 5.99
+    Price: 5.99,
+    Category: {
+      Id: 1,
+      Name: Seafood,
+      Description: Food from the oceans
+    },
+    Retired: false
   }
 ]

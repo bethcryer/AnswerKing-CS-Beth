@@ -1,5 +1,4 @@
 using Answer.King.Api.Services;
-using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Repositories.Models;
@@ -7,6 +6,8 @@ using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;
 using Xunit;
+using Category = Answer.King.Domain.Inventory.Category;
+using CategoryRequest = Answer.King.Api.RequestModels.Category;
 
 namespace Answer.King.Api.UnitTests.Services;
 
@@ -86,7 +87,7 @@ public class CategoryServiceTests
     public async Task CreateCategory_InvalidProductIdInCategory_ThrowsException()
     {
         // Arrange
-        var categoryRequest = new RequestModels.Category
+        var categoryRequest = new CategoryRequest
         {
             Name = "Laptop",
             Description = "desc",
@@ -151,7 +152,7 @@ public class CategoryServiceTests
     public async Task UpdateCategory_InvalidCategoryId_ReturnsNull()
     {
         // Arrange
-        var updateCategoryRequest = new RequestModels.Category();
+        var updateCategoryRequest = new CategoryRequest();
         const int categoryId = 1;
 
         // Act
@@ -169,7 +170,7 @@ public class CategoryServiceTests
         var oldCategory = new Category("old category", "old desc", new List<ProductId>());
         var categoryId = oldCategory.Id;
 
-        var updateCategoryRequest = new RequestModels.Category
+        var updateCategoryRequest = new CategoryRequest
         {
             Name = "updated category",
             Description = "updated desc",
@@ -200,7 +201,7 @@ public class CategoryServiceTests
         this.categoryRepository.GetOne(Arg.Any<long>()).Returns(category);
         this.productRepository.GetByCategoryId(category.Id).Returns(Array.Empty<Product>());
 
-        var updateCategoryRequest = new RequestModels.Category
+        var updateCategoryRequest = new CategoryRequest
         {
             Name = "updated category",
             Description = "updated desc",
@@ -227,7 +228,7 @@ public class CategoryServiceTests
         this.productRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
         this.productRepository.GetOne(updatedProduct.Id).Returns(null as Product);
 
-        var updatedCategory = new RequestModels.Category { Products = new List<long> { updatedProduct.Id } };
+        var updatedCategory = new CategoryRequest { Products = new List<long> { updatedProduct.Id } };
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
@@ -253,40 +254,11 @@ public class CategoryServiceTests
         this.productRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
         this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
 
-        var updatedCategory = new RequestModels.Category
+        var updatedCategory = new CategoryRequest
         {
             Name = "updated category",
             Description = "desc",
             Products = new List<long> { updatedProduct.Id },
-        };
-
-        // Act / Assert
-        var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<ProductLifecycleException>(() =>
-            sut.UpdateCategory(oldCategory.Id, updatedCategory));
-    }
-
-    [Fact]
-    public async Task UpdateCategory_RemoveProductRetired_ThrowsException()
-    {
-        // Arrange
-        var oldProduct = CreateProduct(1, "product", "desc", 1.0);
-        var oldProducts = new[]
-        {
-            oldProduct,
-        };
-        var oldCategory = CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
-
-        oldProduct.Retire();
-
-        this.categoryRepository.GetOne(Arg.Any<long>()).Returns(oldCategory);
-        this.productRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
-
-        var updatedCategory = new RequestModels.Category
-        {
-            Name = "updated category",
-            Description = "desc",
-            Products = new List<long>(),
         };
 
         // Act / Assert
@@ -312,7 +284,7 @@ public class CategoryServiceTests
         this.productRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
         this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
 
-        var updatedCategory = new RequestModels.Category
+        var updatedCategory = new CategoryRequest
         {
             Name = "updated category",
             Description = "desc",
@@ -338,7 +310,7 @@ public class CategoryServiceTests
 
     private static Product CreateProduct(long id, string name, string description, double price)
     {
-        return ProductFactory.CreateProduct(id, name, description, price, new List<CategoryId>(), new List<TagId>(), false);
+        return ProductFactory.CreateProduct(id, name, description, price, new ProductCategory(1, "name", "description"), new List<TagId>(), false);
     }
 
     #endregion

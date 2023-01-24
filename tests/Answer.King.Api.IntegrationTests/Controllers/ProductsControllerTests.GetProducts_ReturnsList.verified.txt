@@ -4,9 +4,11 @@
     Name: Fish,
     Description: Delicious and satisfying.,
     Price: 5.99,
-    Categories: [
-      1
-    ],
+    Category: {
+      Id: 1,
+      Name: Seafood,
+      Description: Food from the oceans
+    },
     Retired: false
   },
   {
@@ -14,9 +16,11 @@
     Name: Chips,
     Description: Nothing more to say.,
     Price: 2.99,
-    Categories: [
-      2
-    ],
+    Category: {
+      Id: 2,
+      Name: Sundries,
+      Description: Things that go with things.
+    },
     Retired: false
   },
   {
@@ -24,9 +28,11 @@
     Name: Gravy,
     Description: Side,
     Price: 0.99,
-    Categories: [
-      2
-    ],
+    Category: {
+      Id: 2,
+      Name: Sundries,
+      Description: Things that go with things.
+    },
     Retired: true
   }
 ]

@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Answer.King.Api.Common.JsonConverters;
-using Answer.King.Domain.Repositories.Models;
+using Answer.King.Api.RequestModels;
 using Answer.King.Test.Common.CustomTraits;
 using Xunit;
 

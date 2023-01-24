@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
+using TagProductsRequest = Answer.King.Api.RequestModels.TagProducts;
+using TagRequest = Answer.King.Api.RequestModels.Tag;
 
 namespace Answer.King.Api.UnitTests.Controllers;
 
@@ -116,7 +118,7 @@ public class TagsControllerTests
     public async Task Post_ValidRequestCallsGetAction_ReturnsNewTag()
     {
         // Arrange
-        var tagRequestModel = new RequestModels.Tag
+        var tagRequestModel = new TagRequest
         {
             Name = "TAG_NAME",
             Description = "TAG_DESCRIPTION",
@@ -164,7 +166,7 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagRequestModel = new RequestModels.Tag
+        var tagRequestModel = new TagRequest
         {
             Name = "TAG_NAME",
             Description = "TAG_DESCRIPTION",
@@ -213,7 +215,7 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagAddProductsRequestModel = new RequestModels.TagProducts
+        var tagAddProductsRequestModel = new TagProductsRequest
         {
             Products = new List<long> { 1 },
         };
@@ -232,7 +234,7 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagAddProductsRequestModel = new RequestModels.TagProducts
+        var tagAddProductsRequestModel = new TagProductsRequest
         {
             Products = new List<long> { 1 },
         };
@@ -279,7 +281,7 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagRemoveProductsRequestModel = new RequestModels.TagProducts
+        var tagRemoveProductsRequestModel = new TagProductsRequest
         {
             Products = new List<long> { 1 },
         };
@@ -298,7 +300,7 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagAddProductsRequestModel = new RequestModels.TagProducts
+        var tagAddProductsRequestModel = new TagProductsRequest
         {
             Products = new List<long> { 1 },
         };

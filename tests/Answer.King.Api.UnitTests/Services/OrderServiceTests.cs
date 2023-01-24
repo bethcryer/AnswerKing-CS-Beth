@@ -2,13 +2,14 @@ using Answer.King.Api.RequestModels;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
+using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Xunit;
-using CategoryId = Answer.King.Domain.Repositories.Models.CategoryId;
 using Order = Answer.King.Domain.Orders.Order;
+using OrderRequest = Answer.King.Api.RequestModels.Order;
 using Product = Answer.King.Domain.Repositories.Models.Product;
 using TagId = Answer.King.Domain.Repositories.Models.TagId;
 
@@ -45,7 +46,7 @@ public class OrderServiceTests
             Quantity = 1,
         };
 
-        var orderRequest = new RequestModels.Order
+        var orderRequest = new OrderRequest
         {
             LineItems = new List<LineItem>(new[] { lineItem1, lineItem2 }),
         };
@@ -60,15 +61,15 @@ public class OrderServiceTests
     public async Task CreateOrder_ValidOrderRequestRecieved_ReturnsOrder()
     {
         // Arrange
-        var categoryIds = new List<CategoryId> { new(1) };
+        var category = new ProductCategory(1, "name", "description");
         var tagIds = new List<TagId> { new(1) };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categoryIds, tagIds, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categoryIds, tagIds, false),
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, category, tagIds, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, category, tagIds, false),
         };
 
-        var orderRequest = new RequestModels.Order
+        var orderRequest = new OrderRequest
         {
             LineItems = new List<LineItem>(new[]
             {
@@ -114,7 +115,7 @@ public class OrderServiceTests
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
-        Assert.Null(await sut.UpdateOrder(1, new RequestModels.Order()));
+        Assert.Null(await sut.UpdateOrder(1, new OrderRequest()));
     }
 
     [Fact]
@@ -124,15 +125,15 @@ public class OrderServiceTests
         var order = new Order();
         this.orderRepository.GetOne(Arg.Any<long>()).Returns(order);
 
-        var categoryIds = new List<CategoryId> { new(1) };
+        var category = new ProductCategory(1, "name", "description");
         var tagIds = new List<TagId> { new(1) };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, categoryIds, tagIds, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, categoryIds, tagIds, false),
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, category, tagIds, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, category, tagIds, false),
         };
 
-        var orderRequest = new RequestModels.Order
+        var orderRequest = new OrderRequest
         {
             LineItems = new List<LineItem>(new[]
             {
@@ -176,11 +177,11 @@ public class OrderServiceTests
 
         var products = new[]
         {
-            new Product("product 1", "desc", 2.0),
-            new Product("product 2", "desc", 4.0),
+            new Product("product 1", "desc", 2.0, new ProductCategory(1, "name", "description")),
+            new Product("product 2", "desc", 4.0, new ProductCategory(1, "name", "description")),
         };
 
-        var orderRequest = new RequestModels.Order
+        var orderRequest = new OrderRequest
         {
             LineItems = new List<LineItem>(new[]
             {
