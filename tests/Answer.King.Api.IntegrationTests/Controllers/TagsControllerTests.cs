@@ -1,19 +1,18 @@
-﻿using Alba;
 using Answer.King.Api.IntegrationTests.Common;
-using Tag = Answer.King.Api.IntegrationTests.Common.Models.Tag;
 using Product = Answer.King.Api.IntegrationTests.Common.Models.Product;
+using Tag = Answer.King.Api.IntegrationTests.Common.Models.Tag;
 
 namespace Answer.King.Api.IntegrationTests.Controllers;
 
 [UsesVerify]
 public class TagsControllerTests : WebFixtures
 {
-    private readonly VerifySettings _verifySettings;
+    private readonly VerifySettings verifySettings;
 
     public TagsControllerTests()
     {
-        this._verifySettings = new();
-        this._verifySettings.ScrubMembers("traceId");
+        this.verifySettings = new();
+        this.verifySettings.ScrubMembers("traceId");
     }
 
     #region Get
@@ -33,13 +32,13 @@ public class TagsControllerTests : WebFixtures
     [Fact]
     public async Task<VerifyResult> GetTag_TagExists_ReturnsTag()
     {
-        var newTag = await this.AlbaHost.Scenario(_ =>
+        await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Non-animal products"
+                    Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -64,7 +63,7 @@ public class TagsControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -73,13 +72,13 @@ public class TagsControllerTests : WebFixtures
     [Fact]
     public async Task<VerifyResult> GetProducts_TagExists_ReturnsProducts()
     {
-        var newTag = await this.AlbaHost.Scenario(_ =>
+        await this.AlbaHost.Scenario(_ =>
         {
             _.Post
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Non-animal products"
+                    Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -104,7 +103,7 @@ public class TagsControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -118,7 +117,7 @@ public class TagsControllerTests : WebFixtures
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Non-animal products"
+                    Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -136,13 +135,13 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Vegan"
+                    Name = "Vegan",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(result.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -156,7 +155,7 @@ public class TagsControllerTests : WebFixtures
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Non-animal products"
+                    Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -170,7 +169,7 @@ public class TagsControllerTests : WebFixtures
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Edited Non-animal products"
+                    Description = "Edited Non-animal products",
                 })
                 .ToUrl($"/api/tags/{tag?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
@@ -188,13 +187,13 @@ public class TagsControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "Vegan"
+                    Name = "Vegan",
                 })
                 .ToUrl("/api/tags/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -206,13 +205,13 @@ public class TagsControllerTests : WebFixtures
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Edited Non-animal products"
+                    Description = "Edited Non-animal products",
                 })
                 .ToUrl("/api/tags/50");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -226,7 +225,7 @@ public class TagsControllerTests : WebFixtures
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Non-animal products"
+                    Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -239,7 +238,7 @@ public class TagsControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl($"/api/tags/{tag?.Id}/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
@@ -257,13 +256,13 @@ public class TagsControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Products = 1
+                    Products = 1,
                 })
                 .ToUrl("/api/tags/1/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -274,13 +273,13 @@ public class TagsControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags/50/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -294,7 +293,7 @@ public class TagsControllerTests : WebFixtures
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Non-animal products"
+                    Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -307,7 +306,7 @@ public class TagsControllerTests : WebFixtures
             _.Delete
                 .Json(new
                 {
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl($"/api/tags/{tag?.Id}/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
@@ -325,13 +324,13 @@ public class TagsControllerTests : WebFixtures
             _.Delete
                 .Json(new
                 {
-                    Products = 1
+                    Products = 1,
                 })
                 .ToUrl("/api/tags/1/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
-        return await VerifyJson(deleteResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(deleteResult.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -342,13 +341,13 @@ public class TagsControllerTests : WebFixtures
             _.Delete
                 .Json(new
                 {
-                    Products = new List<long>()
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags/50/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(deleteResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(deleteResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -363,7 +362,7 @@ public class TagsControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
-        return await VerifyJson(putResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -375,7 +374,7 @@ public class TagsControllerTests : WebFixtures
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Non-animal products"
+                    Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -400,7 +399,7 @@ public class TagsControllerTests : WebFixtures
                 .Json(new
                 {
                     Name = "Vegan",
-                    Description = "Non-animal products"
+                    Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -422,7 +421,7 @@ public class TagsControllerTests : WebFixtures
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Gone);
         });
 
-        return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this._verifySettings);
+        return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 }

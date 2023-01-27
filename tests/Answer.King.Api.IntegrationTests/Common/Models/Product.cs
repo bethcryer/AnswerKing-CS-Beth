@@ -1,18 +1,17 @@
-﻿using Answer.King.Domain;
-
 namespace Answer.King.Api.IntegrationTests.Common.Models;
 
 public class Product
 {
-    public Product(long id, string name, string description, double price, IList<long> categories, bool retired)
+    public Product(long id, string name, string description, double price, Domain.Repositories.Models.ProductCategory category, bool retired)
     {
         this.Id = id;
         this.Name = name;
         this.Description = description;
         this.Price = price;
-        this.Categories = categories ?? new List<long>();
+        this.Category = category;
         this.Retired = retired;
     }
+
     public long Id { get; }
 
     public string Name { get; }
@@ -21,7 +20,7 @@ public class Product
 
     public double Price { get; }
 
-    public IList<long> Categories { get; }
+    public Domain.Repositories.Models.ProductCategory Category { get; }
 
     public bool Retired { get; }
 }

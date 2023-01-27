@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Repositories.Models;
@@ -17,13 +17,12 @@ public class PaymentRepository : IPaymentRepository
 
     private ILiteCollection<Payment> Collection { get; }
 
-
-    public Task<Payment> Get(long id)
+    public Task<Payment> GetOne(long id)
     {
         return Task.FromResult(this.Collection.FindOne(c => c.Id == id));
     }
 
-    public Task<IEnumerable<Payment>> Get()
+    public Task<IEnumerable<Payment>> GetAll()
     {
         return Task.FromResult(this.Collection.FindAll());
     }

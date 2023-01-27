@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
@@ -8,11 +8,11 @@ namespace Answer.King.Infrastructure.SeedData;
 
 public static class CategoryData
 {
-    private static readonly CategoryFactory categoryFactory = new();
+    private static readonly CategoryFactory CategoryFactory = new();
 
     public static IList<Category> Categories { get; } = new List<Category>
     {
-        categoryFactory.CreateCategory(
+        CategoryFactory.CreateCategory(
             1,
             "Seafood",
             "Food from the oceans",
@@ -20,10 +20,10 @@ public static class CategoryData
             DateTime.UtcNow.AddHours(-10),
             new List<ProductId>
             {
-                new(1)
+                new(1),
             },
             false),
-        categoryFactory.CreateCategory(
+        CategoryFactory.CreateCategory(
             2,
             "Sundries",
             "Things that go with things.",
@@ -31,8 +31,8 @@ public static class CategoryData
             DateTime.UtcNow.AddHours(-30),
             new List<ProductId>
             {
-                new(2)
+                new(2),
             },
-            false)
+            false),
     };
 }

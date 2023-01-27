@@ -1,4 +1,4 @@
-﻿using Answer.King.Api.Services;
+using Answer.King.Api.Services;
 using Answer.King.Domain.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -21,6 +21,7 @@ public class ProductsController : ControllerBase
     /// Get all products.
     /// </summary>
     /// <response code="200">When all the products have been returned.</response>
+    /// <returns>All Products.</returns>
     // GET api/products
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Product>), 200)]
@@ -33,9 +34,10 @@ public class ProductsController : ControllerBase
     /// <summary>
     /// Get a single product.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Product identifier.</param>
     /// <response code="200">When the product with the provided <paramref name="id"/> has been found.</response>
     /// <response code="404">When the product with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Product if found.</returns>
     // GET api/products/{ID}
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
@@ -56,9 +58,10 @@ public class ProductsController : ControllerBase
     /// <summary>
     /// Create a new product.
     /// </summary>
-    /// <param name="createProduct"></param>
+    /// <param name="createProduct">Product details.</param>
     /// <response code="201">When the product has been created.</response>
     /// <response code="400">When invalid parameters are provided.</response>
+    /// <returns>Created Product.</returns>
     // POST api/products
     [HttpPost]
     [ProducesResponseType(typeof(Product), StatusCodes.Status201Created)]
@@ -82,11 +85,12 @@ public class ProductsController : ControllerBase
     /// <summary>
     /// Update an existing product.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="updateProduct"></param>
+    /// <param name="id">Product identifier.</param>
+    /// <param name="updateProduct">Product details.</param>
     /// <response code="200">When the product has been updated.</response>
     /// <response code="400">When invalid parameters are provided.</response>
     /// <response code="404">When the product with the given <paramref name="id"/> does not exist.</response>
+    /// <returns>Updated Product.</returns>
     // PUT api/products/{ID}
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
@@ -116,10 +120,11 @@ public class ProductsController : ControllerBase
     /// <summary>
     /// Retire an existing product.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Product identifier.</param>
     /// <response code="204">When the product has been retired.</response>
     /// <response code="404">When the product with the given <paramref name="id"/> does not exist.</response>
     /// <response code="410">When the product with the given <paramref name="id"/> is already retired.</response>
+    /// <returns>Status of retirement request.</returns>
     // DELETE api/products/{ID}
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

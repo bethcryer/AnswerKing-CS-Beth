@@ -30,7 +30,7 @@ internal class CategoryFactory
             createdOn,
             lastUpdated,
             products,
-            retired
+            retired,
         };
 
         /* invoking a private constructor will wrap up any exception into a

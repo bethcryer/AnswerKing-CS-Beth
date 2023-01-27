@@ -1,7 +1,0 @@
-﻿{
-  Id: 3,
-  Name: Burger,
-  Description: Juicy,
-  Price: 1.5,
-  Retired: false
-}

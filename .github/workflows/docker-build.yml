@@ -2,7 +2,7 @@ name: Build and publish docker
 
 on:
   push:
-    branches: "develop"
+    branches: "release-*"
 
 env:
   REGISTRY: ghcr.io
@@ -37,7 +37,7 @@ jobs:
             type=raw, value=${{ env.VERSION }}
 
       - name: Build image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: ./dockerfile

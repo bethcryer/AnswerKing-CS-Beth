@@ -15,7 +15,7 @@ public class ProductIdJsonConverterTests
     {
         // Arrange
         const string json = "1";
-        byte[] jsonUtf8Bytes = Encoding.UTF8.GetBytes(json);
+        var jsonUtf8Bytes = Encoding.UTF8.GetBytes(json);
         var jsonReader = new Utf8JsonReader(jsonUtf8Bytes);
         jsonReader.Read();
 
@@ -36,7 +36,7 @@ public class ProductIdJsonConverterTests
     {
         // Arrange
         const string json = "1.0";
-        byte[] jsonUtf8Bytes = Encoding.UTF8.GetBytes(json);
+        var jsonUtf8Bytes = Encoding.UTF8.GetBytes(json);
         var jsonReader = new Utf8JsonReader(jsonUtf8Bytes);
         jsonReader.Read();
 

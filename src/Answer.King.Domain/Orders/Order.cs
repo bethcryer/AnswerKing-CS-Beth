@@ -1,17 +1,18 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Answer.King.Domain.Orders.Models;
 
 namespace Answer.King.Domain.Orders;
 
-// Todo: look at custom deserialisation: https://stackoverflow.com/questions/42336751/custom-deserialization
 public class Order : IAggregateRoot
 {
+    private readonly IList<LineItem> lineItems;
+
     public Order()
     {
         this.Id = 0;
         this.LastUpdated = this.CreatedOn = DateTime.UtcNow;
         this.OrderStatus = OrderStatus.Created;
-        this._lineItems = new List<LineItem>();
+        this.lineItems = new List<LineItem>();
     }
 
     // ReSharper disable once UnusedMember.Local
@@ -31,7 +32,7 @@ public class Order : IAggregateRoot
         this.CreatedOn = createdOn;
         this.LastUpdated = lastUpdated;
         this.OrderStatus = status;
-        this._lineItems = lineItems ?? new List<LineItem>();
+        this.lineItems = lineItems ?? new List<LineItem>();
     }
 
     public long Id { get; }
@@ -44,9 +45,7 @@ public class Order : IAggregateRoot
 
     public double OrderTotal => this.LineItems.Sum(li => li.SubTotal);
 
-    private IList<LineItem> _lineItems { get; }
-
-    public IReadOnlyCollection<LineItem> LineItems => (this._lineItems as List<LineItem>)!;
+    public IReadOnlyCollection<LineItem> LineItems => (this.lineItems as List<LineItem>)!;
 
     public void AddLineItem(long productId, string productName, string productDescription, double price, int quantity = 1)
     {
@@ -57,13 +56,13 @@ public class Order : IAggregateRoot
             throw new OrderLifeCycleException($"Cannot add line item - Order status {this.OrderStatus}.");
         }
 
-        var lineItem = this._lineItems.SingleOrDefault(li => li.Product.Id == productId);
+        var lineItem = this.lineItems.SingleOrDefault(li => li.Product.Id == productId);
 
         if (lineItem == null)
         {
             var product = new Product(productId, productName, productDescription, price);
             lineItem = new LineItem(product);
-            this._lineItems.Add(lineItem);
+            this.lineItems.Add(lineItem);
         }
 
         lineItem.AddQuantity(quantity);
@@ -79,7 +78,7 @@ public class Order : IAggregateRoot
             throw new OrderLifeCycleException($"Cannot remove line item - Order status {this.OrderStatus}.");
         }
 
-        var lineItem = this._lineItems.SingleOrDefault(li => li.Product.Id == productId);
+        var lineItem = this.lineItems.SingleOrDefault(li => li.Product.Id == productId);
 
         if (lineItem == null)
         {
@@ -90,7 +89,7 @@ public class Order : IAggregateRoot
 
         if (lineItem.Quantity <= 0)
         {
-            this._lineItems.Remove(lineItem);
+            this.lineItems.Remove(lineItem);
         }
 
         this.LastUpdated = DateTime.UtcNow;
@@ -119,29 +118,25 @@ public class Order : IAggregateRoot
     }
 }
 
-public enum OrderStatus
-{
-    Created = 0,
-    Complete = 1,
-    Cancelled = 2
-}
-
 [Serializable]
 public class OrderPaymentException : Exception
 {
-    public OrderPaymentException(string message) : base(message)
+    public OrderPaymentException(string message)
+        : base(message)
     {
     }
 
-    public OrderPaymentException() : base()
+    public OrderPaymentException()
     {
     }
 
-    public OrderPaymentException(string? message, Exception? innerException) : base(message, innerException)
+    public OrderPaymentException(string? message, Exception? innerException)
+        : base(message, innerException)
     {
     }
 
-    protected OrderPaymentException(SerializationInfo info, StreamingContext context) : base(info, context)
+    protected OrderPaymentException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
     {
     }
 }
@@ -149,19 +144,22 @@ public class OrderPaymentException : Exception
 [Serializable]
 public class OrderLifeCycleException : Exception
 {
-    public OrderLifeCycleException(string message) : base(message)
+    public OrderLifeCycleException(string message)
+        : base(message)
     {
     }
 
-    public OrderLifeCycleException() : base()
+    public OrderLifeCycleException()
     {
     }
 
-    public OrderLifeCycleException(string? message, Exception? innerException) : base(message, innerException)
+    public OrderLifeCycleException(string? message, Exception? innerException)
+        : base(message, innerException)
     {
     }
 
-    protected OrderLifeCycleException(SerializationInfo info, StreamingContext context) : base(info, context)
+    protected OrderLifeCycleException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
     {
     }
 }

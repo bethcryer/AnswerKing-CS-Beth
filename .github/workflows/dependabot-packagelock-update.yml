@@ -1,0 +1,32 @@
+name: Restore package-lock on Dependabot PR
+
+on:
+  pull_request:
+
+jobs:
+  restore:
+    name: Update packages.lock.json files
+    if: contains(github.head_ref, 'dependabot') && contains(github.actor, 'dependabot[bot]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.DEPENDABOT_PAT }}
+      - uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
+
+      - run: dotnet restore --force-evaluate
+      - id: diff
+        continue-on-error: true
+        run: |
+          git add -N .
+          git diff --name-only --exit-code
+      - if: steps.diff.outcome == 'failure'
+        run: |
+          git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
+          git config user.name "dependabot[bot]"
+          git add .
+          git commit -m "chore(deps): update packages.lock.json"
+          git push

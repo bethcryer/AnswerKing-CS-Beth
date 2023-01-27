@@ -1,4 +1,3 @@
-﻿using System;
 using LiteDB;
 using Microsoft.Extensions.Configuration;
 
@@ -19,26 +18,10 @@ public class LiteDbConnectionFactory : ILiteDbConnectionFactory
         this.Database = new LiteDatabase(connectionString, mapper);
     }
 
-    private LiteDatabase Database { get; }
+    private ILiteDatabase Database { get; }
 
-    public LiteDatabase GetConnection()
+    public ILiteDatabase GetConnection()
     {
         return this.Database;
-    }
-}
-
-[Serializable]
-public class LiteDbConnectionFactoryException : Exception
-{
-    public LiteDbConnectionFactoryException(string message) : base(message)
-    {
-    }
-
-    public LiteDbConnectionFactoryException() : base()
-    {
-    }
-
-    public LiteDbConnectionFactoryException(string? message, Exception? innerException) : base(message, innerException)
-    {
     }
 }

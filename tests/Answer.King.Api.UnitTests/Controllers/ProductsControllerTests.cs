@@ -1,15 +1,26 @@
-﻿using Answer.King.Api.Controllers;
+using Answer.King.Api.Controllers;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Test.Common.CustomAsserts;
+using Answer.King.Test.Common.CustomTraits;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Xunit;
+using ProductRequest = Answer.King.Api.RequestModels.Product;
 
 namespace Answer.King.Api.UnitTests.Controllers;
 
+[TestCategory(TestType.Unit)]
 public class ProductsControllerTests
 {
+    #region Setup
+
+    private static readonly IProductService ProductService = Substitute.For<IProductService>();
+
+    private static readonly ProductsController GetSubjectUnderTest = new(ProductService);
+
+    #endregion Setup
+
     #region GenericControllerTests
 
     [Fact]
@@ -72,7 +83,7 @@ public class ProductsControllerTests
     {
         // Arrange
         const long id = 1;
-        var products = new Product("name", "description", 1.99);
+        var products = new Product("name", "description", 1.99, new ProductCategory(1, "name", "description"));
         ProductService.GetProduct(Arg.Is(id)).Returns(products);
 
         // Act
@@ -92,6 +103,29 @@ public class ProductsControllerTests
         // Assert
         AssertController.MethodHasVerb<ProductsController, HttpPostAttribute>(
             nameof(ProductsController.Post));
+    }
+
+    [Fact]
+    public async Task Post_ValidRequestCallsGetAction_ReturnsNewProduct()
+    {
+        // Arrange
+        var productRequestModel = new ProductRequest
+        {
+            Name = "PRODUCT_NAME",
+            Description = "PRODUCT_DESCRIPTION",
+            Price = 0,
+        };
+
+        var product = new Product("PRODUCT_NAME", "PRODUCT_DESCRIPTION", 0, new ProductCategory(1, "name", "description"));
+
+        ProductService.CreateProduct(productRequestModel).Returns(product);
+
+        // Act
+        var result = await GetSubjectUnderTest.Post(productRequestModel);
+
+        // Assert
+        await ProductService.Received().CreateProduct(productRequestModel);
+        Assert.IsType<CreatedAtActionResult>(result);
     }
 
     #endregion Post
@@ -119,12 +153,4 @@ public class ProductsControllerTests
     }
 
     #endregion Retire
-
-    #region Setup
-
-    private static readonly IProductService ProductService = Substitute.For<IProductService>();
-
-    private static readonly ProductsController GetSubjectUnderTest = new ProductsController(ProductService);
-
-    #endregion Setup
 }

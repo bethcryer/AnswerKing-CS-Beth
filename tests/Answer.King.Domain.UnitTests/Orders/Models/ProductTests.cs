@@ -1,5 +1,4 @@
-﻿using Answer.King.Test.Common.CustomTraits;
-using Answer.King.Domain.Orders.Models;
+using Answer.King.Test.Common.CustomTraits;
 using Xunit;
 using Product = Answer.King.Domain.Orders.Models.Product;
 
@@ -18,13 +17,11 @@ public class ProductTests
         const int price = 142;
 
         // Act / Assert
-
         Assert.Throws<Guard.DefaultValueException>(() => new Product(
             id,
             name,
             description,
-            price)
-        );
+            price));
     }
 
     [Fact]
@@ -41,7 +38,6 @@ public class ProductTests
             id,
             name,
             description,
-            price)
-        );
+            price));
     }
 }

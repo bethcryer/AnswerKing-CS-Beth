@@ -1,12 +1,12 @@
-﻿using Answer.King.Domain.Repositories.Models;
+using Answer.King.Domain.Repositories.Models;
 
 namespace Answer.King.Domain.Repositories;
 
 public interface IPaymentRepository
 {
-    Task<Payment> Get(long id);
+    Task<Payment> GetOne(long id);
 
-    Task<IEnumerable<Payment>> Get();
+    Task<IEnumerable<Payment>> GetAll();
 
     Task Add(Payment payment);
 }

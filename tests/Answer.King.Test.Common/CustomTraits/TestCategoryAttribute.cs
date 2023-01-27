@@ -1,4 +1,4 @@
-﻿using Xunit.Abstractions;
+using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace Answer.King.Test.Common.CustomTraits;
@@ -20,10 +20,12 @@ public class TestCategoryAttribute : Attribute, ITraitAttribute
 
 /// <summary>
 /// This class discovers all of the tests and test classes that have
-/// applied the Category attribute
+/// applied the Category attribute.
 /// </summary>
 public class TestCategoryDiscoverer : ITraitDiscoverer
 {
+    public const string FullName = $"Answer.King.Test.Common.CustomTraits.{nameof(TestCategoryDiscoverer)}";
+
     /// <summary>
     /// Gets the trait values from the Category attribute.
     /// </summary>
@@ -34,17 +36,4 @@ public class TestCategoryDiscoverer : ITraitDiscoverer
         var categoryType = traitAttribute.GetNamedArgument<TestType>("Type");
         yield return new KeyValuePair<string, string>("Category", $"{categoryType}");
     }
-
-    public const string FullName = "Answer.King.Test.Common.CustomTraits." + nameof(TestCategoryDiscoverer);
-}
-
-public enum TestType
-{
-    Slow = 0,
-
-    Unit = 1,
-
-    Integration = 2,
-
-    Acceptance = 3
 }

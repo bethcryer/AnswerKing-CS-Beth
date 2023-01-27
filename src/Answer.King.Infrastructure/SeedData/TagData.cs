@@ -1,18 +1,18 @@
-﻿using Answer.King.Domain.Inventory.Models;
-using Answer.King.Infrastructure.Repositories.Mappings;
-using Answer.King.Domain.Inventory;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory.Models;
+using Answer.King.Infrastructure.Repositories.Mappings;
 
 namespace Answer.King.Infrastructure.SeedData;
 
 public static class TagData
 {
-    private static readonly TagFactory tagFactory = new();
+    private static readonly TagFactory TagFactory = new();
 
     public static IList<Tag> Tags { get; } = new List<Tag>
     {
-        tagFactory.CreateTag(
+        TagFactory.CreateTag(
             1,
             "Vegan",
             "Non-animal products",
@@ -20,10 +20,10 @@ public static class TagData
             DateTime.UtcNow.AddHours(-10),
             new List<ProductId>
             {
-                new(1)
+                new(1),
             },
             false),
-        tagFactory.CreateTag(
+        TagFactory.CreateTag(
             2,
             "BOGOF",
             "Buy one get one free!",
@@ -31,8 +31,8 @@ public static class TagData
             DateTime.UtcNow.AddHours(-30),
             new List<ProductId>
             {
-                new(2)
+                new(2),
             },
-            false)
+            false),
     };
 }

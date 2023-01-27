@@ -1,16 +1,18 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace Answer.King.Test.Common.CustomAsserts;
 
 public static class CustomAssert
 {
-    public static void HasAttribute<T>(Type objectType) where T : Attribute
+    public static void HasAttribute<T>(Type objectType)
+        where T : Attribute
     {
         var attr = objectType.GetCustomAttributes(typeof(T), false).ToList();
         attr.AssertAttributeCount<T>();
     }
 
-    public static void HasAttribute<T>(Enum @enum) where T : Attribute
+    public static void HasAttribute<T>(Enum @enum)
+        where T : Attribute
     {
         var type = @enum.GetType();
         var memberInfo = type.GetMember(Enum.GetName(type, @enum) ?? throw new InvalidOperationException());
@@ -53,8 +55,7 @@ public static class CustomAssert
     /// </summary>
     public static void DidNotThrow()
     {
-        // ReSharper disable once RedundantJumpStatement
-        return;
+        // Do nothing
     }
 
     public static void EnumMemberAttributeHasCorrectValue(Enum @enum, string expectedValue)

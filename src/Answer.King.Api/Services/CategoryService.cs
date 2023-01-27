@@ -1,10 +1,9 @@
-﻿using Answer.King.Domain.Repositories;
-using Answer.King.Domain.Inventory;
-using Category = Answer.King.Domain.Inventory.Category;
-using Answer.King.Domain.Inventory.Models;
-using Answer.King.Domain.Repositories.Models;
-using Answer.King.Domain.Orders.Models;
 using System.Runtime.Serialization;
+using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory.Models;
+using Answer.King.Domain.Repositories;
+using Answer.King.Domain.Repositories.Models;
+using Category = Answer.King.Domain.Inventory.Category;
 
 namespace Answer.King.Api.Services;
 
@@ -24,22 +23,22 @@ public class CategoryService : ICategoryService
 
     public async Task<Category?> GetCategory(long categoryId)
     {
-        return await this.Categories.Get(categoryId);
+        return await this.Categories.GetOne(categoryId);
     }
 
     public async Task<IEnumerable<Category>> GetCategories()
     {
-        return await this.Categories.Get();
+        return await this.Categories.GetAll();
     }
 
     public async Task<Category> CreateCategory(RequestModels.Category createCategory)
     {
         var categoryProducts = new List<ProductId>();
-        var products = new List<Domain.Repositories.Models.Product>();
+        var products = new List<Product>();
 
         foreach (var productId in createCategory.Products)
         {
-            var product = await this.Products.Get(productId);
+            var product = await this.Products.GetOne(productId);
 
             if (product == null)
             {
@@ -56,7 +55,6 @@ public class CategoryService : ICategoryService
 
         foreach (var product in products)
         {
-            product.AddCategory(new CategoryId(category.Id));
             await this.Products.AddOrUpdate(product);
         }
 
@@ -65,7 +63,7 @@ public class CategoryService : ICategoryService
 
     public async Task<Category?> UpdateCategory(long categoryId, RequestModels.Category updateCategory)
     {
-        var category = await this.Categories.Get(categoryId);
+        var category = await this.Categories.GetOne(categoryId);
         if (category == null)
         {
             return null;
@@ -78,7 +76,6 @@ public class CategoryService : ICategoryService
         {
             if (!productsToCheck.Contains(oldProduct.Id))
             {
-                oldProduct.RemoveCategory(new CategoryId(categoryId));
                 await this.Products.AddOrUpdate(oldProduct);
 
                 category.RemoveProduct(new ProductId(oldProduct.Id));
@@ -89,7 +86,7 @@ public class CategoryService : ICategoryService
 
         foreach (var updateId in productsToCheck)
         {
-            var product = await this.Products.Get(updateId);
+            var product = await this.Products.GetOne(updateId);
 
             if (product == null)
             {
@@ -98,7 +95,7 @@ public class CategoryService : ICategoryService
 
             category.AddProduct(new ProductId(product.Id));
 
-            product.AddCategory(new CategoryId(categoryId));
+            product.SetCategory(new ProductCategory(category.Id, category.Name, category.Description));
             await this.Products.AddOrUpdate(product);
         }
 
@@ -111,7 +108,7 @@ public class CategoryService : ICategoryService
 
     public async Task<Category?> RetireCategory(long categoryId)
     {
-        var category = await this.Categories.Get(categoryId);
+        var category = await this.Categories.GetOne(categoryId);
 
         if (category == null)
         {

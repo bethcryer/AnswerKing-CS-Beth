@@ -1,4 +1,4 @@
-﻿using Answer.King.Domain.Orders.Models;
+using Answer.King.Domain.Orders.Models;
 using Answer.King.Test.Common.CustomTraits;
 using Xunit;
 using Product = Answer.King.Domain.Orders.Models.Product;
@@ -22,7 +22,7 @@ public class LineItemTests
     public void AddQuantity_ValidQuantity_IncrementsByCorrectAmount()
     {
         // Arrange
-        var product = this.GetProduct();
+        var product = GetProduct();
         var lineItem = new LineItem(product);
         var quantity = 5;
         var expected = quantity;
@@ -38,7 +38,7 @@ public class LineItemTests
     public void AddQuantity_AddZero_ThrowsLineItemException()
     {
         // Arrange
-        var product = this.GetProduct();
+        var product = GetProduct();
         var lineItem = new LineItem(product);
 
         // Act / Assert
@@ -49,7 +49,7 @@ public class LineItemTests
     public void AddQuantity_InvalidQuantity_ThrowsLineItemException()
     {
         // Arrange
-        var product = this.GetProduct();
+        var product = GetProduct();
         var lineItem = new LineItem(product);
         var quantity = -3;
 
@@ -61,7 +61,7 @@ public class LineItemTests
     public void RemoveQuantity_ValidQuantity_DecrementsByCorrectAmount()
     {
         // Arrange
-        var product = this.GetProduct();
+        var product = GetProduct();
         var lineItem = new LineItem(product);
         var quantityToAdd = 5;
         var quantityToRemove = 3;
@@ -79,7 +79,7 @@ public class LineItemTests
     public void RemoveQuantity_InvalidQuantity_ThrowsLineItemException()
     {
         // Arrange
-        var product = this.GetProduct();
+        var product = GetProduct();
         var lineItem = new LineItem(product);
         var quantity = -3;
 
@@ -91,7 +91,7 @@ public class LineItemTests
     public void RemoveQuantity_RemoveZero_ThrowsLineItemException()
     {
         // Arrange
-        var product = this.GetProduct();
+        var product = GetProduct();
         var lineItem = new LineItem(product);
 
         // Act / Assert
@@ -102,7 +102,7 @@ public class LineItemTests
     public void RemoveQuantity_RemoveMoreThanQuantity_ThrowsLineItemException()
     {
         // Arrange
-        var product = this.GetProduct();
+        var product = GetProduct();
         var lineItem = new LineItem(product);
         var quantity = 1;
         var moreThanQuantity = 3;
@@ -118,7 +118,7 @@ public class LineItemTests
     public void SubTotal_WithPriceAndQuantity_CalculatesCorrectPrice()
     {
         // Arrange
-        var product = this.GetProduct();
+        var product = GetProduct();
         var lineItem = new LineItem(product);
         var quantity = 5;
         var expected = product.Price * quantity;
@@ -132,12 +132,14 @@ public class LineItemTests
 
     #region Helpers
 
-    private Product GetProduct() => new Product(
-        1,
-        "name",
-        "description",
-        142
-    );
+    private static Product GetProduct()
+    {
+        return new Product(
+            1,
+            "name",
+            "description",
+            142);
+    }
 
     #endregion Helpers
 }

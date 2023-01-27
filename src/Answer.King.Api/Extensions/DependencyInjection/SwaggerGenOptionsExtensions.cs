@@ -1,4 +1,4 @@
-﻿using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Answer.King.Api.Extensions.DependencyInjection;
 
@@ -38,7 +38,7 @@ public static class SwaggerGenOptionsExtensions
         }
 
         var prefix = modelType.GetGenericArguments()
-            .Select(genericArg => CustomSchemaIdSelector(genericArg))
+            .Select(CustomSchemaIdSelector)
             .Aggregate((previous, current) => previous + current);
 
         var genericSchemaId = modelType.Name.Split('`').First();

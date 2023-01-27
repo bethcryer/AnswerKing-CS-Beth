@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Infrastructure.SeedData;
@@ -12,10 +12,11 @@ public static class LiteDbServiceCollectionExtensions
 {
     public static IServiceCollection ConfigureLiteDb(this IServiceCollection services, Action<LiteDbOptions>? setupAction = null)
     {
-        var action = setupAction ?? delegate { };
+        var action = setupAction;
+
         var options = new LiteDbOptions();
 
-        action(options);
+        action?.Invoke(options);
 
         options.EntityMappers.ForEach(type => services.Add(ServiceDescriptor.Transient(typeof(IEntityMapping), type)));
         options.DataSeeders.ForEach(type => services.Add(ServiceDescriptor.Transient(typeof(ISeedData), type)));

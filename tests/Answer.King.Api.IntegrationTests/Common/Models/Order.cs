@@ -50,8 +50,11 @@ public class LineItem
         this.Quantity = quantity;
         this.SubTotal = subTotal;
     }
+
     public OrderProduct Product { get; set; }
+
     public long Quantity { get; set; }
+
     public double SubTotal { get; set; }
 }
 
@@ -69,6 +72,7 @@ public class OrderProduct
         this.Description = description;
         this.Price = price;
     }
+
     public long Id { get; }
 
     public string Name { get; set; }

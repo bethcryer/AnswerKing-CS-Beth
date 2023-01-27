@@ -1,10 +1,11 @@
-﻿namespace Answer.King.Domain;
+namespace Answer.King.Domain;
 
-public interface IAggregateRepository<T> where T : IAggregateRoot
+public interface IAggregateRepository<T>
+    where T : IAggregateRoot
 {
-    Task<IEnumerable<T>> Get();
+    Task<IEnumerable<T>> GetAll();
 
-    Task<T?> Get(long id);
+    Task<T?> GetOne(long id);
 
     Task Save(T item);
 }

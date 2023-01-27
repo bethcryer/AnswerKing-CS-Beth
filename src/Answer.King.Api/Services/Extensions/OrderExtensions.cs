@@ -1,5 +1,4 @@
 ﻿using Answer.King.Domain.Orders;
-using Answer.King.Domain.Orders.Models;
 using Product = Answer.King.Domain.Repositories.Models.Product;
 
 namespace Answer.King.Api.Services.Extensions;
@@ -50,7 +49,7 @@ public static class OrderExtensions
                 {
                     ProductId = lineItem.Product.Id,
                     QuantityDifference = lineItem.Quantity,
-                    IsIncrease = false
+                    IsIncrease = false,
                 });
 
         return removeActions;
@@ -71,7 +70,7 @@ public static class OrderExtensions
                 {
                     ProductId = lineItem.ProductId,
                     QuantityDifference = lineItem.Quantity,
-                    IsIncrease = true
+                    IsIncrease = true,
                 });
 
         return addActions;
@@ -98,26 +97,33 @@ public static class OrderExtensions
                 {
                     ProductId = lineItem.Product.Id,
                     QuantityDifference = Math.Abs(lineItem.Quantity - updatedLineItem.Quantity),
-                    IsIncrease = lineItem.Quantity < updatedLineItem.Quantity
+                    IsIncrease = lineItem.Quantity < updatedLineItem.Quantity,
                 };
             });
 
         return quantityAddRemoveActions.Where(action => action.QuantityDifference > 0).ToList();
     }
 
-    private class AddRemoveUpdateAction
+    private sealed class AddRemoveUpdateAction
     {
         /// <summary>
-        /// Product Id to provide when calling <see cref="Order.AddLineItem"/> or <see cref="Order.RemoveLineItem"/>.
+        /// Gets the product id.
         /// </summary>
-        public long ProductId { get; set; }
+        /// <remarks>Provided when calling <see cref="Order.AddLineItem"/> or <see cref="Order.RemoveLineItem"/>.</remarks>
+        public long ProductId { get; init; }
 
         /// <summary>
+        /// Gets the quantity difference.
+        /// </summary>
+        /// <remarks>
         /// Quantity to add/remove when calling <see cref="Order.AddLineItem"/> or <see cref="Order.RemoveLineItem"/>.
-        /// </summary>
-        public int QuantityDifference { get; set; }
+        /// </remarks>
+        public int QuantityDifference { get; init; }
 
         /// <summary>
+        /// Gets a value indicating whether we should increase or decrease.
+        /// </summary>
+        /// <remarks>
         /// <para>
         /// If set to <see langword="true"/> the value of <see cref="QuantityDifference"/> will be added as the quantity
         /// when calling <see cref="Order.AddLineItem"/>.
@@ -126,7 +132,7 @@ public static class OrderExtensions
         /// If set to <see langword="false"/> the value of <see cref="QuantityDifference"/> will be added as the quantity
         /// when calling <see cref="Order.RemoveLineItem"/>.
         /// </para>
-        /// </summary>
-        public bool IsIncrease { get; set; }
+        /// </remarks>
+        public bool IsIncrease { get; init; }
     }
 }

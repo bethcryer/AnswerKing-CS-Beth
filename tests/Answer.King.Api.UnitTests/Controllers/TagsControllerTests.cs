@@ -1,4 +1,4 @@
-﻿using Answer.King.Api.Controllers;
+using Answer.King.Api.Controllers;
 using Answer.King.Api.Services;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
@@ -8,12 +8,24 @@ using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
+using TagProductsRequest = Answer.King.Api.RequestModels.TagProducts;
+using TagRequest = Answer.King.Api.RequestModels.Tag;
 
 namespace Answer.King.Api.UnitTests.Controllers;
 
 [TestCategory(TestType.Unit)]
 public class TagsControllerTests
 {
+    #region Setup
+
+    private static readonly ITagService TagService = Substitute.For<ITagService>();
+
+    private static readonly IProductService ProductService = Substitute.For<IProductService>();
+
+    private static readonly TagsController GetSubjectUnderTest = new(TagService, ProductService);
+
+    #endregion Setup
+
     #region GenericControllerTests
 
     [Fact]
@@ -40,8 +52,7 @@ public class TagsControllerTests
     public async Task GetAll_ValidRequest_ReturnsOkObjectResult()
     {
         // Arrange
-        var data = new List<Tag>();
-        TagService.GetTags().Returns(data);
+        TagService.GetTags().Returns(new List<Tag>());
 
         // Act
         var result = await GetSubjectUnderTest.GetAll();
@@ -107,10 +118,10 @@ public class TagsControllerTests
     public async Task Post_ValidRequestCallsGetAction_ReturnsNewTag()
     {
         // Arrange
-        var tagRequestModel = new RequestModels.Tag
+        var tagRequestModel = new TagRequest
         {
             Name = "TAG_NAME",
-            Description = "TAG_DESCRIPTION"
+            Description = "TAG_DESCRIPTION",
         };
 
         var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId>());
@@ -121,8 +132,7 @@ public class TagsControllerTests
         var result = await GetSubjectUnderTest.Post(tagRequestModel);
 
         // Assert
-        Assert.Equal(tagRequestModel.Name, tag.Name);
-        Assert.Equal(tagRequestModel.Description, tag.Description);
+        await TagService.Received().CreateTag(tagRequestModel);
         Assert.IsType<CreatedAtActionResult>(result);
     }
 
@@ -156,10 +166,10 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagRequestModel = new RequestModels.Tag
+        var tagRequestModel = new TagRequest
         {
             Name = "TAG_NAME",
-            Description = "TAG_DESCRIPTION"
+            Description = "TAG_DESCRIPTION",
         };
 
         var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId>());
@@ -205,9 +215,9 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagAddProductsRequestModel = new RequestModels.TagProducts
+        var tagAddProductsRequestModel = new TagProductsRequest
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         TagService.AddProducts(id, tagAddProductsRequestModel).Throws(new TagServiceException("The provided product id is not valid."));
@@ -224,9 +234,9 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagAddProductsRequestModel = new RequestModels.TagProducts
+        var tagAddProductsRequestModel = new TagProductsRequest
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId> { new(1) });
@@ -271,9 +281,9 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagRemoveProductsRequestModel = new RequestModels.TagProducts
+        var tagRemoveProductsRequestModel = new TagProductsRequest
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         TagService.RemoveProducts(id, tagRemoveProductsRequestModel).Throws(new TagServiceException("The provided product id is not valid."));
@@ -290,9 +300,9 @@ public class TagsControllerTests
     {
         // Arrange
         const int id = 1;
-        var tagAddProductsRequestModel = new RequestModels.TagProducts
+        var tagAddProductsRequestModel = new TagProductsRequest
         {
-            Products = new List<long> { 1 }
+            Products = new List<long> { 1 },
         };
 
         var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId>());
@@ -373,15 +383,4 @@ public class TagsControllerTests
     }
 
     #endregion GetProducts
-
-    #region Setup
-
-    private static readonly ITagService TagService = Substitute.For<ITagService>();
-
-    private static readonly IProductService ProductService = Substitute.For<IProductService>();
-
-    private static readonly TagsController GetSubjectUnderTest =
-        new TagsController(TagService, ProductService);
-
-    #endregion Setup
 }

@@ -1,4 +1,4 @@
-﻿using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Test.Common.CustomTraits;
 using Xunit;
@@ -30,7 +30,7 @@ public class TagTests
     public void RenameTag_WithBlankName_ThrowsException()
     {
         var tag = new Tag("Vegan", "Non-animal products", new List<ProductId>());
-        Assert.Throws<Guard.EmptyStringException>(() => tag.Rename("", "Buy one get one free!"));
+        Assert.Throws<Guard.EmptyStringException>(() => tag.Rename(string.Empty, "Buy one get one free!"));
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class TagTests
     public void RenameTag_WithBlankDescription_ThrowsException()
     {
         var tag = new Tag("Vegan", "Non-animal products", new List<ProductId>());
-        Assert.Throws<Guard.EmptyStringException>(() => tag.Rename("BOGOF", ""));
+        Assert.Throws<Guard.EmptyStringException>(() => tag.Rename("BOGOF", string.Empty));
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class TagTests
         var tag = new Tag("Vegan", "Non-animal products", new List<ProductId>());
         tag.AddProduct(new ProductId(1));
 
-        Assert.Throws<TagLifecycleException>(() => tag.RetireTag());
+        Assert.Throws<TagLifecycleException>(tag.RetireTag);
     }
 
     [Fact]

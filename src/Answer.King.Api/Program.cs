@@ -1,5 +1,6 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text.Json.Serialization;
+using Answer.King.Api.Common.HealthChecks;
 using Answer.King.Api.Common.JsonConverters;
 using Answer.King.Api.Common.Validators;
 using Answer.King.Api.Extensions.DependencyInjection;
@@ -19,13 +20,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var corsAllowAnyPolicy = "AllowAnyOrigin";
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy(corsAllowAnyPolicy,
+    options.AddPolicy(
+        corsAllowAnyPolicy,
         policy =>
             policy.AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader());
-});
+                .AllowAnyHeader()));
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -78,6 +78,16 @@ builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ITagService, TagService>();
 
+builder.Services.AddOptions<HealthCheckOptions>(HealthCheckOptions.OptionsConfig);
+
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("Database")
+    .Services.ConfigureLiteDb(options =>
+{
+    options.RegisterEntityMappingsFromAssemblyContaining<IEntityMapping>();
+    options.RegisterDataSeedingFromAssemblyContaining<ISeedData>();
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -92,5 +102,6 @@ app.UseHttpsRedirection();
 app.UseCors(corsAllowAnyPolicy);
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();

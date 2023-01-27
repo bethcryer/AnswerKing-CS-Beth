@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Repositories.Models;
 using LiteDB;
@@ -20,17 +19,17 @@ public class ProductRepository : IProductRepository
 
     private ILiteCollection<Product> Collection { get; }
 
-    public Task<Product?> Get(long id)
+    public Task<Product?> GetOne(long id)
     {
         return Task.FromResult(this.Collection.FindOne(c => c.Id == id))!;
     }
 
-    public Task<IEnumerable<Product>> Get()
+    public Task<IEnumerable<Product>> GetAll()
     {
         return Task.FromResult(this.Collection.FindAll());
     }
 
-    public Task<IEnumerable<Product>> Get(IEnumerable<long> ids)
+    public Task<IEnumerable<Product>> GetMany(IEnumerable<long> ids)
     {
         return Task.FromResult(this.Collection.Find(p => ids.Contains(p.Id)));
     }
@@ -43,7 +42,7 @@ public class ProductRepository : IProductRepository
     public Task<IEnumerable<Product>> GetByCategoryId(long categoryId)
     {
         var query = Query.EQ("categories[*] ANY", categoryId);
-        return Task.FromResult(this.Collection.Find(query))!;
+        return Task.FromResult(this.Collection.Find(query));
     }
 
     public Task<IEnumerable<Product>> GetByCategoryId(params long[] categoryIds)

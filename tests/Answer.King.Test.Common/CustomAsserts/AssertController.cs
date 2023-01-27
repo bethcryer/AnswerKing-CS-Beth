@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Xunit;
 
@@ -13,7 +13,7 @@ public static class AssertController
 
         attr.AssertAttributeCount<RouteAttribute>();
 
-        Assert.Equal(route.ToLower(), ((RouteAttribute)attr[0]).Template.ToLower());
+        Assert.Equal(route, ((RouteAttribute)attr[0]).Template, true);
     }
 
     public static void MethodHasVerb<TController, TVerbAttribute>(string methodName)
@@ -61,6 +61,6 @@ public static class AssertController
 
         attr.AssertAttributeCount<RouteAttribute>();
 
-        Assert.Equal(template.ToLower(), ((RouteAttribute)attr[0]).Template.ToLower());
+        Assert.Equal(template, ((RouteAttribute)attr[0]).Template, true);
     }
 }

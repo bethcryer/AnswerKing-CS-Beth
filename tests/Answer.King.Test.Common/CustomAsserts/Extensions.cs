@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace Answer.King.Test.Common.CustomAsserts;
 
@@ -23,7 +23,7 @@ internal static class Extensions
 
     internal static void AssertAttributeCountCorrectValue(this ICollection<object> attr, string value)
     {
-        var baseMessage = $"Assert has {typeof(EnumMemberAttribute).Name} attribute failure.";
+        var baseMessage = $"Assert has {nameof(EnumMemberAttribute)} attribute failure.";
 
         if (attr.Count == 0)
         {
@@ -38,7 +38,7 @@ internal static class Extensions
 
         var attribute = (EnumMemberAttribute)attr.First();
 
-        if (!string.Equals(attribute.Value, value))
+        if (!string.Equals(attribute.Value, value, StringComparison.Ordinal))
         {
             throw new Exception(
                 $"{baseMessage} Attribute value expected to be '{value}' but got '{attribute.Value}'.");

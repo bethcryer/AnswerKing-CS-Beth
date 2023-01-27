@@ -1,9 +1,11 @@
-﻿using Answer.King.Domain.Repositories.Models;
+using Answer.King.Domain.Repositories.Models;
 
 namespace Answer.King.Infrastructure.SeedData;
 
 public class ProductDataSeeder : ISeedData
 {
+    private bool DataSeeded { get; set; }
+
     public void SeedData(ILiteDbConnectionFactory connections)
     {
         if (this.DataSeeded)
@@ -22,6 +24,4 @@ public class ProductDataSeeder : ISeedData
 
         this.DataSeeded = true;
     }
-
-    private bool DataSeeded { get; set; }
 }

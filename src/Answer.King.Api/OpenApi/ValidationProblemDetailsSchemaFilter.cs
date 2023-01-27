@@ -19,7 +19,7 @@ public class ValidationProblemDetailsSchemaFilter : ISchemaFilter
         {
             WriteIndented = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
 
         var exampleValidationProblemDetails = new ValidationProblemDetails
@@ -29,7 +29,7 @@ public class ValidationProblemDetailsSchemaFilter : ISchemaFilter
             Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
             Title = "One or more validation errors occurred.",
             Status = 400,
-            TraceId = "00-f40e09a437a87f4ebcd2f39b128bb8f3-4b2ad798ac046140-00"
+            TraceId = "00-f40e09a437a87f4ebcd2f39b128bb8f3-4b2ad798ac046140-00",
         };
 
         var example = JsonSerializer.Serialize(
@@ -74,7 +74,7 @@ public class ValidationProblemDetailsSchemaFilter : ISchemaFilter
         {
             Type = "string",
             Description = "A unique identifier to represent this request in trace logs.",
-            Nullable = false
+            Nullable = false,
         };
 
         schema.Properties.Add("traceId", traceId);
