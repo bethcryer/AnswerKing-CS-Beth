@@ -14,7 +14,7 @@ internal static class ProductData
     {
         ProductFactory.CreateProduct(
             1,
-            "Fish",
+            "Fish TEST1",
             "Delicious and satisfying.",
             5.99,
             Category(1),
