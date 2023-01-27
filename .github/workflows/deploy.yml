@@ -67,12 +67,12 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Download task definition
-          run: |
-            aws ecs describe-task-definition --task-definition answerking-dotnet-api-task --query taskDefinition > task-definition.json
+        run: aws ecs describe-task-definition --task-definition answerking-dotnet-api-task --query taskDefinition > task-definition.json
 
       - name: Echo task definition
-        - run: echo "PACKAGE_JSON=$(jq -c . < task-definition.json)" >> $GITHUB_ENV
-        - run: '${{ fromJson(env.PACKAGE_JSON) }}'
+        run: |
+          echo "PACKAGE_JSON=$(jq -c . < task-definition.json)" >> $GITHUB_ENV
+          echo '${{ fromJson(env.PACKAGE_JSON) }}'
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
