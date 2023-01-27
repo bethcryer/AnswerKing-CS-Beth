@@ -66,7 +66,7 @@ jobs:
       - name: Echo task definition
         run: |
           echo "PACKAGE_JSON=$(jq -c . < task-definition.json)" >> $GITHUB_ENV
-          echo '${{ fromJson(env.PACKAGE_JSON) }}'
+          echo '${{ fromJson(env.PACKAGE_JSON).version }}'
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
