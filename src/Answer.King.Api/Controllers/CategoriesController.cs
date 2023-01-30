@@ -1,5 +1,6 @@
 using Answer.King.Api.RequestModels;
 using Answer.King.Api.Services;
+using Answer.King.Domain.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -111,7 +112,7 @@ public class CategoriesController : ControllerBase
 
             return this.Ok(category);
         }
-        catch (CategoryServiceException ex)
+        catch (Exception ex) when (ex is CategoryServiceException or ProductLifecycleException)
         {
             this.ModelState.AddModelError("products", ex.Message);
             return this.ValidationProblem();

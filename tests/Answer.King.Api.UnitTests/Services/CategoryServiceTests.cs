@@ -237,6 +237,36 @@ public class CategoryServiceTests
     }
 
     [Fact]
+    public async Task UpdateCategory_AddNullProduct_ThrowsException()
+    {
+        // Arrange
+        var oldProduct = CreateProduct(1, "product", "desc", 1.0);
+        var oldProducts = new[]
+        {
+            oldProduct,
+        };
+        var oldCategory = CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
+
+        var updatedProduct = CreateProduct(2, "updated product", "desc", 10.0);
+
+        this.categoryRepository.GetOne(Arg.Any<long>()).Returns(oldCategory);
+        this.productRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
+        this.productRepository.GetOne(updatedProduct.Id).Returns(default(Product));
+
+        var updatedCategory = new CategoryRequest
+        {
+            Name = "updated category",
+            Description = "desc",
+            Products = new List<long> { updatedProduct.Id },
+        };
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        await Assert.ThrowsAsync<CategoryServiceException>(() =>
+            sut.UpdateCategory(oldCategory.Id, updatedCategory));
+    }
+
+    [Fact]
     public async Task UpdateCategory_AddProductRetired_ThrowsException()
     {
         // Arrange
