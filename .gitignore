@@ -455,3 +455,10 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Terraform
+.idea/*
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup

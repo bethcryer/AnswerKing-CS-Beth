@@ -7,6 +7,7 @@ public class LiteDbConnectionFactory : ILiteDbConnectionFactory
 {
     public LiteDbConnectionFactory(IConfiguration config, BsonMapper mapper)
     {
+        System.IO.Directory.CreateDirectory("db");
         var connectionString = config.GetConnectionString("AnswerKing");
 
         if (string.IsNullOrWhiteSpace(connectionString))
