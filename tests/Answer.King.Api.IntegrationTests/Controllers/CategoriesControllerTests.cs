@@ -157,7 +157,7 @@ public class CategoriesControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { 5 },
+                    Products = new List<long> { 1000 },
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -249,7 +249,7 @@ public class CategoriesControllerTests : WebFixtures
                 {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { 5 },
+                    Products = new List<long> { 1000 },
                 })
                 .ToUrl("/api/categories/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);

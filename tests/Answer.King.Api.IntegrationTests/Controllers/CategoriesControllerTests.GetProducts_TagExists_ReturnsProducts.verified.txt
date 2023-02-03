@@ -10,5 +10,17 @@
       Description: Food from the oceans
     },
     Retired: false
+  },
+  {
+    Id: 18,
+    Name: Scampi,
+    Description: Breaded scampi,
+    Price: 7.99,
+    Category: {
+      Id: 1,
+      Name: Seafood,
+      Description: Food from the oceans
+    },
+    Retired: true
   }
 ]

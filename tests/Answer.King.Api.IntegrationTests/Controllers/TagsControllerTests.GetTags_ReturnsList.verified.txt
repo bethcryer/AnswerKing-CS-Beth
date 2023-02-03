@@ -7,7 +7,28 @@
     LastUpdated: DateTime_2,
     Products: [
       {
-        Value: 1
+        Value: 3
+      },
+      {
+        Value: 8
+      },
+      {
+        Value: 11
+      },
+      {
+        Value: 12
+      },
+      {
+        Value: 14
+      },
+      {
+        Value: 22
+      },
+      {
+        Value: 23
+      },
+      {
+        Value: 24
       }
     ],
     Retired: false
@@ -21,6 +42,40 @@
     Products: [
       {
         Value: 2
+      },
+      {
+        Value: 4
+      },
+      {
+        Value: 10
+      }
+    ],
+    Retired: false
+  },
+  {
+    Id: 3,
+    Name: Vegetartian,
+    Description: No meat products,
+    CreatedOn: DateTime_3,
+    LastUpdated: DateTime_4,
+    Products: [
+      {
+        Value: 9
+      },
+      {
+        Value: 13
+      },
+      {
+        Value: 15
+      },
+      {
+        Value: 19
+      },
+      {
+        Value: 20
+      },
+      {
+        Value: 21
       }
     ],
     Retired: false

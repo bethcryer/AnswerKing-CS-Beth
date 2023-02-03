@@ -8,6 +8,9 @@
     Products: [
       {
         Value: 1
+      },
+      {
+        Value: 18
       }
     ],
     Retired: false
@@ -15,12 +18,125 @@
   {
     Id: 2,
     Name: Sundries,
-    Description: Things that go with things.,
+    Description: Sides,
     CreatedOn: DateTime_3,
     LastUpdated: DateTime_4,
     Products: [
       {
         Value: 2
+      },
+      {
+        Value: 3
+      },
+      {
+        Value: 13
+      },
+      {
+        Value: 14
+      },
+      {
+        Value: 15
+      }
+    ],
+    Retired: false
+  },
+  {
+    Id: 3,
+    Name: Burgers,
+    Description: Patty served in a sliced bun.,
+    CreatedOn: DateTime_5,
+    LastUpdated: DateTime_6,
+    Products: [
+      {
+        Value: 4
+      },
+      {
+        Value: 5
+      },
+      {
+        Value: 6
+      },
+      {
+        Value: 7
+      },
+      {
+        Value: 8
+      }
+    ],
+    Retired: false
+  },
+  {
+    Id: 4,
+    Name: Pizza,
+    Description: Stone baked flat bread with toppings.,
+    CreatedOn: DateTime_5,
+    LastUpdated: DateTime_7,
+    Products: [
+      {
+        Value: 9
+      },
+      {
+        Value: 10
+      },
+      {
+        Value: 11
+      },
+      {
+        Value: 12
+      }
+    ],
+    Retired: false
+  },
+  {
+    Id: 5,
+    Name: Grills,
+    Description: Flame grilled options.,
+    CreatedOn: DateTime_5,
+    LastUpdated: DateTime_8,
+    Products: [
+      {
+        Value: 16
+      },
+      {
+        Value: 17
+      }
+    ],
+    Retired: false
+  },
+  {
+    Id: 6,
+    Name: Desserts,
+    Description: Sweet treats.,
+    CreatedOn: DateTime_5,
+    LastUpdated: DateTime_9,
+    Products: [
+      {
+        Value: 19
+      },
+      {
+        Value: 20
+      },
+      {
+        Value: 21
+      }
+    ],
+    Retired: false
+  },
+  {
+    Id: 7,
+    Name: Drinks,
+    Description: Alcoholic and non-alcoholic beverages,
+    CreatedOn: DateTime_10,
+    LastUpdated: DateTime_11,
+    Products: [
+      {
+        Value: 22
+      },
+      {
+        Value: 23
+      },
+      {
+        Value: 24
       }
     ],
     Retired: false

@@ -19,7 +19,7 @@
     Category: {
       Id: 2,
       Name: Sundries,
-      Description: Things that go with things.
+      Description: Sides
     },
     Retired: false
   },
@@ -31,8 +31,260 @@
     Category: {
       Id: 2,
       Name: Sundries,
-      Description: Things that go with things.
+      Description: Sides
     },
     Retired: true
+  },
+  {
+    Id: 4,
+    Name: Plain Burger,
+    Description: Plain beef patty served in a sliced bun,
+    Price: 8.99,
+    Category: {
+      Id: 3,
+      Name: Burgers,
+      Description: Patty served in a sliced bun.
+    },
+    Retired: false
+  },
+  {
+    Id: 5,
+    Name: Cheese Burger,
+    Description: Plain burger with cheese,
+    Price: 9.99,
+    Category: {
+      Id: 3,
+      Name: Burgers,
+      Description: Patty served in a sliced bun.
+    },
+    Retired: false
+  },
+  {
+    Id: 6,
+    Name: Bacon Burger,
+    Description: Plain burger with bacon,
+    Price: 9.99,
+    Category: {
+      Id: 3,
+      Name: Burgers,
+      Description: Patty served in a sliced bun.
+    },
+    Retired: false
+  },
+  {
+    Id: 7,
+    Name: Chicken Burger,
+    Description: Breadcrumbed chicken breast served in a sliced bun,
+    Price: 8.5,
+    Category: {
+      Id: 3,
+      Name: Burgers,
+      Description: Patty served in a sliced bun.
+    },
+    Retired: false
+  },
+  {
+    Id: 8,
+    Name: Plant Burger,
+    Description: Plant based patty served in a sliced bun,
+    Price: 9.99,
+    Category: {
+      Id: 3,
+      Name: Burgers,
+      Description: Patty served in a sliced bun.
+    },
+    Retired: false
+  },
+  {
+    Id: 9,
+    Name: Margherita,
+    Description: Tomato and mozarella with fresh basil,
+    Price: 10.99,
+    Category: {
+      Id: 4,
+      Name: Pizza,
+      Description: Stone baked flat bread with toppings.
+    },
+    Retired: false
+  },
+  {
+    Id: 10,
+    Name: Pepperoni,
+    Description: Tomato, mozzarella and pepperoni,
+    Price: 11.99,
+    Category: {
+      Id: 4,
+      Name: Pizza,
+      Description: Stone baked flat bread with toppings.
+    },
+    Retired: false
+  },
+  {
+    Id: 11,
+    Name: Vegan Club,
+    Description: This Isn’t bacon, vegan chick’n pieces, vegan mozzarella and fresh tomatoes,
+    Price: 12.99,
+    Category: {
+      Id: 4,
+      Name: Pizza,
+      Description: Stone baked flat bread with toppings.
+    },
+    Retired: false
+  },
+  {
+    Id: 12,
+    Name: Spicy Shawarma,
+    Description: Tomato and chilli sauce, vegan shawarma, vegan mozzarella, green peppers and jalapenos,
+    Price: 12.99,
+    Category: {
+      Id: 4,
+      Name: Pizza,
+      Description: Stone baked flat bread with toppings.
+    },
+    Retired: false
+  },
+  {
+    Id: 13,
+    Name: Nachos,
+    Description: Corn tortilla chips, with cheese, jalapeños, guacamole, spring onions, coriander and salsa,
+    Price: 2.99,
+    Category: {
+      Id: 2,
+      Name: Sundries,
+      Description: Sides
+    },
+    Retired: false
+  },
+  {
+    Id: 14,
+    Name: Potato Wedges,
+    Description: Baked southern spiced potato wedges,
+    Price: 2.99,
+    Category: {
+      Id: 2,
+      Name: Sundries,
+      Description: Sides
+    },
+    Retired: false
+  },
+  {
+    Id: 15,
+    Name: Onion Rings,
+    Description: Battered, deep fried onion rings,
+    Price: 1.99,
+    Category: {
+      Id: 2,
+      Name: Sundries,
+      Description: Sides
+    },
+    Retired: false
+  },
+  {
+    Id: 16,
+    Name: Sirloin Steak,
+    Description: Locally sourced 8oz sirloin,
+    Price: 16.99,
+    Category: {
+      Id: 5,
+      Name: Grills,
+      Description: Flame grilled options.
+    },
+    Retired: false
+  },
+  {
+    Id: 17,
+    Name: Rump Steak,
+    Description: Locally sourced 10oz rump,
+    Price: 14.99,
+    Category: {
+      Id: 5,
+      Name: Grills,
+      Description: Flame grilled options.
+    },
+    Retired: false
+  },
+  {
+    Id: 18,
+    Name: Scampi,
+    Description: Breaded scampi,
+    Price: 7.99,
+    Category: {
+      Id: 1,
+      Name: Seafood,
+      Description: Food from the oceans
+    },
+    Retired: true
+  },
+  {
+    Id: 19,
+    Name: Cheesecake,
+    Description: Breadcrumb and cream cheese dessert,
+    Price: 4.99,
+    Category: {
+      Id: 6,
+      Name: Desserts,
+      Description: Sweet treats.
+    },
+    Retired: false
+  },
+  {
+    Id: 20,
+    Name: Ice Cream,
+    Description: Frozen dessert,
+    Price: 4.99,
+    Category: {
+      Id: 6,
+      Name: Desserts,
+      Description: Sweet treats.
+    },
+    Retired: false
+  },
+  {
+    Id: 21,
+    Name: Popcorn Sundae,
+    Description: Ice cream, chocolate fudge and popcorn,
+    Price: 6.99,
+    Category: {
+      Id: 6,
+      Name: Desserts,
+      Description: Sweet treats.
+    },
+    Retired: false
+  },
+  {
+    Id: 22,
+    Name: Lager,
+    Description: Alcoholic,
+    Price: 2.5,
+    Category: {
+      Id: 7,
+      Name: Drinks,
+      Description: Alcoholic and non-alcoholic beverages
+    },
+    Retired: false
+  },
+  {
+    Id: 23,
+    Name: Wine,
+    Description: Alcoholic,
+    Price: 4.5,
+    Category: {
+      Id: 7,
+      Name: Drinks,
+      Description: Alcoholic and non-alcoholic beverages
+    },
+    Retired: false
+  },
+  {
+    Id: 24,
+    Name: Cocktail,
+    Description: Alcoholic,
+    Price: 7.5,
+    Category: {
+      Id: 7,
+      Name: Drinks,
+      Description: Alcoholic and non-alcoholic beverages
+    },
+    Retired: false
   }
 ]

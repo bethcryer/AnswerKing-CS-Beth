@@ -7,6 +7,9 @@
   Products: [
     {
       Value: 1
+    },
+    {
+      Value: 18
     }
   ],
   Retired: false

@@ -11,6 +11,8 @@ internal static class OrderData
 {
     private static readonly OrderFactory OrderFactory = new();
 
+    private static readonly DateTime Now = DateTime.UtcNow;
+
     public static IList<Order> Orders { get; } = GetOrders();
 
     private static IList<Order> GetOrders()
@@ -47,8 +49,8 @@ internal static class OrderData
 
         return OrderFactory.CreateOrder(
             0,
-            DateTime.UtcNow.AddHours(-1),
-            DateTime.UtcNow.AddMinutes(-10),
+            Now.AddHours(-1),
+            Now.AddMinutes(-10),
             OrderStatus.Created,
             lineItems);
     }
@@ -59,8 +61,8 @@ internal static class OrderData
 
         return OrderFactory.CreateOrder(
             0,
-            DateTime.UtcNow.AddHours(-3),
-            DateTime.UtcNow.AddMinutes(-50),
+            Now.AddHours(-3),
+            Now.AddMinutes(-50),
             OrderStatus.Cancelled,
             lineItems);
     }

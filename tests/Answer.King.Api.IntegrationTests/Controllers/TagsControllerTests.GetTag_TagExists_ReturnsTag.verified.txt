@@ -6,7 +6,28 @@
   LastUpdated: DateTime_2,
   Products: [
     {
-      Value: 1
+      Value: 3
+    },
+    {
+      Value: 8
+    },
+    {
+      Value: 11
+    },
+    {
+      Value: 12
+    },
+    {
+      Value: 14
+    },
+    {
+      Value: 22
+    },
+    {
+      Value: 23
+    },
+    {
+      Value: 24
     }
   ],
   Retired: false

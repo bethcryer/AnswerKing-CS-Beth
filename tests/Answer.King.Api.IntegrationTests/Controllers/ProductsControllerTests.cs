@@ -189,7 +189,7 @@ public class ProductsControllerTests : WebFixtures
                     Price = 1.50,
                     CategoryId = new CategoryId(1),
                 })
-                .ToUrl("/api/products/5");
+                .ToUrl("/api/products/1000");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
@@ -259,7 +259,7 @@ public class ProductsControllerTests : WebFixtures
         var putResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
-                .Url("/api/products/5");
+                .Url("/api/products/1000");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 

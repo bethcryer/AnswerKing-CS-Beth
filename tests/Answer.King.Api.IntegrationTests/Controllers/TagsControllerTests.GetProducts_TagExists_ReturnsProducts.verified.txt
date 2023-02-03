@@ -1,13 +1,97 @@
 ﻿[
   {
-    Id: 1,
-    Name: Fish,
-    Description: Delicious and satisfying.,
-    Price: 5.99,
+    Id: 3,
+    Name: Gravy,
+    Description: Side,
+    Price: 0.99,
     Category: {
-      Id: 1,
-      Name: Seafood,
-      Description: Food from the oceans
+      Id: 2,
+      Name: Sundries,
+      Description: Sides
+    },
+    Retired: true
+  },
+  {
+    Id: 8,
+    Name: Plant Burger,
+    Description: Plant based patty served in a sliced bun,
+    Price: 9.99,
+    Category: {
+      Id: 3,
+      Name: Burgers,
+      Description: Patty served in a sliced bun.
+    },
+    Retired: false
+  },
+  {
+    Id: 11,
+    Name: Vegan Club,
+    Description: This Isn’t bacon, vegan chick’n pieces, vegan mozzarella and fresh tomatoes,
+    Price: 12.99,
+    Category: {
+      Id: 4,
+      Name: Pizza,
+      Description: Stone baked flat bread with toppings.
+    },
+    Retired: false
+  },
+  {
+    Id: 12,
+    Name: Spicy Shawarma,
+    Description: Tomato and chilli sauce, vegan shawarma, vegan mozzarella, green peppers and jalapenos,
+    Price: 12.99,
+    Category: {
+      Id: 4,
+      Name: Pizza,
+      Description: Stone baked flat bread with toppings.
+    },
+    Retired: false
+  },
+  {
+    Id: 14,
+    Name: Potato Wedges,
+    Description: Baked southern spiced potato wedges,
+    Price: 2.99,
+    Category: {
+      Id: 2,
+      Name: Sundries,
+      Description: Sides
+    },
+    Retired: false
+  },
+  {
+    Id: 22,
+    Name: Lager,
+    Description: Alcoholic,
+    Price: 2.5,
+    Category: {
+      Id: 7,
+      Name: Drinks,
+      Description: Alcoholic and non-alcoholic beverages
+    },
+    Retired: false
+  },
+  {
+    Id: 23,
+    Name: Wine,
+    Description: Alcoholic,
+    Price: 4.5,
+    Category: {
+      Id: 7,
+      Name: Drinks,
+      Description: Alcoholic and non-alcoholic beverages
+    },
+    Retired: false
+  },
+  {
+    Id: 24,
+    Name: Cocktail,
+    Description: Alcoholic,
+    Price: 7.5,
+    Category: {
+      Id: 7,
+      Name: Drinks,
+      Description: Alcoholic and non-alcoholic beverages
     },
     Retired: false
   }
