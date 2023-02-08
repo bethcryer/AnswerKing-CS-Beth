@@ -36,6 +36,18 @@
           "StyleCop.Analyzers.Unstable": "1.2.0.435"
         }
       },
+      "Verify": {
+        "type": "Direct",
+        "requested": "[19.7.1, )",
+        "resolved": "19.7.1",
+        "contentHash": "Pm7bWHyay4s5/8TGsqVgeu0i0XHnYRvTwfAE1yFMmtFpfhymIcUYiuQ/5kucsXyocpeG9mxeYOETj1cQMx/BVg==",
+        "dependencies": {
+          "Argon": "0.2.1",
+          "DiffEngine": "11.1.0",
+          "EmptyFiles": "4.1.0",
+          "SimpleInfoName": "2.1.0"
+        }
+      },
       "Verify.Xunit": {
         "type": "Direct",
         "requested": "[19.7.1, )",
@@ -1086,17 +1098,6 @@
           "System.Xml.ReaderWriter": "4.3.0"
         }
       },
-      "Verify": {
-        "type": "Transitive",
-        "resolved": "19.7.1",
-        "contentHash": "Pm7bWHyay4s5/8TGsqVgeu0i0XHnYRvTwfAE1yFMmtFpfhymIcUYiuQ/5kucsXyocpeG9mxeYOETj1cQMx/BVg==",
-        "dependencies": {
-          "Argon": "0.2.1",
-          "DiffEngine": "11.1.0",
-          "EmptyFiles": "4.1.0",
-          "SimpleInfoName": "2.1.0"
-        }
-      },
       "xunit.abstractions": {
         "type": "Transitive",
         "resolved": "2.0.3",
@@ -1155,7 +1156,7 @@
       "answer.king.test.common": {
         "type": "Project",
         "dependencies": {
-          "xunit": "[2.4.1, )"
+          "xunit": "[2.4.2, )"
         }
       }
     }

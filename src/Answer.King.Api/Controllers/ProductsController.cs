@@ -10,8 +10,11 @@ namespace Answer.King.Api.Controllers;
 [Produces("application/json")]
 public class ProductsController : ControllerBase
 {
-    public ProductsController(IProductService products)
+    private readonly ILogger<ProductsController> logger;
+
+    public ProductsController(ILogger<ProductsController> logger, IProductService products)
     {
+        this.logger = logger;
         this.Products = products;
     }
 
@@ -28,6 +31,7 @@ public class ProductsController : ControllerBase
     [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> GetAll()
     {
+        this.logger.LogInformation("Get all Products request");
         return this.Ok(await this.Products.GetProducts());
     }
 

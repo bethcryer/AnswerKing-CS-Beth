@@ -4,17 +4,22 @@ using System.Threading.Tasks;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Repositories.Models;
 using LiteDB;
+using Microsoft.Extensions.Logging;
 
 namespace Answer.King.Infrastructure.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    public ProductRepository(ILiteDbConnectionFactory connections)
+    private readonly ILogger<ProductRepository> logger;
+
+    public ProductRepository(ILiteDbConnectionFactory connections, ILogger<ProductRepository> logger)
     {
         var db = connections.GetConnection();
 
         this.Collection = db.GetCollection<Product>();
         this.Collection.EnsureIndex("categories");
+
+        this.logger = logger;
     }
 
     private ILiteCollection<Product> Collection { get; }
@@ -26,6 +31,7 @@ public class ProductRepository : IProductRepository
 
     public Task<IEnumerable<Product>> GetAll()
     {
+        this.logger.LogInformation("Get all Products repository call");
         return Task.FromResult(this.Collection.FindAll());
     }
 
