@@ -73,6 +73,14 @@ public class ProductsController : ControllerBase
     [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> Post([FromBody] RequestModels.Product createProduct)
     {
+        var namedProduct = await this.Products.GetProductByName(createProduct.Name);
+
+        if (namedProduct != null)
+        {
+            this.ModelState.AddModelError("product", "A product with this name already exists");
+            return this.BadRequest();
+        }
+
         try
         {
             var product = await this.Products.CreateProduct(createProduct);
@@ -110,6 +118,14 @@ public class ProductsController : ControllerBase
             if (product == null)
             {
                 return this.NotFound();
+            }
+
+            var namedProduct = await this.Products.GetProductByName(updateProduct.Name);
+
+            if (namedProduct != null && id != namedProduct.Id)
+            {
+                this.ModelState.AddModelError("product", "A product with this name already exists");
+                return this.BadRequest();
             }
 
             return this.Ok(product);

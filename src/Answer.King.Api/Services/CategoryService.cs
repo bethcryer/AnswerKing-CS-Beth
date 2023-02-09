@@ -26,6 +26,11 @@ public class CategoryService : ICategoryService
         return await this.Categories.GetOne(categoryId);
     }
 
+    public async Task<Category?> GetCategoryByName(string name)
+    {
+        return await this.Categories.GetOne(name);
+    }
+
     public async Task<IEnumerable<Category>> GetCategories()
     {
         return await this.Categories.GetAll();

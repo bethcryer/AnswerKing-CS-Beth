@@ -10,6 +10,8 @@ public interface ITagService
 
     Task<Tag?> GetTag(long tagId);
 
+    Task<Tag?> GetTagByName(string name);
+
     Task<Tag?> RetireTag(long tagId);
 
     Task<Tag?> UpdateTag(long tagId, RequestModels.Tag updateTag);

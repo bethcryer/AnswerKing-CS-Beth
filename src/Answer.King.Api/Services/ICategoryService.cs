@@ -10,6 +10,8 @@ public interface ICategoryService
 
     Task<Category?> GetCategory(long categoryId);
 
+    Task<Category?> GetCategoryByName(string name);
+
     Task<Category?> RetireCategory(long categoryId);
 
     Task<Category?> UpdateCategory(long categoryId, RequestModels.Category updateCategory);

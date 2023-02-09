@@ -35,6 +35,11 @@ public class ProductService : IProductService
         return await this.Products.GetOne(productId);
     }
 
+    public async Task<Product?> GetProductByName(string name)
+    {
+        return await this.Products.GetOne(name);
+    }
+
     public async Task<Product> CreateProduct(RequestModels.Product createProduct)
     {
         var category = await this.Categories.GetOne(createProduct.CategoryId);

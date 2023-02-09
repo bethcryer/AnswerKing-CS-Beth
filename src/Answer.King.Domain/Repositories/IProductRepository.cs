@@ -6,6 +6,8 @@ public interface IProductRepository
 {
     Task<Product?> GetOne(long id);
 
+    Task<Product?> GetOne(string name);
+
     Task<IEnumerable<Product>> GetAll();
 
     Task<IEnumerable<Product>> GetMany(IEnumerable<long> ids);

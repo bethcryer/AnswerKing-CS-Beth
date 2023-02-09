@@ -4,4 +4,5 @@ namespace Answer.King.Domain.Repositories;
 
 public interface ITagRepository : IAggregateRepository<Tag>
 {
+    Task<Tag?> GetOne(string name);
 }

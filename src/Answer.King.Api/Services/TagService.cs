@@ -25,6 +25,11 @@ public class TagService : ITagService
         return await this.Tags.GetOne(tagId);
     }
 
+    public async Task<Tag?> GetTagByName(string name)
+    {
+        return await this.Tags.GetOne(name);
+    }
+
     public async Task<IEnumerable<Tag>> GetTags()
     {
         return await this.Tags.GetAll();

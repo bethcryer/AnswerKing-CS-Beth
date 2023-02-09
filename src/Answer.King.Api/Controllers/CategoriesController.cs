@@ -72,6 +72,14 @@ public class CategoriesController : ControllerBase
     [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> Post([FromBody] Category createCategory)
     {
+        var namedCategory = await this.Categories.GetCategoryByName(createCategory.Name);
+
+        if (namedCategory != null)
+        {
+            this.ModelState.AddModelError("category", "A category with this name already exists");
+            return this.BadRequest();
+        }
+
         try
         {
             var category = await this.Categories.CreateCategory(createCategory);
@@ -108,6 +116,14 @@ public class CategoriesController : ControllerBase
             if (category == null)
             {
                 return this.NotFound();
+            }
+
+            var namedCategory = await this.Categories.GetCategoryByName(updateCategory.Name);
+
+            if (namedCategory != null && namedCategory.Id != id)
+            {
+                this.ModelState.AddModelError("category", "A category with this name already exists");
+                return this.BadRequest();
             }
 
             return this.Ok(category);

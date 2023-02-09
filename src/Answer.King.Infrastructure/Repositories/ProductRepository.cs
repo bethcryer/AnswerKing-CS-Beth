@@ -29,6 +29,11 @@ public class ProductRepository : IProductRepository
         return Task.FromResult(this.Collection.FindOne(c => c.Id == id))!;
     }
 
+    public Task<Product?> GetOne(string name)
+    {
+        return Task.FromResult(this.Collection.FindOne(c => c.Name == name))!;
+    }
+
     public Task<IEnumerable<Product>> GetAll()
     {
         this.logger.LogInformation("Get all Products repository call");

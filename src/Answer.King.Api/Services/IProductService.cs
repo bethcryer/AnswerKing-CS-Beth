@@ -8,6 +8,8 @@ public interface IProductService
 
     Task<Product?> GetProduct(long productId);
 
+    Task<Product?> GetProductByName(string name);
+
     Task<IEnumerable<Product>> GetProducts();
 
     Task<IEnumerable<Product>> GetProducts(IEnumerable<long> productIds);
