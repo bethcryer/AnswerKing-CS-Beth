@@ -16,6 +16,18 @@ variable "owner" {
   default     = "answerking-dotnet-team"
 }
 
+variable "dns_record_name" {
+  type        = string
+  description = "DNS Record Name"
+  default     = "dotnet.answerking.co.uk"
+}
+
+variable "dns_base_domain_name" {
+  type        = string
+  description = "DNS Base Domain Name"
+  default     = "answerking.co.uk"
+}
+
 variable "image_url" {
   type        = string
   description = "AnswerKing C# API image"
@@ -37,13 +49,13 @@ variable "vpc_cidr" {
 variable "num_public_subnets" {
   type        = number
   description = "Number of public subnets"
-  default     = 2
+  default     = 1
 }
 
 variable "num_private_subnets" {
   type        = number
   description = "Number of private subnets"
-  default     = 2
+  default     = 1
 }
 
 variable "aws_cloudwatch_retention_in_days" {

@@ -32,7 +32,7 @@ resource "aws_autoscaling_group" "failure_analysis_ecs_asg" {
     vpc_zone_identifier       = [module.vpc_subnet.public_subnet_ids[0]]
     launch_configuration      = aws_launch_configuration.ecs_launch_config.name
 
-    desired_capacity          = 2
+    desired_capacity          = 1
     min_size                  = 1
     max_size                  = 5
     health_check_grace_period = 300
