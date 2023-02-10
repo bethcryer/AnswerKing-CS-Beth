@@ -1,0 +1,13 @@
+{
+  Id: 8,
+  Name: Test Category,
+  Description: Food from the oceans,
+  CreatedOn: DateTime_1,
+  LastUpdated: DateTime_2,
+  Products: [
+    {
+      Value: 1
+    }
+  ],
+  Retired: false
+}

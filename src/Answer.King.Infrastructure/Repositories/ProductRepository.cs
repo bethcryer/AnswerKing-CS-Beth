@@ -52,8 +52,7 @@ public class ProductRepository : IProductRepository
 
     public Task<IEnumerable<Product>> GetByCategoryId(long categoryId)
     {
-        var query = Query.EQ("categories[*] ANY", categoryId);
-        return Task.FromResult(this.Collection.Find(query));
+        return Task.FromResult(this.Collection.Find(p => p.Category.Id.Equals(categoryId)));
     }
 
     public Task<IEnumerable<Product>> GetByCategoryId(params long[] categoryIds)

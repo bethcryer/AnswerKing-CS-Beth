@@ -131,6 +131,29 @@ public class CategoriesControllerTests : WebFixtures
     }
 
     [Fact]
+    public async Task<VerifyResult> PostCategory_ValidModel_ReturnsNewCategoryWithProduct()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Test Category",
+                    Description = "Food from the oceans",
+                    Products = new List<long>
+                    {
+                        1,
+                    },
+                })
+                .ToUrl("/api/categories");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
+        });
+
+        var category = result.ReadAsJson<Category>();
+        return await Verify(category);
+    }
+
+    [Fact]
     public async Task<VerifyResult> PostCategory_InvalidDTO_ReturnsBadRequest()
     {
         var result = await this.AlbaHost.Scenario(_ =>
