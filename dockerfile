@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN dotnet restore && dotnet publish -c Release -o out
+RUN dotnet restore && dotnet publish src/Answer.King.Api/Answer.King.Api.csproj -c Release -o out
 
 #build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
