@@ -4,17 +4,22 @@ using System.Threading.Tasks;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Repositories.Models;
 using LiteDB;
+using Microsoft.Extensions.Logging;
 
 namespace Answer.King.Infrastructure.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    public ProductRepository(ILiteDbConnectionFactory connections)
+    private readonly ILogger<ProductRepository> logger;
+
+    public ProductRepository(ILiteDbConnectionFactory connections, ILogger<ProductRepository> logger)
     {
         var db = connections.GetConnection();
 
         this.Collection = db.GetCollection<Product>();
         this.Collection.EnsureIndex("categories");
+
+        this.logger = logger;
     }
 
     private ILiteCollection<Product> Collection { get; }
@@ -24,8 +29,14 @@ public class ProductRepository : IProductRepository
         return Task.FromResult(this.Collection.FindOne(c => c.Id == id))!;
     }
 
+    public Task<Product?> GetOne(string name)
+    {
+        return Task.FromResult(this.Collection.FindOne(c => c.Name == name))!;
+    }
+
     public Task<IEnumerable<Product>> GetAll()
     {
+        this.logger.LogInformation("Get all Products repository call");
         return Task.FromResult(this.Collection.FindAll());
     }
 
@@ -41,8 +52,7 @@ public class ProductRepository : IProductRepository
 
     public Task<IEnumerable<Product>> GetByCategoryId(long categoryId)
     {
-        var query = Query.EQ("categories[*] ANY", categoryId);
-        return Task.FromResult(this.Collection.Find(query));
+        return Task.FromResult(this.Collection.Find(p => p.Category.Id.Equals(categoryId)));
     }
 
     public Task<IEnumerable<Product>> GetByCategoryId(params long[] categoryIds)

@@ -119,6 +119,26 @@ public class ProductsControllerTests : WebFixtures
 
         return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
+
+    [Fact]
+    public async Task<VerifyResult> PostProduct_DuplicateName_ReturnsBadRequest()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Fish",
+                    Description = "Juicy",
+                    Price = 1.50,
+                    CategoryId = new CategoryId(1),
+                })
+                .ToUrl("/api/products");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
+    }
     #endregion
 
     #region Put
@@ -189,7 +209,7 @@ public class ProductsControllerTests : WebFixtures
                     Price = 1.50,
                     CategoryId = new CategoryId(1),
                 })
-                .ToUrl("/api/products/5");
+                .ToUrl("/api/products/1000");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 
@@ -250,6 +270,26 @@ public class ProductsControllerTests : WebFixtures
         return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
     }
 
+    [Fact]
+    public async Task<VerifyResult> PutProduct_DuplicateName_ReturnsBadRequest()
+    {
+        var putResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Put
+                .Json(new
+                {
+                    Name = "Fish",
+                    Description = "Juicy",
+                    Price = 1.50,
+                    CategoryId = 1,
+                })
+                .ToUrl("/api/products/3");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
+    }
+
     #endregion
 
     #region Retire
@@ -259,7 +299,7 @@ public class ProductsControllerTests : WebFixtures
         var putResult = await this.AlbaHost.Scenario(_ =>
         {
             _.Delete
-                .Url("/api/products/5");
+                .Url("/api/products/1000");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
         });
 

@@ -35,6 +35,11 @@ public class ProductService : IProductService
         return await this.Products.GetOne(productId);
     }
 
+    public async Task<Product?> GetProductByName(string name)
+    {
+        return await this.Products.GetOne(name);
+    }
+
     public async Task<Product> CreateProduct(RequestModels.Product createProduct)
     {
         var category = await this.Categories.GetOne(createProduct.CategoryId);
@@ -97,6 +102,10 @@ public class ProductService : IProductService
             await this.Categories.Save(currentCategory);
 
             product.SetCategory(new ProductCategory(category.Id, category.Name, category.Description));
+
+            category.AddProduct(new ProductId(product.Id));
+
+            await this.Categories.Save(category);
         }
 
         await this.Products.AddOrUpdate(product);

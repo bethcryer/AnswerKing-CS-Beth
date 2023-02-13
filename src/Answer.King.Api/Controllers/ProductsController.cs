@@ -10,8 +10,11 @@ namespace Answer.King.Api.Controllers;
 [Produces("application/json")]
 public class ProductsController : ControllerBase
 {
-    public ProductsController(IProductService products)
+    private readonly ILogger<ProductsController> logger;
+
+    public ProductsController(ILogger<ProductsController> logger, IProductService products)
     {
+        this.logger = logger;
         this.Products = products;
     }
 
@@ -28,6 +31,7 @@ public class ProductsController : ControllerBase
     [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> GetAll()
     {
+        this.logger.LogInformation("Get all Products request");
         return this.Ok(await this.Products.GetProducts());
     }
 
@@ -69,6 +73,14 @@ public class ProductsController : ControllerBase
     [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> Post([FromBody] RequestModels.Product createProduct)
     {
+        var namedProduct = await this.Products.GetProductByName(createProduct.Name);
+
+        if (namedProduct != null)
+        {
+            this.ModelState.AddModelError("product", "A product with this name already exists");
+            return this.BadRequest();
+        }
+
         try
         {
             var product = await this.Products.CreateProduct(createProduct);
@@ -106,6 +118,14 @@ public class ProductsController : ControllerBase
             if (product == null)
             {
                 return this.NotFound();
+            }
+
+            var namedProduct = await this.Products.GetProductByName(updateProduct.Name);
+
+            if (namedProduct != null && id != namedProduct.Id)
+            {
+                this.ModelState.AddModelError("product", "A product with this name already exists");
+                return this.BadRequest();
             }
 
             return this.Ok(product);

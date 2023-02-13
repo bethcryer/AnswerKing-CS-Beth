@@ -37,7 +37,7 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
@@ -77,7 +77,7 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
@@ -116,7 +116,7 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
@@ -135,7 +135,25 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
+                    Name = "Test Tag",
+                })
+                .ToUrl("/api/tags");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PostTag_DuplicateName_ReturnsBadRequest()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
                     Name = "Vegan",
+                    Description = "Non-Animal Products",
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -154,7 +172,7 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
@@ -168,7 +186,7 @@ public class TagsControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Edited Non-animal products",
                 })
                 .ToUrl($"/api/tags/{tag?.Id}");
@@ -187,7 +205,7 @@ public class TagsControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                 })
                 .ToUrl("/api/tags/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -204,11 +222,29 @@ public class TagsControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Edited Non-animal products",
                 })
                 .ToUrl("/api/tags/50");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
+        });
+
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PutTag_DuplicateName_ReturnsBadRequest()
+    {
+        var putResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Put
+                .Json(new
+                {
+                    Name = "Vegan",
+                    Description = "Edited Non-animal products",
+                })
+                .ToUrl("/api/tags/2");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
         return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
@@ -224,7 +260,7 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
@@ -292,7 +328,7 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
@@ -373,7 +409,7 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");
@@ -398,7 +434,7 @@ public class TagsControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Vegan",
+                    Name = "Test Tag",
                     Description = "Non-animal products",
                 })
                 .ToUrl("/api/tags");

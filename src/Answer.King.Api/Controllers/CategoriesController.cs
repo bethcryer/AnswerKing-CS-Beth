@@ -1,5 +1,6 @@
 using Answer.King.Api.RequestModels;
 using Answer.King.Api.Services;
+using Answer.King.Domain.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -71,6 +72,14 @@ public class CategoriesController : ControllerBase
     [SwaggerOperation(Tags = new[] { "Inventory" })]
     public async Task<IActionResult> Post([FromBody] Category createCategory)
     {
+        var namedCategory = await this.Categories.GetCategoryByName(createCategory.Name);
+
+        if (namedCategory != null)
+        {
+            this.ModelState.AddModelError("category", "A category with this name already exists");
+            return this.BadRequest();
+        }
+
         try
         {
             var category = await this.Categories.CreateCategory(createCategory);
@@ -109,9 +118,17 @@ public class CategoriesController : ControllerBase
                 return this.NotFound();
             }
 
+            var namedCategory = await this.Categories.GetCategoryByName(updateCategory.Name);
+
+            if (namedCategory != null && namedCategory.Id != id)
+            {
+                this.ModelState.AddModelError("category", "A category with this name already exists");
+                return this.BadRequest();
+            }
+
             return this.Ok(category);
         }
-        catch (CategoryServiceException ex)
+        catch (Exception ex) when (ex is CategoryServiceException or ProductLifecycleException)
         {
             this.ModelState.AddModelError("products", ex.Message);
             return this.ValidationProblem();

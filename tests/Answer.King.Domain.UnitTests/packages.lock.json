@@ -1070,7 +1070,7 @@
       "answer.king.test.common": {
         "type": "Project",
         "dependencies": {
-          "xunit": "[2.4.1, )"
+          "xunit": "[2.4.2, )"
         }
       }
     }

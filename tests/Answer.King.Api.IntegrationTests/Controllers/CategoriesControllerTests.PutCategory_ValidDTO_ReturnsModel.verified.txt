@@ -1,6 +1,6 @@
 ﻿{
-  Id: 3,
-  Name: Seafood,
+  Id: 8,
+  Name: Test Category,
   Description: Food from the oceans and the high seas and also the puddles maybe,
   CreatedOn: DateTime_1,
   LastUpdated: DateTime_2,

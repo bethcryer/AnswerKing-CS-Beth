@@ -37,7 +37,7 @@ public class CategoriesControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                     Description = "Food from the oceans",
                     Products = new List<long>(),
                 })
@@ -78,7 +78,7 @@ public class CategoriesControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                     Description = "Food from the oceans",
                     Products = new List<long>(),
                 })
@@ -118,9 +118,32 @@ public class CategoriesControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                     Description = "Food from the oceans",
                     Products = new List<long>(),
+                })
+                .ToUrl("/api/categories");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
+        });
+
+        var category = result.ReadAsJson<Category>();
+        return await Verify(category);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PostCategory_ValidModel_ReturnsNewCategoryWithProduct()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Test Category",
+                    Description = "Food from the oceans",
+                    Products = new List<long>
+                    {
+                        1,
+                    },
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -138,7 +161,7 @@ public class CategoriesControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -155,9 +178,28 @@ public class CategoriesControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
+                    Name = "Test Category",
+                    Description = "Food from the oceans",
+                    Products = new List<long> { 1000 },
+                })
+                .ToUrl("/api/categories");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PostCategory_DuplicateName_ReturnsBadRequest()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
                     Name = "Seafood",
                     Description = "Food from the oceans",
-                    Products = new List<long> { 5 },
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/categories");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -176,7 +218,7 @@ public class CategoriesControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                     Description = "Food from the oceans",
                     Products = new List<long>(),
                 })
@@ -191,7 +233,7 @@ public class CategoriesControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                     Description = "Food from the oceans and the high seas and also the puddles maybe",
                     Products = new List<long>(),
                 })
@@ -211,7 +253,7 @@ public class CategoriesControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                 })
                 .ToUrl("/api/categories/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -228,7 +270,7 @@ public class CategoriesControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                     Description = "Food from the oceans",
                     Products = new List<long>(),
                 })
@@ -247,11 +289,30 @@ public class CategoriesControllerTests : WebFixtures
             _.Put
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                     Description = "Food from the oceans",
-                    Products = new List<long> { 5 },
+                    Products = new List<long> { 1000 },
                 })
                 .ToUrl("/api/categories/1");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PutCategory_DuplicateName_ReturnsBadRequest()
+    {
+        var putResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Put
+                .Json(new
+                {
+                    Name = "Seafood",
+                    Description = "Food from the oceans",
+                    Products = new List<long>(),
+                })
+                .ToUrl("/api/categories/2");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
@@ -281,7 +342,7 @@ public class CategoriesControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                     Description = "Food from the oceans",
                     Products = new List<long>(),
                 })
@@ -307,7 +368,7 @@ public class CategoriesControllerTests : WebFixtures
             _.Post
                 .Json(new
                 {
-                    Name = "Seafood",
+                    Name = "Test Category",
                     Description = "Food from the oceans",
                     Products = new List<long>(),
                 })

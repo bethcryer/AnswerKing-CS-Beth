@@ -4,6 +4,7 @@ using Answer.King.Domain.Repositories.Models;
 using Answer.King.Test.Common.CustomAsserts;
 using Answer.King.Test.Common.CustomTraits;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 using ProductRequest = Answer.King.Api.RequestModels.Product;
@@ -16,8 +17,9 @@ public class ProductsControllerTests
     #region Setup
 
     private static readonly IProductService ProductService = Substitute.For<IProductService>();
+    private static readonly ILogger<ProductsController> Logger = Substitute.For<ILogger<ProductsController>>();
 
-    private static readonly ProductsController GetSubjectUnderTest = new(ProductService);
+    private static readonly ProductsController GetSubjectUnderTest = new(Logger, ProductService);
 
     #endregion Setup
 

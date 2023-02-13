@@ -29,6 +29,11 @@ public class CategoryRepository : ICategoryRepository
         return Task.FromResult(this.Collection.FindOne(c => c.Id == id))!;
     }
 
+    public Task<Category?> GetOne(string name)
+    {
+        return Task.FromResult(this.Collection.FindOne(c => c.Name == name))!;
+    }
+
     public Task Save(Category item)
     {
         return Task.FromResult(this.Collection.Upsert(item));

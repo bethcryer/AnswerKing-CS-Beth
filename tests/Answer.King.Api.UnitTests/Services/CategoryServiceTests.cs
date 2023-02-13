@@ -101,6 +101,28 @@ public class CategoryServiceTests
         await Assert.ThrowsAsync<CategoryServiceException>(() => sut.CreateCategory(categoryRequest));
     }
 
+    [Fact]
+    public async Task CreateCategory_ValidCategoryRequest_ReturnsNewCategory()
+    {
+        // Arrange
+        var categoryRequest = new CategoryRequest
+        {
+            Name = "updated category",
+            Description = "updated desc",
+            Products = new List<long>(),
+        };
+
+        // Act
+        var sut = this.GetServiceUnderTest();
+        var actualCategory = await sut.CreateCategory(categoryRequest);
+
+        // Assert
+        Assert.Equal(categoryRequest.Name, actualCategory!.Name);
+        Assert.Equal(categoryRequest.Description, actualCategory.Description);
+
+        await this.categoryRepository.Received().Save(Arg.Any<Category>());
+    }
+
     #endregion
 
     #region Get
@@ -237,6 +259,36 @@ public class CategoryServiceTests
     }
 
     [Fact]
+    public async Task UpdateCategory_AddNullProduct_ThrowsException()
+    {
+        // Arrange
+        var oldProduct = CreateProduct(1, "product", "desc", 1.0);
+        var oldProducts = new[]
+        {
+            oldProduct,
+        };
+        var oldCategory = CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
+
+        var updatedProduct = CreateProduct(2, "updated product", "desc", 10.0);
+
+        this.categoryRepository.GetOne(Arg.Any<long>()).Returns(oldCategory);
+        this.productRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
+        this.productRepository.GetOne(updatedProduct.Id).Returns(default(Product));
+
+        var updatedCategory = new CategoryRequest
+        {
+            Name = "updated category",
+            Description = "desc",
+            Products = new List<long> { updatedProduct.Id },
+        };
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        await Assert.ThrowsAsync<CategoryServiceException>(() =>
+            sut.UpdateCategory(oldCategory.Id, updatedCategory));
+    }
+
+    [Fact]
     public async Task UpdateCategory_AddProductRetired_ThrowsException()
     {
         // Arrange
@@ -277,10 +329,12 @@ public class CategoryServiceTests
             oldProduct,
         };
         var oldCategory = CreateCategory(1, "category", "desc", new List<ProductId> { new(1) });
+        var category2 = CreateCategory(2, "new category", "desc", new List<ProductId> { new(2) });
 
-        var updatedProduct = CreateProduct(2, "updated product", "desc", 10.0);
+        var updatedProduct = CreateProduct(2, "updated product", "desc", 10.0, 2);
 
-        this.categoryRepository.GetOne(Arg.Any<long>()).Returns(oldCategory);
+        this.categoryRepository.GetOne(1).Returns(oldCategory);
+        this.categoryRepository.GetOne(2).Returns(category2);
         this.productRepository.GetByCategoryId(oldCategory.Id).Returns(oldProducts);
         this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
 
@@ -296,7 +350,7 @@ public class CategoryServiceTests
         var category = await sut.UpdateCategory(oldCategory.Id, updatedCategory);
 
         await this.productRepository.Received().GetByCategoryId(oldCategory.Id);
-        Assert.Equal(updatedProduct.Id, category?.Products.First().Value);
+        Assert.Equal(updatedProduct.Id, category?.Products.Last().Value);
     }
 
     #endregion
@@ -308,9 +362,9 @@ public class CategoryServiceTests
         return CategoryFactory.CreateCategory(id, name, description, DateTime.UtcNow, DateTime.UtcNow, products, false);
     }
 
-    private static Product CreateProduct(long id, string name, string description, double price)
+    private static Product CreateProduct(long id, string name, string description, double price, long categoryId = 1)
     {
-        return ProductFactory.CreateProduct(id, name, description, price, new ProductCategory(1, "name", "description"), new List<TagId>(), false);
+        return ProductFactory.CreateProduct(id, name, description, price, new ProductCategory(categoryId, "name", "description"), new List<TagId>(), false);
     }
 
     #endregion

@@ -67,6 +67,14 @@ public class TagsController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] Tag createTag)
     {
+        var namedTag = await this.Tags.GetTagByName(createTag.Name);
+
+        if (namedTag != null)
+        {
+            this.ModelState.AddModelError("tag", "A tag with this name already exists");
+            return this.BadRequest();
+        }
+
         var tag = await this.Tags.CreateTag(createTag);
 
         return this.CreatedAtAction(nameof(this.GetOne), new { tag.Id }, tag);
@@ -92,6 +100,14 @@ public class TagsController : ControllerBase
         if (tag == null)
         {
             return this.NotFound();
+        }
+
+        var namedTag = await this.Tags.GetTagByName(updateTag.Name);
+
+        if (namedTag != null && id != namedTag.Id)
+        {
+            this.ModelState.AddModelError("tag", "A tag with this name already exists");
+            return this.BadRequest();
         }
 
         return this.Ok(tag);

@@ -28,6 +28,11 @@ public class TagRepository : ITagRepository
         return Task.FromResult(this.Collection.FindOne(c => c.Id == id))!;
     }
 
+    public Task<Tag?> GetOne(string name)
+    {
+        return Task.FromResult(this.Collection.FindOne(c => c.Name == name))!;
+    }
+
     public Task Save(Tag item)
     {
         return Task.FromResult(this.Collection.Upsert(item));
