@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FunctionsPreservedDependencies Include="Microsoft.Extensions.DependencyModel.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="appsettings.Production.json" />
   </ItemGroup>
 
