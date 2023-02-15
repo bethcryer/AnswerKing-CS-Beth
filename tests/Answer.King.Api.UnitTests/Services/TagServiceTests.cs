@@ -7,7 +7,6 @@ using Answer.King.Infrastructure.Repositories.Mappings;
 using Answer.King.Test.Common.CustomTraits;
 using NSubstitute;
 using Xunit;
-using TagProductsRequest = Answer.King.Api.RequestModels.TagProducts;
 using TagRequest = Answer.King.Api.RequestModels.Tag;
 
 namespace Answer.King.Api.UnitTests.Services;
@@ -92,6 +91,7 @@ public class TagServiceTests
         {
             Name = "Vegan",
             Description = "desc",
+            Products = new List<long>(),
         };
 
         // Act
@@ -101,6 +101,24 @@ public class TagServiceTests
         // Assert
         Assert.Equal(tagRequest.Name, actualTag.Name);
         Assert.Equal(tagRequest.Description, actualTag.Description);
+    }
+
+    [Fact]
+    public async Task CreateTag_RetiredProduct_ThrowsException()
+    {
+        // Arrange
+        var tagRequest = new TagRequest
+        {
+            Name = "Vegan",
+            Description = "desc",
+            Products = new List<long> { 1 },
+        };
+
+        this.productRepository.GetOne(1).Returns(null as Product);
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        await Assert.ThrowsAsync<TagServiceException>(() => sut.CreateTag(tagRequest));
     }
 
     #endregion
@@ -169,330 +187,192 @@ public class TagServiceTests
     public async Task UpdateTag_ValidTagIdAndRequest_ReturnsUpdatedTag()
     {
         // Arrange
-        var oldTag = new Tag("old tag", "old desc", new List<ProductId>());
-        var tagId = oldTag.Id;
+        var oldTag = CreateTag(1, "old tag", "old desc", new List<ProductId> { new(1) });
+        var product = CreateProduct(1, "product name", "product description", 1, new List<TagId> { new(1) });
 
         var updateTagRequest = new TagRequest
         {
-            Name = "updated category",
-            Description = "updated desc",
+            Name = "new tag",
+            Description = "new desc",
+            Products = new List<long> { 1 },
         };
 
-        this.tagRepository.GetOne(tagId).Returns(oldTag);
+        this.tagRepository.GetOne(oldTag.Id).Returns(oldTag);
+        this.productRepository.GetOne(product.Id).Returns(product);
 
         // Act
         var sut = this.GetServiceUnderTest();
-        var actualTag = await sut.UpdateTag(tagId, updateTagRequest);
+        var actualTag = await sut.UpdateTag(oldTag.Id, updateTagRequest);
 
         // Assert
         Assert.Equal(updateTagRequest.Name, actualTag!.Name);
         Assert.Equal(updateTagRequest.Description, actualTag.Description);
+        Assert.Equal(updateTagRequest.Products, actualTag.Products.Select(x => x.Value).ToList());
 
-        await this.tagRepository.Received().GetOne(tagId);
-        await this.tagRepository.Received().Save(Arg.Any<Tag>());
-    }
-
-    #endregion
-
-    #region Update: Add Products
-
-    [Fact]
-    public async Task AddTagProducts_InvalidTagId_ReturnsNull()
-    {
-        // Arrange
-        var updateTagRequest = new TagProductsRequest();
-        const int tagId = 1;
-
-        // Act
-        var sut = this.GetServiceUnderTest();
-        var category = await sut.AddProducts(tagId, updateTagRequest);
-
-        // Assert
-        Assert.Null(category);
+        await this.tagRepository.Received().GetOne(oldTag.Id);
+        await this.tagRepository.Received().Save(Arg.Is<Tag>(x =>
+            x.Name == updateTagRequest.Name && x.Description == updateTagRequest.Description));
     }
 
     [Fact]
-    public async Task AddTagProducts_ValidTagIdAndRequest_ReturnsUpdatedTag()
+    public async Task UpdateTag_ValidTagIdAndRequestWithAddedProducts_ReturnsUpdatedTag()
     {
         // Arrange
-        var oldTag = CreateTag(1, "old tag", "old desc", new List<ProductId>());
-        var tagId = oldTag.Id;
+        var oldTag = CreateTag(1, "tag", "desc", new List<ProductId>());
+        var product = CreateProduct(1, "product name", "product description", 1, new List<TagId>());
 
-        var product = CreateProduct(1, "Product", "desc", 1);
-        var productId = product.Id;
-
-        var addProducts = new TagProductsRequest
+        var updateTagRequest = new TagRequest
         {
-            Products = new List<long> { productId },
-        };
-
-        this.productRepository.GetOne(productId).Returns(product);
-        this.tagRepository.GetOne(tagId).Returns(oldTag);
-
-        // Act
-        var sut = this.GetServiceUnderTest();
-        var actualTag = await sut.AddProducts(tagId, addProducts);
-
-        // Assert
-        Assert.Equal(addProducts.Products[0], actualTag!.Products.First().Value);
-
-        await this.tagRepository.Received().GetOne(tagId);
-        await this.tagRepository.Received().Save(Arg.Any<Tag>());
-    }
-
-    [Fact]
-    public async Task AddTagProducts_InvalidTagNotAssociatedWithProduct_ThrowsException()
-    {
-        // Arrange
-        var product = new List<ProductId> { new(1) };
-        var tag = new Tag("tag", "desc", product);
-
-        this.tagRepository.GetOne(Arg.Any<long>()).Returns(tag);
-        this.productRepository.GetByCategoryId(tag.Id).Returns(Array.Empty<Product>());
-
-        var addProducts = new TagProductsRequest
-        {
+            Name = "tag",
+            Description = "desc",
             Products = new List<long> { 1 },
         };
 
-        // Act / Assert
+        this.tagRepository.GetOne(oldTag.Id).Returns(oldTag);
+        this.productRepository.GetOne(product.Id).Returns(product);
+
+        // Act
         var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<TagServiceException>(() =>
-            sut.AddProducts(tag.Id, addProducts));
+        var actualTag = await sut.UpdateTag(oldTag.Id, updateTagRequest);
+
+        // Assert
+        Assert.Equal(updateTagRequest.Name, actualTag!.Name);
+        Assert.Equal(updateTagRequest.Description, actualTag.Description);
+        Assert.Equal(updateTagRequest.Products, actualTag.Products.Select(x => x.Value).ToList());
+
+        await this.tagRepository.Received().GetOne(oldTag.Id);
+        await this.tagRepository.Received().Save(Arg.Is<Tag>(x => x.Products.Contains(new ProductId(product.Id))));
     }
 
     [Fact]
-    public async Task AddTagProducts_InvalidUpdatedProduct_ThrowsException()
+    public async Task UpdateTag_ValidTagIdAndRequestWithRemovedProducts_ReturnsUpdatedTag()
     {
         // Arrange
-        var oldProduct = CreateProduct(1, "product", "desc", 1.0);
-        var oldProducts = new[] { oldProduct };
         var oldTag = CreateTag(1, "tag", "desc", new List<ProductId> { new(1) });
+        var product = CreateProduct(1, "product name", "product description", 1, new List<TagId> { new(1) });
 
-        var updatedProduct = CreateProduct(2, "updated product", "desc", 1.0);
-
-        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
-        this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
-        this.productRepository.GetOne(updatedProduct.Id).Returns(null as Product);
-
-        var addProducts = new TagProductsRequest
+        var updateTagRequest = new TagRequest
         {
-            Products = new List<long> { updatedProduct.Id },
+            Name = "tag",
+            Description = "desc",
+            Products = new List<long>(),
         };
 
-        // Act / Assert
+        this.tagRepository.GetOne(oldTag.Id).Returns(oldTag);
+        this.productRepository.GetOne(product.Id).Returns(product);
+
+        // Act
         var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<TagServiceException>(() =>
-            sut.AddProducts(oldTag.Id, addProducts));
+        var actualTag = await sut.UpdateTag(oldTag.Id, updateTagRequest);
+
+        // Assert
+        Assert.Equal(updateTagRequest.Name, actualTag!.Name);
+        Assert.Equal(updateTagRequest.Description, actualTag.Description);
+        Assert.Equal(updateTagRequest.Products, actualTag.Products.Select(x => x.Value).ToList());
+
+        await this.tagRepository.Received().GetOne(oldTag.Id);
+        await this.tagRepository.Received().Save(Arg.Is<Tag>(x => x.Products.Count == 0));
     }
 
     [Fact]
-    public async Task AddTagProducts_TagRetired_ThrowsException()
+    public async Task UpdateTag_InvalidProduct_ThrowsException()
     {
         // Arrange
         var oldTag = CreateTag(1, "tag", "desc", new List<ProductId>());
 
-        var updatedProduct = CreateProduct(2, "updated product", "desc", 1.0);
-        updatedProduct.Retire();
-
-        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
-        this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
-
-        var addProducts = new TagProductsRequest
+        var updateTagRequest = new TagRequest
         {
-            Products = new List<long> { updatedProduct.Id },
-        };
-
-        // Act / Assert
-        var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<ProductLifecycleException>(() =>
-            sut.AddProducts(oldTag.Id, addProducts));
-    }
-
-    [Fact]
-    public async Task AddTagProducts_ValidUpdatedProduct_UpdatesProductCorrectly()
-    {
-        // Arrange
-        var oldProduct = CreateProduct(1, "product", "desc", 1.0);
-        var oldProducts = new[]
-        {
-            oldProduct,
-        };
-        var oldTag = CreateTag(1, "tag", "desc", new List<ProductId> { new(1) });
-
-        var updatedProduct = CreateProduct(2, "updated product", "desc", 10.0);
-
-        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
-        this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
-        this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
-
-        var addProducts = new TagProductsRequest
-        {
-            Products = new List<long> { updatedProduct.Id },
-        };
-
-        // Act / Assert
-        var sut = this.GetServiceUnderTest();
-        var tag = await sut.AddProducts(oldTag.Id, addProducts);
-        Assert.Equal(oldProduct.Id, tag?.Products.First().Value);
-        Assert.Equal(updatedProduct.Id, tag?.Products.ElementAt(1).Value);
-    }
-
-    #endregion
-
-    #region Delete: Remove Products
-
-    [Fact]
-    public async Task RemoveTagProducts_InvalidTagId_ReturnsNull()
-    {
-        // Arrange
-        var updateTagRequest = new TagProductsRequest();
-        const int tagId = 1;
-
-        // Act
-        var sut = this.GetServiceUnderTest();
-        var category = await sut.RemoveProducts(tagId, updateTagRequest);
-
-        // Assert
-        Assert.Null(category);
-    }
-
-    [Fact]
-    public async Task RemoveTagProducts_ValidTagIdAndRequest_ReturnsUpdatedTag()
-    {
-        // Arrange
-        var product = CreateProduct(1, "Product", "desc", 1);
-        var productId = product.Id;
-
-        var oldTag = CreateTag(1, "old tag", "old desc", new List<ProductId> { new(productId) });
-        var tagId = oldTag.Id;
-
-        var removeProducts = new TagProductsRequest
-        {
-            Products = new List<long> { productId },
-        };
-
-        this.productRepository.GetOne(productId).Returns(product);
-        this.tagRepository.GetOne(tagId).Returns(oldTag);
-
-        // Act
-        var sut = this.GetServiceUnderTest();
-        var actualTag = await sut.RemoveProducts(tagId, removeProducts);
-
-        // Assert
-        Assert.Empty(actualTag!.Products);
-
-        await this.tagRepository.Received().GetOne(tagId);
-        await this.tagRepository.Received().Save(Arg.Any<Tag>());
-    }
-
-    [Fact]
-    public async Task RemoveTagProducts_InvalidTagNotAssociatedWithProduct_ThrowsException()
-    {
-        // Arrange
-        var product = new List<ProductId> { new(1) };
-        var tag = new Tag("tag", "desc", product);
-
-        this.tagRepository.GetOne(Arg.Any<long>()).Returns(tag);
-        this.productRepository.GetByCategoryId(tag.Id).Returns(Array.Empty<Product>());
-
-        var removeProducts = new TagProductsRequest
-        {
+            Name = "tag",
+            Description = "desc",
             Products = new List<long> { 1 },
         };
 
+        this.tagRepository.GetOne(oldTag.Id).Returns(oldTag);
+        this.productRepository.GetOne(1).Returns(null as Product);
+
         // Act / Assert
         var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<TagServiceException>(() =>
-            sut.RemoveProducts(tag.Id, removeProducts));
+        await Assert.ThrowsAsync<TagServiceException>(() => sut.UpdateTag(oldTag.Id, updateTagRequest));
     }
 
     [Fact]
-    public async Task RemoveTagProducts_InvalidUpdatedProduct_ThrowsException()
+    public async Task UpdateTag_RetiredTag_ThrowsException()
     {
         // Arrange
-        var oldProduct = CreateProduct(1, "product", "desc", 1.0);
-        var oldProducts = new[] { oldProduct };
-        var oldTag = CreateTag(1, "tag", "desc", new List<ProductId> { new(1) });
+        var oldTag = CreateTag(1, "tag", "desc", new List<ProductId>(), true);
+        var product = CreateProduct(1, "product name", "product description", 1, new List<TagId>());
 
-        var updatedProduct = CreateProduct(2, "updated product", "desc", 1.0);
-
-        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
-        this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
-        this.productRepository.GetOne(updatedProduct.Id).Returns(null as Product);
-
-        var removeProducts = new TagProductsRequest
+        var updateTagRequest = new TagRequest
         {
-            Products = new List<long> { updatedProduct.Id },
+            Name = "tag",
+            Description = "desc",
+            Products = new List<long> { 1 },
         };
+
+        this.tagRepository.GetOne(oldTag.Id).Returns(oldTag);
+        this.productRepository.GetOne(product.Id).Returns(product);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<TagServiceException>(() =>
-            sut.RemoveProducts(oldTag.Id, removeProducts));
+        await Assert.ThrowsAsync<TagServiceException>(() => sut.UpdateTag(oldTag.Id, updateTagRequest));
     }
 
     [Fact]
-    public async Task RemoveTagProducts_ProductRetired_ThrowsException()
+    public async Task UpdateTag_AddRetiredProduct_ThrowsException()
     {
         // Arrange
         var oldTag = CreateTag(1, "tag", "desc", new List<ProductId>());
+        var product = CreateProduct(1, "product name", "product description", 1, new List<TagId>(), true);
 
-        var updatedProduct = CreateProduct(2, "updated product", "desc", 1.0);
-        updatedProduct.Retire();
-
-        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
-        this.productRepository.GetOne(updatedProduct.Id).Returns(updatedProduct);
-
-        var removeProducts = new TagProductsRequest
+        var updateTagRequest = new TagRequest
         {
-            Products = new List<long> { updatedProduct.Id },
+            Name = "tag",
+            Description = "desc",
+            Products = new List<long> { 1 },
         };
+
+        this.tagRepository.GetOne(oldTag.Id).Returns(oldTag);
+        this.productRepository.GetOne(product.Id).Returns(product);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
-        await Assert.ThrowsAsync<ProductLifecycleException>(() =>
-            sut.RemoveProducts(oldTag.Id, removeProducts));
+        await Assert.ThrowsAsync<TagServiceException>(() => sut.UpdateTag(oldTag.Id, updateTagRequest));
     }
 
     [Fact]
-    public async Task RemoveTagProducts_ValidUpdatedProduct_UpdatesProductCorrectly()
+    public async Task UpdateTag_RemoveRetiredProduct_ThrowsException()
     {
         // Arrange
-        var oldProduct = CreateProduct(1, "product", "desc", 1.0);
-        var oldProducts = new[]
-        {
-            oldProduct,
-        };
         var oldTag = CreateTag(1, "tag", "desc", new List<ProductId> { new(1) });
+        var product = CreateProduct(1, "product name", "product description", 1, new List<TagId> { new(1) }, true);
 
-        this.tagRepository.GetOne(Arg.Any<long>()).Returns(oldTag);
-        this.productRepository.GetByCategoryId(oldTag.Id).Returns(oldProducts);
-        this.productRepository.GetOne(oldProduct.Id).Returns(oldProduct);
-
-        var removeProducts = new TagProductsRequest
+        var updateTagRequest = new TagRequest
         {
-            Products = new List<long> { oldProduct.Id },
+            Name = "tag",
+            Description = "desc",
+            Products = new List<long>(),
         };
+
+        this.tagRepository.GetOne(oldTag.Id).Returns(oldTag);
+        this.productRepository.GetOne(product.Id).Returns(product);
 
         // Act / Assert
         var sut = this.GetServiceUnderTest();
-        var tag = await sut.RemoveProducts(oldTag.Id, removeProducts);
-        Assert.Empty(tag!.Products);
+        await Assert.ThrowsAsync<TagServiceException>(() => sut.UpdateTag(oldTag.Id, updateTagRequest));
     }
 
     #endregion
 
     #region Helpers
 
-    private static Tag CreateTag(long id, string name, string description, IList<ProductId> products)
+    private static Tag CreateTag(long id, string name, string description, IList<ProductId> products, bool retired = false)
     {
-        return TagFactory.CreateTag(id, name, description, DateTime.UtcNow, DateTime.UtcNow, products, false);
+        return TagFactory.CreateTag(id, name, description, DateTime.UtcNow, DateTime.UtcNow, products, retired);
     }
 
-    private static Product CreateProduct(long id, string name, string description, double price)
+    private static Product CreateProduct(long id, string name, string description, double price, IList<TagId> tags, bool retired = false)
     {
-        return ProductFactory.CreateProduct(id, name, description, price, new ProductCategory(1, "category", "desc"), new List<TagId>(), false);
+        return ProductFactory.CreateProduct(id, name, description, price, new ProductCategory(1, "category", "desc"), tags, retired);
     }
 
     #endregion

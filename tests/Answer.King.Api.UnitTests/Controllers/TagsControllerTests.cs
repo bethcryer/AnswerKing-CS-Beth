@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
-using TagProductsRequest = Answer.King.Api.RequestModels.TagProducts;
 using TagRequest = Answer.King.Api.RequestModels.Tag;
 
 namespace Answer.King.Api.UnitTests.Controllers;
@@ -136,6 +135,26 @@ public class TagsControllerTests
         Assert.IsType<CreatedAtActionResult>(result);
     }
 
+    [Fact]
+    public async Task Post_ProductIdNotValid_ReturnsValidationProblem()
+    {
+        // Arrange
+        var tagRequestModel = new TagRequest
+        {
+            Name = "TAG_NAME",
+            Description = "TAG_DESCRIPTION",
+        };
+
+        TagService.CreateTag(tagRequestModel).Throws(new TagServiceException("The provided product id is not valid."));
+
+        // Act
+        var result = await GetSubjectUnderTest.Post(tagRequestModel);
+
+        // Assert
+        var value = (result as ObjectResult)!.Value as ValidationProblemDetails;
+        Assert.NotEmpty(value!.Errors);
+    }
+
     #endregion Post
 
     #region Put
@@ -149,19 +168,6 @@ public class TagsControllerTests
     }
 
     [Fact]
-    public async Task Put_NullTag_ReturnsNotFoundResult()
-    {
-        // Arrange
-        const int id = 1;
-
-        // Act
-        var result = await GetSubjectUnderTest.Put(id, null!);
-
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
-    }
-
-    [Fact]
     public async Task Put_ValidRequest_ReturnsOkObjectResult()
     {
         // Arrange
@@ -170,9 +176,10 @@ public class TagsControllerTests
         {
             Name = "TAG_NAME",
             Description = "TAG_DESCRIPTION",
+            Products = new List<long> { 1 },
         };
 
-        var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId>());
+        var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId> { new(1) });
 
         TagService.UpdateTag(id, tagRequestModel).Returns(tag);
 
@@ -180,141 +187,33 @@ public class TagsControllerTests
         var result = await GetSubjectUnderTest.Put(id, tagRequestModel);
 
         // Assert
-        Assert.Equal(tagRequestModel.Name, tag.Name);
-        Assert.Equal(tagRequestModel.Description, tag.Description);
         Assert.IsType<OkObjectResult>(result);
-    }
-
-    #endregion Put
-
-    #region Put: Add Products
-
-    [Fact]
-    public void PutProducts_Method_HasCorrectVerbAttributeAndPath()
-    {
-        // Assert
-        AssertController.MethodHasVerb<TagsController, HttpPutAttribute>(
-            nameof(TagsController.AddProducts), "{id}/products");
+        var value = (result as OkObjectResult)!.Value as Tag;
+        Assert.Equal(tagRequestModel.Name, value?.Name);
+        Assert.Equal(tagRequestModel.Description, value?.Description);
+        Assert.Equal(tagRequestModel.Products, value?.Products.Select(x => x.Value).ToList());
     }
 
     [Fact]
-    public async Task PutProducts_NullTag_ReturnsNotFoundResult()
+    public async Task Put_ProductIdNotValid_ReturnsValidationProblem()
     {
         // Arrange
         const int id = 1;
-
-        // Act
-        var result = await GetSubjectUnderTest.AddProducts(id, null!);
-
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
-    }
-
-    [Fact]
-    public async Task PutProducts_ProductIdNotValid_ReturnsValidationProblem()
-    {
-        // Arrange
-        const int id = 1;
-        var tagAddProductsRequestModel = new TagProductsRequest
+        var tagRequestModel = new TagRequest
         {
-            Products = new List<long> { 1 },
+            Name = "TAG_NAME",
+            Description = "TAG_DESCRIPTION",
+            Products = new List<long> { 0 },
         };
 
-        TagService.AddProducts(id, tagAddProductsRequestModel).Throws(new TagServiceException("The provided product id is not valid."));
+        TagService.UpdateTag(id, tagRequestModel).Throws(new TagServiceException("The provided product id is not valid."));
 
         // Act
-        var result = await GetSubjectUnderTest.AddProducts(id, tagAddProductsRequestModel);
+        var result = await GetSubjectUnderTest.Put(id, tagRequestModel);
 
         // Assert
-        Assert.IsType<ObjectResult>(result);
-    }
-
-    [Fact]
-    public async Task PutProducts_ValidRequest_ReturnsOkObjectResult()
-    {
-        // Arrange
-        const int id = 1;
-        var tagAddProductsRequestModel = new TagProductsRequest
-        {
-            Products = new List<long> { 1 },
-        };
-
-        var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId> { new(1) });
-
-        TagService.AddProducts(id, tagAddProductsRequestModel).Returns(tag);
-
-        // Act
-        var result = await GetSubjectUnderTest.AddProducts(id, tagAddProductsRequestModel);
-
-        // Assert
-        Assert.Equal(tagAddProductsRequestModel.Products[0], tag.Products.First().Value);
-        Assert.IsType<OkObjectResult>(result);
-    }
-
-    #endregion Put
-
-    #region Delete: Remove Products
-
-    [Fact]
-    public void DeleteProducts_Method_HasCorrectVerbAttributeAndPath()
-    {
-        // Assert
-        AssertController.MethodHasVerb<TagsController, HttpDeleteAttribute>(
-            nameof(TagsController.RemoveProducts), "{id}/products");
-    }
-
-    [Fact]
-    public async Task DeleteProducts_NullTag_ReturnsNotFoundResult()
-    {
-        // Arrange
-        const int id = 1;
-
-        // Act
-        var result = await GetSubjectUnderTest.RemoveProducts(id, null!);
-
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
-    }
-
-    [Fact]
-    public async Task DeleteProducts_ProductIdNotValid_ReturnsValidationProblem()
-    {
-        // Arrange
-        const int id = 1;
-        var tagRemoveProductsRequestModel = new TagProductsRequest
-        {
-            Products = new List<long> { 1 },
-        };
-
-        TagService.RemoveProducts(id, tagRemoveProductsRequestModel).Throws(new TagServiceException("The provided product id is not valid."));
-
-        // Act
-        var result = await GetSubjectUnderTest.RemoveProducts(id, tagRemoveProductsRequestModel);
-
-        // Assert
-        Assert.IsType<ObjectResult>(result);
-    }
-
-    [Fact]
-    public async Task DeleteProducts_ValidRequest_ReturnsOkObjectResult()
-    {
-        // Arrange
-        const int id = 1;
-        var tagAddProductsRequestModel = new TagProductsRequest
-        {
-            Products = new List<long> { 1 },
-        };
-
-        var tag = new Tag("TAG_NAME", "TAG_DESCRIPTION", new List<ProductId>());
-
-        TagService.RemoveProducts(id, tagAddProductsRequestModel).Returns(tag);
-
-        // Act
-        var result = await GetSubjectUnderTest.RemoveProducts(id, tagAddProductsRequestModel);
-
-        // Assert
-        Assert.Empty(tag.Products);
-        Assert.IsType<OkObjectResult>(result);
+        var value = (result as ObjectResult)!.Value as ValidationProblemDetails;
+        Assert.NotEmpty(value!.Errors);
     }
 
     #endregion Put
@@ -327,16 +226,6 @@ public class TagsControllerTests
         // Assert
         AssertController.MethodHasVerb<TagsController, HttpDeleteAttribute>(
             nameof(TagsController.Retire), "{id}");
-    }
-
-    [Fact]
-    public async Task Retire_NullTag_ReturnsNotFound()
-    {
-        // Arrange / Act
-        var result = await GetSubjectUnderTest.Retire(Arg.Any<long>());
-
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
@@ -371,16 +260,4 @@ public class TagsControllerTests
     }
 
     #endregion Retire
-
-    #region GetProducts
-
-    [Fact]
-    public void GetProducts_Method_HasCorrectVerbAttributeAndPath()
-    {
-        // Assert
-        AssertController.MethodHasVerb<TagsController, HttpGetAttribute>(
-            nameof(TagsController.GetProducts), "{id}/products");
-    }
-
-    #endregion GetProducts
 }

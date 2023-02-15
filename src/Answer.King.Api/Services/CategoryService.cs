@@ -43,11 +43,8 @@ public class CategoryService : ICategoryService
 
         foreach (var productId in createCategory.Products)
         {
-            var product = await this.Products.GetOne(productId);
-            if (product == null)
-            {
-                throw new CategoryServiceException("The provided product id is not valid.");
-            }
+            var product = await this.Products.GetOne(productId) ??
+                          throw new CategoryServiceException("The provided product id is not valid.");
 
             products.Add(product);
 
@@ -78,15 +75,12 @@ public class CategoryService : ICategoryService
         }
 
         var categoryProducts = await this.Products.GetByCategoryId(categoryId);
-        var newProducts = updateCategory.Products.Where(p => !categoryProducts.Any(p2 => p2.Id == p));
+        var newProducts = updateCategory.Products.Where(p => categoryProducts.All(p2 => p2.Id != p));
 
         foreach (var updateId in newProducts)
         {
-            var product = await this.Products.GetOne(updateId);
-            if (product == null)
-            {
-                throw new CategoryServiceException("The provided product id is not valid.");
-            }
+            var product = await this.Products.GetOne(updateId) ??
+                          throw new CategoryServiceException("The provided product id is not valid.");
 
             products.Add(product);
 
@@ -134,11 +128,8 @@ public class CategoryService : ICategoryService
 
     private async Task RemoveProductFromCategory(Product product)
     {
-        var oldCategory = await this.Categories.GetOne(product.Category.Id);
-        if (oldCategory == null)
-        {
-            throw new CategoryServiceException("Failed to remove product from old category.");
-        }
+        var oldCategory = await this.Categories.GetOne(product.Category.Id) ??
+                          throw new CategoryServiceException("Failed to remove product from old category.");
 
         oldCategory.RemoveProduct(new ProductId(product.Id));
         await this.Categories.Save(oldCategory);

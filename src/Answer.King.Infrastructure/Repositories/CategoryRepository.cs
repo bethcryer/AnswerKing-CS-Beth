@@ -7,13 +7,12 @@ using LiteDB;
 
 namespace Answer.King.Infrastructure.Repositories;
 
-public class CategoryRepository : ICategoryRepository
+public class CategoryRepository : BaseRepository, ICategoryRepository
 {
     public CategoryRepository(ILiteDbConnectionFactory connections)
+        : base(connections)
     {
-        var db = connections.GetConnection();
-
-        this.Collection = db.GetCollection<Category>();
+        this.Collection = this.Db.GetCollection<Category>();
         this.Collection.EnsureIndex("products");
     }
 

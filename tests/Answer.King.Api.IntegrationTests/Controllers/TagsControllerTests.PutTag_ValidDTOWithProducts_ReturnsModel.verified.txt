@@ -1,0 +1,13 @@
+﻿{
+  Id: 4,
+  Name: Test Tag,
+  Description: Edited Non-animal products,
+  CreatedOn: DateTime_1,
+  LastUpdated: DateTime_2,
+  Products: [
+    {
+      Value: 25
+    }
+  ],
+  Retired: false
+}

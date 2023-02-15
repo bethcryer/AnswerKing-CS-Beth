@@ -1,4 +1,5 @@
 using Answer.King.Api.IntegrationTests.Common;
+using Answer.King.Api.RequestModels;
 using Product = Answer.King.Api.IntegrationTests.Common.Models.Product;
 using Tag = Answer.King.Api.IntegrationTests.Common.Models.Tag;
 
@@ -39,6 +40,7 @@ public class TagsControllerTests : WebFixtures
                 {
                     Name = "Test Tag",
                     Description = "Non-animal products",
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -67,46 +69,6 @@ public class TagsControllerTests : WebFixtures
     }
     #endregion
 
-    #region Get Products
-
-    [Fact]
-    public async Task<VerifyResult> GetProducts_TagExists_ReturnsProducts()
-    {
-        await this.AlbaHost.Scenario(_ =>
-        {
-            _.Post
-                .Json(new
-                {
-                    Name = "Test Tag",
-                    Description = "Non-animal products",
-                })
-                .ToUrl("/api/tags");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
-        });
-
-        var result = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Get.Url("/api/tags/1/products");
-            _.StatusCodeShouldBeOk();
-        });
-
-        var tag = result.ReadAsJson<IEnumerable<Product>>();
-        return await Verify(tag);
-    }
-
-    [Fact]
-    public async Task<VerifyResult> GetProducts_TagDoesNotExist_Returns404()
-    {
-        var result = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Get.Url("/api/tags/50/products");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
-        });
-
-        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
-    }
-    #endregion
-
     #region Post
     [Fact]
     public async Task<VerifyResult> PostTag_ValidModel_ReturnsNewTag()
@@ -118,6 +80,7 @@ public class TagsControllerTests : WebFixtures
                 {
                     Name = "Test Tag",
                     Description = "Non-animal products",
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -125,6 +88,55 @@ public class TagsControllerTests : WebFixtures
 
         var tag = result.ReadAsJson<Tag>();
         return await Verify(tag);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PostTag_ValidModelWithProducts_ReturnsNewTag()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Test Tag",
+                    Description = "Non-animal products",
+                    Products = new List<long> { 1 }, // valid product ID
+                })
+                .ToUrl("/api/tags");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
+        });
+
+        var tag = result.ReadAsJson<Tag>();
+        return await Verify(tag);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PostTag_ValidModelWithRetiredProducts_ReturnsBadRequest_DoesNotPartiallyCreateTag()
+    {
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Test Tag",
+                    Description = "Non-animal products",
+                    Products = new List<long> { 3 }, // retired product ID
+                })
+                .ToUrl("/api/tags");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
+        });
+
+        var allTagsResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Get.Url("/api/tags");
+            _.StatusCodeShouldBeOk();
+        });
+
+        var allTags = allTagsResult.ReadAsJson<IEnumerable<Tag>>();
+
+        Assert.All(allTags!, tag => Assert.NotEqual("Test Tag", tag.Name));
+
+        return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
 
     [Fact]
@@ -154,6 +166,7 @@ public class TagsControllerTests : WebFixtures
                 {
                     Name = "Vegan",
                     Description = "Non-Animal Products",
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -161,6 +174,7 @@ public class TagsControllerTests : WebFixtures
 
         return await VerifyJson(result.ReadAsTextAsync(), this.verifySettings);
     }
+
     #endregion
 
     #region Put
@@ -174,6 +188,7 @@ public class TagsControllerTests : WebFixtures
                 {
                     Name = "Test Tag",
                     Description = "Non-animal products",
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -181,19 +196,71 @@ public class TagsControllerTests : WebFixtures
 
         var tag = postResult.ReadAsJson<Tag>();
 
-        var putResult = await this.AlbaHost.Scenario(_ =>
+        var result = await this.AlbaHost.Scenario(_ =>
         {
             _.Put
                 .Json(new
                 {
                     Name = "Test Tag",
                     Description = "Edited Non-animal products",
+                    Products = new List<long>(),
                 })
                 .ToUrl($"/api/tags/{tag?.Id}");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
         });
 
-        var updatedTag = putResult.ReadAsJson<Tag>();
+        var updatedTag = result.ReadAsJson<Tag>();
+        return await Verify(updatedTag);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> PutTag_ValidDTOWithProducts_ReturnsModel()
+    {
+        var productResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Burger",
+                    Description = "Juicy",
+                    Price = 1.50,
+                    CategoryId = new CategoryId(1),
+                })
+                .ToUrl("/api/products");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
+        });
+
+        var product = productResult.ReadAsJson<Product>();
+
+        var postResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Test Tag",
+                    Description = "Non-animal products",
+                    Products = new List<long>(),
+                })
+                .ToUrl("/api/tags");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
+        });
+
+        var tag = postResult.ReadAsJson<Tag>();
+
+        var result = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Put
+                .Json(new
+                {
+                    Name = "Test Tag",
+                    Description = "Edited Non-animal products",
+                    Products = new List<long> { product!.Id },
+                })
+                .ToUrl($"/api/tags/{tag?.Id}");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
+        });
+
+        var updatedTag = result.ReadAsJson<Tag>();
         return await Verify(updatedTag);
     }
 
@@ -206,6 +273,7 @@ public class TagsControllerTests : WebFixtures
                 .Json(new
                 {
                     Name = "Test Tag",
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags/1");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -224,6 +292,7 @@ public class TagsControllerTests : WebFixtures
                 {
                     Name = "Test Tag",
                     Description = "Edited Non-animal products",
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags/50");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
@@ -242,148 +311,13 @@ public class TagsControllerTests : WebFixtures
                 {
                     Name = "Vegan",
                     Description = "Edited Non-animal products",
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags/2");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
         });
 
         return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
-    }
-    #endregion
-
-    #region Put: Add Product
-    [Fact]
-    public async Task<VerifyResult> PutAddProducts_ValidDTO_ReturnsModel()
-    {
-        var postResult = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Post
-                .Json(new
-                {
-                    Name = "Test Tag",
-                    Description = "Non-animal products",
-                })
-                .ToUrl("/api/tags");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
-        });
-
-        var tag = postResult.ReadAsJson<Tag>();
-
-        var putResult = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Put
-                .Json(new
-                {
-                    Products = new List<long>(),
-                })
-                .ToUrl($"/api/tags/{tag?.Id}/products");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
-        });
-
-        var updatedTag = putResult.ReadAsJson<Tag>();
-        return await Verify(updatedTag);
-    }
-
-    [Fact]
-    public async Task<VerifyResult> PutAddProducts_InvalidDTO_ReturnsBadRequest()
-    {
-        var putResult = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Put
-                .Json(new
-                {
-                    Products = 1,
-                })
-                .ToUrl("/api/tags/1/products");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
-        });
-
-        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
-    }
-
-    [Fact]
-    public async Task<VerifyResult> PutAddProducts_InvalidId_ReturnsNotFound()
-    {
-        var putResult = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Put
-                .Json(new
-                {
-                    Products = new List<long>(),
-                })
-                .ToUrl("/api/tags/50/products");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
-        });
-
-        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
-    }
-    #endregion
-
-    #region Delete: Remove Product
-    [Fact]
-    public async Task<VerifyResult> DeleteRemoveProducts_ValidDTO_ReturnsModel()
-    {
-        var postResult = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Post
-                .Json(new
-                {
-                    Name = "Test Tag",
-                    Description = "Non-animal products",
-                })
-                .ToUrl("/api/tags");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
-        });
-
-        var tag = postResult.ReadAsJson<Tag>();
-
-        var deleteResult = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Delete
-                .Json(new
-                {
-                    Products = new List<long>(),
-                })
-                .ToUrl($"/api/tags/{tag?.Id}/products");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
-        });
-
-        var updatedTag = deleteResult.ReadAsJson<Tag>();
-        return await Verify(updatedTag);
-    }
-
-    [Fact]
-    public async Task<VerifyResult> DeleteRemoveProducts_InvalidDTO_ReturnsBadRequest()
-    {
-        var deleteResult = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Delete
-                .Json(new
-                {
-                    Products = 1,
-                })
-                .ToUrl("/api/tags/1/products");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.BadRequest);
-        });
-
-        return await VerifyJson(deleteResult.ReadAsTextAsync(), this.verifySettings);
-    }
-
-    [Fact]
-    public async Task<VerifyResult> DeleteRemoveProducts_InvalidId_ReturnsNotFound()
-    {
-        var deleteResult = await this.AlbaHost.Scenario(_ =>
-        {
-            _.Delete
-                .Json(new
-                {
-                    Products = new List<long>(),
-                })
-                .ToUrl("/api/tags/50/products");
-            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
-        });
-
-        return await VerifyJson(deleteResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
 
@@ -411,6 +345,7 @@ public class TagsControllerTests : WebFixtures
                 {
                     Name = "Test Tag",
                     Description = "Non-animal products",
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
@@ -436,6 +371,7 @@ public class TagsControllerTests : WebFixtures
                 {
                     Name = "Test Tag",
                     Description = "Non-animal products",
+                    Products = new List<long>(),
                 })
                 .ToUrl("/api/tags");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);

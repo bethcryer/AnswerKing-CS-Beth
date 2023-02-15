@@ -8,15 +8,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Answer.King.Infrastructure.Repositories;
 
-public class ProductRepository : IProductRepository
+public class ProductRepository : BaseRepository, IProductRepository
 {
     private readonly ILogger<ProductRepository> logger;
 
     public ProductRepository(ILiteDbConnectionFactory connections, ILogger<ProductRepository> logger)
+        : base(connections)
     {
-        var db = connections.GetConnection();
-
-        this.Collection = db.GetCollection<Product>();
+        this.Collection = this.Db.GetCollection<Product>();
         this.Collection.EnsureIndex("categories");
 
         this.logger = logger;
