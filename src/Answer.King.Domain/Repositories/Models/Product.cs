@@ -64,7 +64,7 @@ public class Product
 
     public void AddTag(TagId tag)
     {
-        if (this.Retired)
+        if (this.Retired && !this.Tags.Contains(tag))
         {
             throw new ProductLifecycleException("Cannot add tag to retired product.");
         }
@@ -74,7 +74,7 @@ public class Product
 
     public void RemoveTag(TagId tag)
     {
-        if (this.Retired)
+        if (this.Retired && this.Tags.Contains(tag))
         {
             throw new ProductLifecycleException("Cannot remove tag from retired product.");
         }
@@ -89,7 +89,7 @@ public class Product
 
     public void SetCategory(ProductCategory newCategory)
     {
-        if (this.Retired)
+        if (this.Retired && this.Category != newCategory)
         {
             throw new ProductLifecycleException("Can't add product to category. Product is retired");
         }
