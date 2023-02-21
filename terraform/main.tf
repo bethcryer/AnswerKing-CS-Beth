@@ -13,6 +13,7 @@ module "vpc_subnet" {
 # Security Group: Defines network traffic rules for our ECS
 
 resource "aws_security_group" "ecs_sg" {
+  #checkov:skip=CKV_AWS_260:Allowing ingress from 0.0.0.0 for public HTTP(S) access
   name        = "${var.project_name}-ecs-sg"
   description = "Security group for ec2-sg"
   vpc_id       = module.vpc_subnet.vpc_id
@@ -38,6 +39,7 @@ resource "aws_security_group" "ecs_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All traffic"
   }
 
   tags = {
@@ -106,7 +108,7 @@ resource "aws_ecs_task_definition" "aws_ecs_task" {
       "name": "${var.project_name}-container",
       "image": "${var.image_url}",
       "entryPoint": [],
-      
+
       "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -143,10 +145,12 @@ resource "aws_ecs_task_definition" "aws_ecs_task" {
   network_mode             = "awsvpc"
   memory                   = "512"
   cpu                      = "256"
+
+  #checkov:skip=CKV_AWS_249:TODO: Determine if we should have separate role permissions for execution and task in future security ticket
   execution_role_arn       = aws_iam_role.ecs_task_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
 
- volume {
+  volume {
     name = "${var.project_name}-ecs-efs-volume"
 
     efs_volume_configuration {

@@ -1,6 +1,7 @@
 # Elastic IP
 
 resource "aws_eip" "lb_eip" {
+  #checkov:skip=CKV2_AWS_19:IP is being used for load balancer
   vpc = true
 
   tags = {
@@ -20,10 +21,15 @@ resource "aws_route53_record" "dns_dotnet" {
 # Load Balancer
 
 resource "aws_lb" "load_balancer" {
-  name               = "${var.project_name}-lb"
-  internal           = false
-  load_balancer_type = "network"
-  ip_address_type    = "ipv4"
+  #checkov:skip=CKV_AWS_150:Deletion protection is being left off for ease of running terraform destroy
+
+  #checkov:skip=CKV_AWS_91:TODO: Add cloudwatch logging
+  #checkov:skip=CKV2_AWS_20:TODO: Redirect HTTP to HTTPS at load balancer and remove HTTP handling afterwards in future security ticket
+  name                             = "${var.project_name}-lb"
+  internal                         = false
+  load_balancer_type               = "network"
+  ip_address_type                  = "ipv4"
+  enable_cross_zone_load_balancing = true
 
   subnet_mapping {
     subnet_id     = "${module.vpc_subnet.public_subnet_ids[0]}"
@@ -46,7 +52,7 @@ resource "aws_lb_target_group" "target_group" {
     Name = "${var.project_name}-lb-tg"
   }
 
-  lifecycle { 
+  lifecycle {
     create_before_destroy = true
     ignore_changes = [name]
   }
@@ -64,6 +70,7 @@ resource "aws_lb_listener" "listener" {
 }
 
 resource "aws_lb_listener" "listener_443" {
+  #checkov:skip=CKV_AWS_103:TODO: Add SSL policy to ensure TLS 1.2 or higher is being used in future security ticket
   load_balancer_arn = aws_lb.load_balancer.id
   port              = "443"
   protocol          = "TLS"
