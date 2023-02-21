@@ -63,12 +63,12 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[19.7.1, )",
-        "resolved": "19.7.1",
-        "contentHash": "NTuOBOk+Awwoar8HmjmkYeICygwW3M3rrMjMV59FUSCngzszXGcMBtlIXQmiyfS24Qb+NjZokEyaphWEIMwIRQ==",
+        "requested": "[19.10.0, )",
+        "resolved": "19.10.0",
+        "contentHash": "MHahmhhKESeo4hOucvRGywhKlk18B27E3mw+8eC8YijLukrbXNncVNHzl7ef+dM36Q4MFe+Pzty2H4Lk/Iiltw==",
         "dependencies": {
-          "EmptyFiles": "4.1.0",
-          "Verify": "19.7.1",
+          "EmptyFiles": "4.2.0",
+          "Verify": "19.10.0",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.4.2"
         }
@@ -92,8 +92,8 @@
       },
       "Argon": {
         "type": "Transitive",
-        "resolved": "0.2.1",
-        "contentHash": "u+nKsl9XXOr6ZS2VrEUwEgJyp2O+rBMyVZ/du03U8Boab4mpSZCLL3+YrzuacsVQv5xKZQhH0nCojZk+bw8L9A=="
+        "resolved": "0.4.0",
+        "contentHash": "gkGsTpDQnkIBl4HAr/Z06LQGdzyTB1vDHB1z+w0sUMZLJCPPzSCCH77ecmTzUXNhMat809BkkuIUv/zcoEwW4w=="
       },
       "AWS.Logger.AspNetCore": {
         "type": "Transitive",
@@ -159,8 +159,8 @@
       },
       "EmptyFiles": {
         "type": "Transitive",
-        "resolved": "4.1.0",
-        "contentHash": "mwnB0PowYoKVD0t/ImcAbwBNNHRpmRrbiuCSosy6m5YoGJ/29k45RTU/8arLrhcPWH1JVCwPfmMsW06/IdDaZA=="
+        "resolved": "4.2.0",
+        "contentHash": "VWXAwhdItSlxEbRLoQBmeNGTCb2Rhp0Nry+4xtKvpTRkWmeC0Ut9fiBeMtTtARLTxC5JyQ6HsgcmhdcNxYqNRg=="
       },
       "FluentValidation": {
         "type": "Transitive",
@@ -1726,12 +1726,12 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "19.7.1",
-        "contentHash": "Pm7bWHyay4s5/8TGsqVgeu0i0XHnYRvTwfAE1yFMmtFpfhymIcUYiuQ/5kucsXyocpeG9mxeYOETj1cQMx/BVg==",
+        "resolved": "19.10.0",
+        "contentHash": "0TmGkePJHe9ros8R+Pnsav84+oF8odDaZMlNeUz0lYnCFqrCmToEN85KsMI0uT8TU1aCr/9ezgoyHplhMV+liA==",
         "dependencies": {
-          "Argon": "0.2.1",
+          "Argon": "0.4.0",
           "DiffEngine": "11.1.0",
-          "EmptyFiles": "4.1.0",
+          "EmptyFiles": "4.2.0",
           "SimpleInfoName": "2.1.0"
         }
       },
