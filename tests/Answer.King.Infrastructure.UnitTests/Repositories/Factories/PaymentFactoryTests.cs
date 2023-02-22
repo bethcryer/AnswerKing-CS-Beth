@@ -1,8 +1,8 @@
 using System.Reflection;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
+using Answer.King.Infrastructure.UnitTests.TestObjects;
 using Answer.King.Test.Common.CustomTraits;
-using Category = Answer.King.Domain.Inventory.Category;
 
 namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
 
@@ -32,7 +32,7 @@ public class PaymentFactoryTests
 
         var constructor = paymentFactoryConstructorPropertyInfo?.GetValue(PaymentFactory);
 
-        var wrongConstructor = typeof(Category).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+        var wrongConstructor = typeof(WrongConstructor).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
             .SingleOrDefault(c => c.IsPrivate && c.GetParameters().Length > 0);
 
         paymentFactoryConstructorPropertyInfo?.SetValue(PaymentFactory, wrongConstructor);

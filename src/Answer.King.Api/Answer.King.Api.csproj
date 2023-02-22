@@ -56,4 +56,8 @@
     <None Include="appsettings.Production.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="db\" />
+  </ItemGroup>
+
 </Project>

@@ -61,12 +61,14 @@ public class OrderServiceTests
     public async Task CreateOrder_ValidOrderRequestRecieved_ReturnsOrder()
     {
         // Arrange
+        var createdOn = DateTime.UtcNow;
+        var lastUpdated = createdOn;
         var category = new ProductCategory(1, "name", "description");
         var tagIds = new List<TagId> { new(1) };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, category, tagIds, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, category, tagIds, false),
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, createdOn, lastUpdated, category, tagIds, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, createdOn, lastUpdated, category, tagIds, false),
         };
 
         var orderRequest = new OrderRequest
@@ -122,6 +124,8 @@ public class OrderServiceTests
     public async Task UpdateOrder_ValidOrderRequestReceived_ReturnsUpdatedOrder()
     {
         // Arrange
+        var createdOn = DateTime.UtcNow;
+        var lastUpdated = DateTime.UtcNow;
         var order = new Order();
         this.orderRepository.GetOne(Arg.Any<long>()).Returns(order);
 
@@ -129,8 +133,8 @@ public class OrderServiceTests
         var tagIds = new List<TagId> { new(1) };
         var products = new[]
         {
-            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, category, tagIds, false),
-            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, category, tagIds, false),
+            ProductFactory.CreateProduct(1, "product 1", "desc", 2.0, createdOn, lastUpdated, category, tagIds, false),
+            ProductFactory.CreateProduct(2, "product 2", "desc", 4.0, createdOn, lastUpdated, category, tagIds, false),
         };
 
         var orderRequest = new OrderRequest

@@ -60,8 +60,11 @@ public class ProductServiceTests
     public async Task RetireProduct_ValidProductId_ReturnsProductAsRetired()
     {
         // Arrange
+        var createdOn = DateTime.UtcNow;
+        var lastUpdated = createdOn;
+
         var product = ProductFactory.CreateProduct(
-            1, "product", "desc", 12.00, new ProductCategory(1, "category", "desc"), new List<TagId> { new(1) }, false);
+            1, "product", "desc", 12.00, createdOn, lastUpdated, new ProductCategory(1, "category", "desc"), new List<TagId> { new(1) }, false);
 
         this.productRepository.GetOne(product.Id).Returns(product);
 

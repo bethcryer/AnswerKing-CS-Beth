@@ -1,8 +1,8 @@
 using System.Reflection;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
-using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
+using Answer.King.Infrastructure.UnitTests.TestObjects;
 using Answer.King.Test.Common.CustomTraits;
 
 namespace Answer.King.Infrastructure.UnitTests.Repositories.Factories;
@@ -34,7 +34,7 @@ public class TagFactoryTests
 
         var constructor = tagFactoryConstructorPropertyInfo?.GetValue(TagFactory);
 
-        var wrongConstructor = typeof(Product).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+        var wrongConstructor = typeof(WrongConstructor).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
             .SingleOrDefault(c => c.IsPrivate && c.GetParameters().Length > 0);
 
         tagFactoryConstructorPropertyInfo?.SetValue(TagFactory, wrongConstructor);

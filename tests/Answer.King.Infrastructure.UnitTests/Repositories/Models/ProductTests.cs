@@ -17,9 +17,11 @@ public class ProductTests
         const int id = 0;
         const string productName = "Product Name";
         const string productDescription = "Product Description";
+        const int price = 142;
+        var createdOn = DateTime.UtcNow;
+        var lastUpdated = createdOn;
         var category = new ProductCategory(1, "name", "description");
         var tags = new List<TagId> { new(1) };
-        const int price = 142;
         const bool retired = false;
 
         // Act / Assert
@@ -28,6 +30,8 @@ public class ProductTests
             productName,
             productDescription,
             price,
+            createdOn,
+            lastUpdated,
             category,
             tags,
             retired));
@@ -40,9 +44,11 @@ public class ProductTests
         const int id = 1;
         var productName = null as string;
         const string productDescription = "Product Description";
+        const int price = 142;
+        var createdOn = DateTime.UtcNow;
+        var lastUpdated = createdOn;
         var category = new ProductCategory(1, "name", "description");
         var tags = new List<TagId> { new(1) };
-        const int price = 142;
         const bool retired = false;
 
         // Act / Assert
@@ -51,6 +57,8 @@ public class ProductTests
             productName!,
             productDescription,
             price,
+            createdOn,
+            lastUpdated,
             category,
             tags,
             retired));
@@ -63,9 +71,11 @@ public class ProductTests
         const int id = 1;
         const string productName = "";
         const string productDescription = "Product Description";
+        const int price = 142;
+        var createdOn = DateTime.UtcNow;
+        var lastUpdated = createdOn;
         var category = new ProductCategory(1, "name", "description");
         var tags = new List<TagId> { new(1) };
-        const int price = 142;
         const bool retired = false;
 
         // Act / Assert
@@ -74,6 +84,8 @@ public class ProductTests
             productName,
             productDescription,
             price,
+            createdOn,
+            lastUpdated,
             category,
             tags,
             retired));
@@ -86,9 +98,11 @@ public class ProductTests
         const int id = 1;
         const string productName = "Product Name";
         var productDescription = null as string;
+        const int price = 142;
+        var createdOn = DateTime.UtcNow;
+        var lastUpdated = createdOn;
         var category = new ProductCategory(1, "name", "description");
         var tags = new List<TagId> { new(1) };
-        const int price = 142;
         const bool retired = false;
 
         // Act / Assert
@@ -97,6 +111,8 @@ public class ProductTests
             productName,
             productDescription!,
             price,
+            createdOn,
+            lastUpdated,
             category,
             tags,
             retired));
@@ -109,9 +125,11 @@ public class ProductTests
         const int id = 1;
         const string productName = "Product Name";
         const string productDescription = "";
+        const int price = 142;
+        var createdOn = DateTime.UtcNow;
+        var lastUpdated = createdOn;
         var category = new ProductCategory(1, "name", "description");
         var tags = new List<TagId> { new(1) };
-        const int price = 142;
         const bool retired = false;
 
         // Act / Assert
@@ -120,6 +138,8 @@ public class ProductTests
             productName,
             productDescription,
             price,
+            createdOn,
+            lastUpdated,
             category,
             tags,
             retired));
@@ -132,9 +152,11 @@ public class ProductTests
         const int id = 1;
         const string productName = "Product Name";
         const string productDescription = "Product Description";
+        const int price = -1;
+        var createdOn = DateTime.UtcNow;
+        var lastUpdated = createdOn;
         var category = new ProductCategory(1, "name", "description");
         var tags = new List<TagId> { new(1) };
-        const int price = -1;
         const bool retired = false;
 
         // Act Assert
@@ -143,6 +165,8 @@ public class ProductTests
             productName,
             productDescription,
             price,
+            createdOn,
+            lastUpdated,
             category,
             tags,
             retired));

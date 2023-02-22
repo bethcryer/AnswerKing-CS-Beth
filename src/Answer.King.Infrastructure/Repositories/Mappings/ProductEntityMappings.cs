@@ -26,6 +26,8 @@ public class ProductEntityMappings : IEntityMapping
                     ["name"] = product.Name,
                     ["description"] = product.Description,
                     ["price"] = product.Price,
+                    ["createdOn"] = product.CreatedOn,
+                    ["lastUpdated"] = product.LastUpdated,
                     ["Category"] = new BsonDocument
                     {
                         ["_id"] = product.Category.Id,
@@ -53,6 +55,8 @@ public class ProductEntityMappings : IEntityMapping
                     doc["name"].AsString,
                     doc["description"].AsString,
                     doc["price"].AsDouble,
+                    doc["createdOn"].AsDateTime,
+                    doc["lastUpdated"].AsDateTime,
                     category,
                     tags,
                     doc["retired"].AsBoolean);

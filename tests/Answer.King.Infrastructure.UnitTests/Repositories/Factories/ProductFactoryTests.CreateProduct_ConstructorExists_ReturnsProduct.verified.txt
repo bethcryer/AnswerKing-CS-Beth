@@ -1,8 +1,10 @@
-﻿{
+{
   Id: 1,
   Name: NAME,
   Description: DESC,
   Price: 1.0,
+  CreatedOn: DateTime_1,
+  LastUpdated: DateTime_1,
   Category: {
     Id: 1,
     Name: name,

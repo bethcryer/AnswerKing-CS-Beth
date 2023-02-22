@@ -20,11 +20,24 @@ internal class ProductFactory
         string name,
         string description,
         double price,
+        DateTime createdOn,
+        DateTime lastUpdated,
         ProductCategory category,
         IList<TagId> tags,
         bool retired)
     {
-        var parameters = new object[] { id, name, description, price, category, tags, retired };
+        var parameters = new object[]
+        {
+            id,
+            name,
+            description,
+            price,
+            createdOn,
+            lastUpdated,
+            category,
+            tags,
+            retired,
+        };
 
         /* invoking a private constructor will wrap up any exception into a
          * TargetInvocationException so here I unwrap it

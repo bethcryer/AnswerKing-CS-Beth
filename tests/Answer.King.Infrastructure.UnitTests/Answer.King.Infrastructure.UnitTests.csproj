@@ -31,4 +31,8 @@
     <ProjectReference Include="..\Answer.King.Test.Common\Answer.King.Test.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestObjects\" />
+  </ItemGroup>
+
 </Project>

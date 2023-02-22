@@ -364,7 +364,7 @@ public class CategoryServiceTests
 
     private static Product CreateProduct(long id, string name, string description, double price, long categoryId = 1)
     {
-        return ProductFactory.CreateProduct(id, name, description, price, new ProductCategory(categoryId, "name", "description"), new List<TagId>(), false);
+        return ProductFactory.CreateProduct(id, name, description, price, DateTime.UtcNow, DateTime.UtcNow, new ProductCategory(categoryId, "name", "description"), new List<TagId>(), false);
     }
 
     #endregion

@@ -372,7 +372,7 @@ public class TagServiceTests
 
     private static Product CreateProduct(long id, string name, string description, double price, IList<TagId> tags, bool retired = false)
     {
-        return ProductFactory.CreateProduct(id, name, description, price, new ProductCategory(1, "category", "desc"), tags, retired);
+        return ProductFactory.CreateProduct(id, name, description, price, DateTime.UtcNow, DateTime.UtcNow, new ProductCategory(1, "category", "desc"), tags, retired);
     }
 
     #endregion
