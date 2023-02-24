@@ -72,7 +72,7 @@ public class TagsController : ControllerBase
         if (namedTag != null)
         {
             this.ModelState.AddModelError("tag", "A tag with this name already exists");
-            return this.BadRequest();
+            return this.ValidationProblem();
         }
 
         try
@@ -109,7 +109,7 @@ public class TagsController : ControllerBase
         if (namedTag != null && id != namedTag.Id)
         {
             this.ModelState.AddModelError("tag", "A tag with this name already exists");
-            return this.BadRequest();
+            return this.ValidationProblem();
         }
 
         try

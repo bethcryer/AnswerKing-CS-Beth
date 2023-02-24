@@ -77,7 +77,7 @@ public class CategoriesController : ControllerBase
         if (namedCategory != null)
         {
             this.ModelState.AddModelError("category", "A category with this name already exists");
-            return this.BadRequest();
+            return this.ValidationProblem();
         }
 
         try
@@ -123,7 +123,7 @@ public class CategoriesController : ControllerBase
             if (namedCategory != null && namedCategory.Id != id)
             {
                 this.ModelState.AddModelError("category", "A category with this name already exists");
-                return this.BadRequest();
+                return this.ValidationProblem();
             }
 
             return this.Ok(category);
