@@ -31,7 +31,7 @@ variable "dns_base_domain_name" {
 variable "image_url" {
   type        = string
   description = "AnswerKing C# API image"
-  default     = "ghcr.io/answerconsulting/answerking-cs:latest"
+  default     = "ghcr.io/answerdigital/answerking-cs:latest"
 }
 
 variable "ec2_type" {
@@ -49,13 +49,13 @@ variable "vpc_cidr" {
 variable "num_public_subnets" {
   type        = number
   description = "Number of public subnets"
-  default     = 1
+  default     = 2
 }
 
 variable "num_private_subnets" {
   type        = number
   description = "Number of private subnets"
-  default     = 1
+  default     = 2
 }
 
 variable "aws_cloudwatch_retention_in_days" {
