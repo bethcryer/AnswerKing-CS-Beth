@@ -171,4 +171,39 @@ public class ProductsController : ControllerBase
                 type: "https://www.rfc-editor.org/rfc/rfc7231#section-6.5.9");
         }
     }
+
+    /// <summary>
+    /// Unretire an existing product.
+    /// </summary>
+    /// <param name="id">Product identifier.</param>
+    /// <response code="200">When the product has been unretired.</response>
+    /// <response code="404">When the product with the given <paramref name="id"/> does not exist.</response>
+    /// <response code="410">When the product with the given <paramref name="id"/> is not retired.</response>
+    /// <returns>Status of retirement request.</returns>
+    // POST api/products/{ID}
+    [HttpPost("{id}")]
+    [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
+    public async Task<IActionResult> Unretire(long id)
+    {
+        try
+        {
+            var product = await this.Products.UnretireProduct(id);
+            if (product == null)
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok(product);
+        }
+        catch (ProductServiceException)
+        {
+            return this.Problem(
+                statusCode: StatusCodes.Status410Gone,
+                title: "Gone",
+                type: "https://www.rfc-editor.org/rfc/rfc7231#section-6.5.9");
+        }
+    }
 }

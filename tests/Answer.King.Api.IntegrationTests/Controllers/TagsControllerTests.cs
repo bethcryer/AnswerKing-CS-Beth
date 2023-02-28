@@ -396,4 +396,45 @@ public class TagsControllerTests : WebFixtures
         return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
+
+    #region Unretire
+    [Fact]
+    public async Task<VerifyResult> UnretireTag_InvalidId_ReturnsNotFound()
+    {
+        var postResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Url("/api/tags/50");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
+        });
+
+        return await VerifyJson(postResult.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task UnretireTag_ValidId_ReturnsNoContent()
+    {
+        var postResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Test Tag",
+                    Description = "Non-animal products",
+                    Products = new List<long>(),
+                })
+                .ToUrl("/api/tags");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
+        });
+
+        var tag = postResult.ReadAsJson<Tag>();
+
+        await this.AlbaHost.Scenario(_ =>
+        {
+            _.Delete
+                .Url($"/api/tags/{tag?.Id}");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
+        });
+    }
+    #endregion
 }

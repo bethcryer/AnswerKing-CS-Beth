@@ -369,4 +369,55 @@ public class ProductsControllerTests : WebFixtures
         return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
+
+    #region Unretire
+    [Fact]
+    public async Task<VerifyResult> UnretireProduct_InvalidId_ReturnsNotFound()
+    {
+        var postResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Url("/api/products/1000");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
+        });
+
+        return await VerifyJson(postResult.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> UnretireProduct_ValidId_ReturnsProduct()
+    {
+        var postResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Burger",
+                    Description = "Juicy",
+                    Price = 1.5,
+                    CategoryId = new CategoryId(1),
+                })
+                .ToUrl("/api/products");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
+        });
+
+        var products = postResult.ReadAsJson<Product>();
+
+        await this.AlbaHost.Scenario(_ =>
+        {
+            _.Delete
+                .Url($"/api/products/{products?.Id}");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
+        });
+
+        var unretireResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Url($"/api/products/{products?.Id}");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
+        });
+
+        return await VerifyJson(unretireResult.ReadAsTextAsync(), this.verifySettings);
+    }
+    #endregion
 }

@@ -102,6 +102,11 @@ public class Product
         this.LastUpdated = DateTime.UtcNow;
     }
 
+    public void Unretire()
+    {
+        this.Retired = false;
+    }
+
     public void SetCategory(ProductCategory newCategory)
     {
         if (this.Retired && this.Category != newCategory)

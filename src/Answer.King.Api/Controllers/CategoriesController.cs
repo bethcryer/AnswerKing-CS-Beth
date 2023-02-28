@@ -181,6 +181,37 @@ public class CategoriesController : ControllerBase
     }
 
     /// <summary>
+    /// Unretire category.
+    /// </summary>
+    /// <param name="id">Category identifier.</param>
+    /// <response code="200">When the category has been unretired.</response>
+    /// <response code="400">When invalid parameters are provided.</response>
+    /// <returns>Unretired Category.</returns>
+    // POST api/categories
+    [HttpPost("{id}")]
+    [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
+    public async Task<IActionResult> Unretire(long id)
+    {
+        try
+        {
+            var category = await this.Categories.UnretireCategory(id);
+            if (category == null)
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok(category);
+        }
+        catch (CategoryServiceException ex)
+        {
+            this.ModelState.AddModelError("products", ex.Message);
+            return this.ValidationProblem();
+        }
+    }
+
+    /// <summary>
     /// Get all products in a category.
     /// </summary>
     /// <param name="id">Category identifier.</param>

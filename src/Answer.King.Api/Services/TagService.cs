@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
@@ -119,6 +119,28 @@ public class TagService : ITagService
         try
         {
             tag.RetireTag();
+
+            await this.Tags.Save(tag);
+
+            return tag;
+        }
+        catch (TagLifecycleException ex)
+        {
+            throw new TagServiceException(ex.Message, ex);
+        }
+    }
+
+    public async Task<Tag?> UnretireTag(long tagId)
+    {
+        var tag = await this.Tags.GetOne(tagId);
+        if (tag == null)
+        {
+            return null;
+        }
+
+        try
+        {
+            tag.UnretireTag();
 
             await this.Tags.Save(tag);
 

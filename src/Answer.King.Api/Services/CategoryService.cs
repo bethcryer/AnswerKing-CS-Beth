@@ -126,6 +126,29 @@ public class CategoryService : ICategoryService
         }
     }
 
+    public async Task<Category?> UnretireCategory(long categoryId)
+    {
+        var category = await this.Categories.GetOne(categoryId);
+
+        if (category == null)
+        {
+            return null;
+        }
+
+        try
+        {
+            category.UnretireCategory();
+
+            await this.Categories.Save(category);
+
+            return category;
+        }
+        catch (CategoryLifecycleException ex)
+        {
+            throw new CategoryServiceException(ex.Message, ex);
+        }
+    }
+
     private async Task RemoveProductFromCategory(Product product)
     {
         var oldCategory = await this.Categories.GetOne(product.Category.Id) ??

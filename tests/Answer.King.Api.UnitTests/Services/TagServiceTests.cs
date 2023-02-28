@@ -363,6 +363,50 @@ public class TagServiceTests
 
     #endregion
 
+    #region Unretire
+
+    [Fact]
+    public async Task UnretireTag_InvalidTagIdReceived_ReturnsNull()
+    {
+        // Arrange
+        this.tagRepository.GetOne(Arg.Any<long>()).Returns(null as Tag);
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        Assert.Null(await sut.UnretireTag(1));
+    }
+
+    [Fact]
+    public async Task UnretireTag_NotRetired_ThrowsException()
+    {
+        // Arrange
+        var tag = new Tag("tag", "desc", new List<ProductId>());
+        this.tagRepository.GetOne(tag.Id).Returns(tag);
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        await Assert.ThrowsAsync<TagServiceException>(() =>
+            sut.UnretireTag(tag.Id));
+    }
+
+    [Fact]
+    public async Task UnretireTag_ValidtagId_ReturnsUnretiredTag()
+    {
+        // Arrange
+        var tag = new Tag("tag", "desc", new List<ProductId>());
+        tag.RetireTag();
+        this.tagRepository.GetOne(tag.Id).Returns(tag);
+
+        // Act
+        var sut = this.GetServiceUnderTest();
+        var retiredTag = await sut.UnretireTag(tag.Id);
+
+        // Assert
+        Assert.False(retiredTag!.Retired);
+    }
+
+    #endregion
+
     #region Helpers
 
     private static Tag CreateTag(long id, string name, string description, IList<ProductId> products, bool retired = false)

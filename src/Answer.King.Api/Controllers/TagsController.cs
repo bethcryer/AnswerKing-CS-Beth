@@ -172,4 +172,41 @@ public class TagsController : ControllerBase
                 type: "https://www.rfc-editor.org/rfc/rfc7231#section-6.5.9");
         }
     }
+
+    /// <summary>
+    /// Unretire an existing tag.
+    /// </summary>
+    /// <param name="id">Tag identifier.</param>
+    /// <response code="204">When the tag has been unretired.</response>
+    /// <response code="400">When invalid parameters are provided.</response>
+    /// <response code="404">When the tag with the given <paramref name="id"/> does not exist.</response>
+    /// <response code="410">When the tag with the given <paramref name="id"/> is not retired.</response>
+    /// <returns>Status of retirement request.</returns>
+    // POST api/tags/{ID}
+    [HttpPost("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    public async Task<IActionResult> Unretire(long id)
+    {
+        try
+        {
+            var tag = await this.Tags.UnretireTag(id);
+            if (tag == null)
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok(tag);
+        }
+        catch (TagServiceException ex) when (ex.Message.StartsWith(
+                                                      "The tag is not retired.", StringComparison.OrdinalIgnoreCase))
+        {
+            return this.Problem(
+                statusCode: StatusCodes.Status410Gone,
+                title: "Gone",
+                type: "https://www.rfc-editor.org/rfc/rfc7231#section-6.5.9");
+        }
+    }
 }
