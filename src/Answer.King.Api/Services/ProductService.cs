@@ -1,3 +1,4 @@
+using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
 using Answer.King.Domain.Repositories.Models;
@@ -10,15 +11,19 @@ public class ProductService : IProductService
 {
     public ProductService(
         IProductRepository products,
-        ICategoryRepository categories)
+        ICategoryRepository categories,
+        ITagRepository tags)
     {
         this.Products = products;
         this.Categories = categories;
+        this.Tags = tags;
     }
 
     private IProductRepository Products { get; }
 
     private ICategoryRepository Categories { get; }
+
+    private ITagRepository Tags { get; }
 
     public async Task<IEnumerable<Product>> GetProducts()
     {
@@ -51,10 +56,34 @@ public class ProductService : IProductService
             createProduct.Price,
             new ProductCategory(category.Id, category.Name, category.Description));
 
+        this.Products.BeginTransaction();
+
         await this.Products.AddOrUpdate(product);
         category.AddProduct(new ProductId(product.Id));
 
         await this.Categories.Save(category);
+
+        try
+        {
+            this.Tags.BeginTransaction();
+
+            var tags = await this.AssociateProductAndTags(product, createProduct.Tags);
+
+            foreach (var tag in tags)
+            {
+                await this.Tags.Save(tag);
+            }
+
+            this.Tags.CommitTransaction();
+        }
+        catch
+        {
+            this.Tags.RollbackTransaction();
+            this.Products.RollbackTransaction();
+            throw;
+        }
+
+        this.Products.CommitTransaction();
 
         return product;
     }
@@ -94,6 +123,45 @@ public class ProductService : IProductService
             category.AddProduct(new ProductId(product.Id));
 
             await this.Categories.Save(category);
+        }
+
+        var tagIdsToRemove = product.Tags.Where(x => !updateProduct.Tags.Contains(x));
+        var updatedTags = new List<Tag>();
+
+        foreach (var tagId in tagIdsToRemove)
+        {
+            var tag = await this.Tags.GetOne(tagId);
+
+            try
+            {
+                product.RemoveTag(tagId);
+                tag!.RemoveProduct(new ProductId(productId));
+            }
+            catch (Exception ex) when (ex is TagLifecycleException or ProductLifecycleException)
+            {
+                throw new ProductServiceException(ex.Message, ex);
+            }
+
+            updatedTags.Add(tag);
+        }
+
+        updatedTags.AddRange(await this.AssociateProductAndTags(product, updateProduct.Tags));
+
+        try
+        {
+            this.Tags.BeginTransaction();
+
+            foreach (var tag in updatedTags)
+            {
+                await this.Tags.Save(tag);
+            }
+
+            this.Tags.CommitTransaction();
+        }
+        catch
+        {
+            this.Tags.RollbackTransaction();
+            throw;
         }
 
         await this.Products.AddOrUpdate(product);
@@ -148,6 +216,31 @@ public class ProductService : IProductService
         await this.Products.AddOrUpdate(product);
 
         return product;
+    }
+
+    private async Task<List<Tag>> AssociateProductAndTags(Product product, List<long> tags)
+    {
+        var updatedTags = new List<Tag>();
+
+        foreach (var tagId in tags)
+        {
+            var tag = await this.Tags.GetOne(tagId) ??
+                            throw new ProductServiceException($"The provided tag id is not valid: {tagId}");
+
+            try
+            {
+                tag.AddProduct(new ProductId(product.Id));
+                product.AddTag(new TagId(tagId));
+            }
+            catch (Exception ex) when (ex is ProductLifecycleException or TagLifecycleException)
+            {
+                throw new ProductServiceException(ex.Message, ex);
+            }
+
+            updatedTags.Add(tag);
+        }
+
+        return updatedTags;
     }
 }
 

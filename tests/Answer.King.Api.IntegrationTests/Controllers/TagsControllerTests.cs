@@ -225,6 +225,7 @@ public class TagsControllerTests : WebFixtures
                     Description = "Juicy",
                     Price = 1.50,
                     CategoryId = new CategoryId(1),
+                    Tags = Array.Empty<long>(),
                 })
                 .ToUrl("/api/products");
             _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);

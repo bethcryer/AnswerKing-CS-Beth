@@ -21,6 +21,8 @@ public class ProductServiceTests
 
     private readonly IProductRepository productRepository = Substitute.For<IProductRepository>();
 
+    private readonly ITagRepository tagRepository = Substitute.For<ITagRepository>();
+
     #region Create
 
     [Fact]
@@ -102,6 +104,45 @@ public class ProductServiceTests
         Assert.Null(await sut.UpdateProduct(1, new ProductRequest()));
     }
 
+    [Fact]
+    public async Task UpdateProduct_RemoveTag_ReturnsUpdatedProduct()
+    {
+        // Arrange
+        const int productId = 1;
+        const int categoryId = 1;
+        const int tagId = 1;
+
+        var product = new Product("product", "desc", 1.0, new ProductCategory(categoryId, "category", "desc"))
+        {
+            Id = productId,
+        };
+        product.AddTag(new TagId(tagId));
+
+        var updateProduct = new ProductRequest()
+        {
+            CategoryId = new Api.RequestModels.CategoryId(categoryId),
+            Description = "desc",
+            Name = "product",
+            Price = 1.0,
+            Tags = new List<long>(),
+        };
+
+        var tag = new Domain.Inventory.Tag("tag", "desc", new List<ProductId> { new ProductId(productId) });
+        tag.AddProduct(new ProductId(productId));
+
+        this.productRepository.GetOne(productId).Returns(product);
+        this.tagRepository.GetOne(tagId).Returns(tag);
+        this.tagRepository.Save(Arg.Any<Domain.Inventory.Tag>()).Returns(Task.CompletedTask);
+        this.productRepository.AddOrUpdate(Arg.Any<Product>()).Returns(Task.CompletedTask);
+
+        // Act
+        var productService = this.GetServiceUnderTest();
+        var updatedProduct = await productService.UpdateProduct(productId, updateProduct);
+
+        // Assert
+        Assert.NotNull(updatedProduct);
+        Assert.Empty(updatedProduct.Tags);
+    }
     #endregion
 
     #region Get
@@ -198,7 +239,7 @@ public class ProductServiceTests
 
     private IProductService GetServiceUnderTest()
     {
-        return new ProductService(this.productRepository, this.categoryRepository);
+        return new ProductService(this.productRepository, this.categoryRepository, this.tagRepository);
     }
 
     #endregion
