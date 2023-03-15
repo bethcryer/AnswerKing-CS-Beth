@@ -139,8 +139,8 @@
       },
       "AWSSDK.Extensions.NETCore.Setup": {
         "type": "Transitive",
-        "resolved": "3.7.4",
-        "contentHash": "P1N5+kfoWMWu/GyMUsREAICeFo5QUP7nqF4vN3hP3ocMmzTnOLMPUtJdjmdFQ8STiYyr5UlNL4hhZ9C5mgq3jg==",
+        "resolved": "3.7.5",
+        "contentHash": "T+JpP2dFbyAFgm5htiwx9oaGZ9+IVGz5xpBCzCbLWW4lwmVWn3o1Wzi4xUpAo+TULWlzf4CBhuJ9chO0YtAGVw==",
         "dependencies": {
           "AWSSDK.Core": "3.7.6",
           "Microsoft.Extensions.Configuration.Abstractions": "2.0.0",
@@ -1786,7 +1786,7 @@
           "AWS.Logger.AspNetCore": "[3.3.0, )",
           "AWS.Logger.SeriLog": "[3.2.0, )",
           "AWSSDK.CloudWatchLogs": "[3.7.104.33, )",
-          "AWSSDK.Extensions.NETCore.Setup": "[3.7.4, )",
+          "AWSSDK.Extensions.NETCore.Setup": "[3.7.5, )",
           "Answer.King.Domain": "[1.0.0, )",
           "Answer.King.Infrastructure": "[1.0.0, )",
           "FluentValidation.AspNetCore": "[11.2.2, )",
