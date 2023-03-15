@@ -50,12 +50,12 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[19.10.0, )",
-        "resolved": "19.10.0",
-        "contentHash": "MHahmhhKESeo4hOucvRGywhKlk18B27E3mw+8eC8YijLukrbXNncVNHzl7ef+dM36Q4MFe+Pzty2H4Lk/Iiltw==",
+        "requested": "[19.11.1, )",
+        "resolved": "19.11.1",
+        "contentHash": "/bAPzV25PgtSaWQZj8WJOWi7KWyehz6NaRFQWapaOpHtfn1JVoLOUB0FSZMPE/f93h8lG81hWzXMwy0mwVdOYg==",
         "dependencies": {
-          "EmptyFiles": "4.2.0",
-          "Verify": "19.10.0",
+          "EmptyFiles": "4.3.0",
+          "Verify": "19.11.1",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.4.2"
         }
