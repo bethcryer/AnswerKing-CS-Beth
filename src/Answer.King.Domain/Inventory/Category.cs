@@ -116,6 +116,18 @@ public class Category : IAggregateRoot
 
         this.LastUpdated = DateTime.UtcNow;
     }
+
+    public void UnretireCategory()
+    {
+        if (!this.Retired)
+        {
+            throw new CategoryLifecycleException("The category is not retired.");
+        }
+
+        this.Retired = false;
+
+        this.LastUpdated = DateTime.UtcNow;
+    }
 }
 
 [Serializable]

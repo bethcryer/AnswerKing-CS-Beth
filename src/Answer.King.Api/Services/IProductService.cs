@@ -1,4 +1,4 @@
-﻿using Answer.King.Domain.Repositories.Models;
+using Answer.King.Domain.Repositories.Models;
 
 namespace Answer.King.Api.Services;
 
@@ -15,6 +15,8 @@ public interface IProductService
     Task<IEnumerable<Product>> GetProducts(IEnumerable<long> productIds);
 
     Task<Product?> RetireProduct(long productId);
+
+    Task<Product?> UnretireProduct(long productId);
 
     Task<Product?> UpdateProduct(long productId, RequestModels.Product updateProduct);
 }

@@ -33,12 +33,8 @@ public static class AssertController
     {
         var method = typeof(TController).GetMethod(methodName);
 
-        var attr = method?.GetCustomAttributes(typeof(TVerbAttribute), false).ToList();
-
-        if (attr == null)
-        {
-            throw new Exception("No custom attributes found.");
-        }
+        var attr = method?.GetCustomAttributes(typeof(TVerbAttribute), false).ToList() ??
+                   throw new Exception("No custom attributes found.");
 
         attr.AssertAttributeCount<TVerbAttribute>();
 
@@ -52,12 +48,8 @@ public static class AssertController
     {
         var method = typeof(TController).GetMethod(methodName);
 
-        var attr = method?.GetCustomAttributes(typeof(RouteAttribute), false).ToList();
-
-        if (attr == null)
-        {
-            throw new Exception("No custom attributes found.");
-        }
+        var attr = method?.GetCustomAttributes(typeof(RouteAttribute), false).ToList() ??
+                   throw new Exception("No custom attributes found.");
 
         attr.AssertAttributeCount<RouteAttribute>();
 

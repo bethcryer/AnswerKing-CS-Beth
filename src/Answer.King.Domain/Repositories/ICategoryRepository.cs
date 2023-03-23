@@ -2,7 +2,7 @@
 
 namespace Answer.King.Domain.Repositories;
 
-public interface ICategoryRepository : IAggregateRepository<Category>
+public interface ICategoryRepository : IAggregateRepository<Category>, IBaseRepository
 {
     Task<Category?> GetOne(string name);
 

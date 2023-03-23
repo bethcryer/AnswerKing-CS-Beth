@@ -4,6 +4,9 @@
   status: 400,
   traceId: {Scrubbed},
   errors: {
+    Tags: [
+      The Tags field is required.
+    ],
     CategoryId: [
       The CategoryId field is required.
     ],

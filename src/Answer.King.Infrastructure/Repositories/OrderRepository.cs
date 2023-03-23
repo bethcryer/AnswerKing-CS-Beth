@@ -6,13 +6,12 @@ using LiteDB;
 
 namespace Answer.King.Infrastructure.Repositories;
 
-public class OrderRepository : IOrderRepository
+public class OrderRepository : BaseRepository, IOrderRepository
 {
     public OrderRepository(ILiteDbConnectionFactory connections)
+        : base(connections)
     {
-        var db = connections.GetConnection();
-
-        this.Collection = db.GetCollection<Order>();
+        this.Collection = this.Db.GetCollection<Order>();
         this.Collection.EnsureIndex("lineItems.product._id");
     }
 

@@ -1,4 +1,4 @@
-﻿using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory;
 
 namespace Answer.King.Api.Services;
 
@@ -14,9 +14,7 @@ public interface ITagService
 
     Task<Tag?> RetireTag(long tagId);
 
+    Task<Tag?> UnretireTag(long tagId);
+
     Task<Tag?> UpdateTag(long tagId, RequestModels.Tag updateTag);
-
-    Task<Tag?> AddProducts(long tagId, RequestModels.TagProducts addProducts);
-
-    Task<Tag?> RemoveProducts(long tagId, RequestModels.TagProducts removeProducts);
 }

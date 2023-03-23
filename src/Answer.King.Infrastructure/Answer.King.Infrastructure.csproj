@@ -20,6 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="SeedData\ProductData.cs~RF44073381.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

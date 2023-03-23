@@ -1,0 +1,14 @@
+{
+  id: 25,
+  name: Burger,
+  description: Juicy,
+  price: 1.5,
+  createdOn: DateTimeOffset_1,
+  lastUpdated: DateTimeOffset_2,
+  category: {
+    id: 1,
+    name: Seafood,
+    description: Food from the oceans
+  },
+  retired: false
+}

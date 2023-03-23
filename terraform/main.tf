@@ -1,7 +1,7 @@
 # VPC Subnet module: Creates a VPC for our resources to live inside
 
 module "vpc_subnet" {
-  source = "git::github.com/AnswerConsulting/AnswerKing-Infrastructure.git//Terraform_modules/vpc_subnets?ref=v1.0.0"
+  source = "git::https://github.com/answerdigital/terraform-modules//Terraform_modules/vpc_subnets?ref=v1.0.0"
 
   project_name        = var.project_name
   owner               = var.owner
@@ -13,24 +13,17 @@ module "vpc_subnet" {
 # Security Group: Defines network traffic rules for our ECS
 
 resource "aws_security_group" "ecs_sg" {
+  #checkov:skip=CKV_AWS_260:Allowing ingress from 0.0.0.0 for public HTTP(S) access
   name        = "${var.project_name}-ecs-sg"
-  description = "Security group for ec2-sg"
+  description = "Security group for ECS service"
   vpc_id       = module.vpc_subnet.vpc_id
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "HTTP"
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "HTTPS"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [aws_security_group.alb_sg.id]
+    description     = "Application Load Balancer"
   }
 
   egress {
@@ -38,47 +31,13 @@ resource "aws_security_group" "ecs_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All traffic"
   }
 
   tags = {
     Name  = "${var.project_name}-ecs-sg"
     Owner = var.owner
   }
-}
-
-data "aws_iam_policy_document" "ecs_assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role" "ecs_task_role" {
-  name                = "${var.project_name}-ecs-task-role"
-  assume_role_policy  = data.aws_iam_policy_document.ecs_assume_role_policy.json
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonElasticFileSystemClientFullAccess",
-    "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-  ]
-
-  tags = {
-    Name = "${var.project_name}-ecs-task-role"
-    Owner = var.owner
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_role_policy" {
-  role       = aws_iam_role.ecs_task_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
-}
-
-resource "aws_iam_instance_profile" "ecs_instance_profile" {
-  name = "${var.project_name}-iam-instance-profile"
-  role = aws_iam_role.ecs_task_role.name
 }
 
 # ECS: Elastic Container Service
@@ -106,7 +65,7 @@ resource "aws_ecs_task_definition" "aws_ecs_task" {
       "name": "${var.project_name}-container",
       "image": "${var.image_url}",
       "entryPoint": [],
-      
+
       "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -143,10 +102,11 @@ resource "aws_ecs_task_definition" "aws_ecs_task" {
   network_mode             = "awsvpc"
   memory                   = "512"
   cpu                      = "256"
-  execution_role_arn       = aws_iam_role.ecs_task_role.arn
+
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
 
- volume {
+  volume {
     name = "${var.project_name}-ecs-efs-volume"
 
     efs_volume_configuration {
@@ -171,7 +131,7 @@ data "aws_ecs_task_definition" "main" {
   task_definition = aws_ecs_task_definition.aws_ecs_task.family
 }
 
-resource "aws_ecs_service" "aws_ecs_service" {
+resource "aws_ecs_service" "ecs_service" {
   name                 = "${var.project_name}-ecs-service"
   cluster              = aws_ecs_cluster.ecs_cluster.id
   task_definition      = "${aws_ecs_task_definition.aws_ecs_task.family}:${max(aws_ecs_task_definition.aws_ecs_task.revision, data.aws_ecs_task_definition.main.revision)}"
@@ -184,11 +144,14 @@ resource "aws_ecs_service" "aws_ecs_service" {
   network_configuration {
     subnets          = module.vpc_subnet.public_subnet_ids
     assign_public_ip = true
-    security_groups = [aws_security_group.ecs_sg.id]
+    security_groups = [
+      aws_security_group.ecs_sg.id,
+      aws_security_group.alb_sg.id
+    ]
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.target_group.arn
+    target_group_arn = aws_lb_target_group.alb_target_group.arn
     container_name   = "${var.project_name}-container"
     container_port   =  80
   }

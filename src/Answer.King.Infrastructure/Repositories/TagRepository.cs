@@ -6,13 +6,12 @@ using LiteDB;
 
 namespace Answer.King.Infrastructure.Repositories;
 
-public class TagRepository : ITagRepository
+public class TagRepository : BaseRepository, ITagRepository
 {
     public TagRepository(ILiteDbConnectionFactory connections)
+        : base(connections)
     {
-        var db = connections.GetConnection();
-
-        this.Collection = db.GetCollection<Tag>();
+        this.Collection = this.Db.GetCollection<Tag>();
         this.Collection.EnsureIndex("products");
     }
 

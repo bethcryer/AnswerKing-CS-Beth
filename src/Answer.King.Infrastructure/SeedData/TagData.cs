@@ -61,5 +61,26 @@ public static class TagData
                 new(21),
             },
             false),
+        TagFactory.CreateTag(
+            4,
+            "Gluten-Free",
+            "Products without gluten",
+            Now.AddDays(-3),
+            Now.AddHours(-30),
+            new List<ProductId>
+            {
+                new(4),
+                new(5),
+                new(6),
+                new(7),
+                new(8),
+                new(9),
+                new(10),
+                new(11),
+                new(12),
+                new(15),
+                new(18),
+            },
+            true),
     };
 }

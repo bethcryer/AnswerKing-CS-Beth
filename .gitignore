@@ -463,3 +463,6 @@ $RECYCLE.BIN/
 terraform.tfstate
 terraform.tfstate.backup
 terraform/env_variables.tf
+
+# Python venv
+.venv/

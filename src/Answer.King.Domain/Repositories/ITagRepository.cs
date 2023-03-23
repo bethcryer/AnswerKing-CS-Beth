@@ -2,7 +2,7 @@
 
 namespace Answer.King.Domain.Repositories;
 
-public interface ITagRepository : IAggregateRepository<Tag>
+public interface ITagRepository : IAggregateRepository<Tag>, IBaseRepository
 {
     Task<Tag?> GetOne(string name);
 }

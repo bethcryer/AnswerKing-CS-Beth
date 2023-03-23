@@ -24,12 +24,8 @@ public static class CustomAssert
     public static void MethodHasAttribute<T>(Type objectType, string methodName)
         where T : Attribute
     {
-        var method = objectType.GetMethod(methodName);
-
-        if (method == null)
-        {
-            throw new Exception($"Method {methodName} does not exist on type {objectType}.");
-        }
+        var method = objectType.GetMethod(methodName) ??
+                     throw new Exception($"Method {methodName} does not exist on type {objectType}.");
 
         var attr = method.GetCustomAttributes(typeof(T), false).ToList();
         attr.AssertAttributeCount<T>();
@@ -38,12 +34,8 @@ public static class CustomAssert
     public static void PropertyHasAttribute<T>(Type objectType, string propertyName)
         where T : Attribute
     {
-        var method = objectType.GetProperty(propertyName);
-
-        if (method == null)
-        {
-            throw new Exception($"Property {propertyName} does not exist on type {objectType}.");
-        }
+        var method = objectType.GetProperty(propertyName) ??
+                     throw new Exception($"Property {propertyName} does not exist on type {objectType}.");
 
         var attr = method.GetCustomAttributes(typeof(T), false).ToList();
         attr.AssertAttributeCount<T>();

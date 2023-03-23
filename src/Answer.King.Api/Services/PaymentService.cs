@@ -33,12 +33,8 @@ public class PaymentService : IPaymentService
 
     public async Task<Payment> MakePayment(RequestModels.Payment makePayment)
     {
-        var order = await this.Orders.GetOne(makePayment.OrderId);
-
-        if (order == null)
-        {
-            throw new PaymentServiceException($"No order found for given order id: {makePayment.OrderId}.");
-        }
+        var order = await this.Orders.GetOne(makePayment.OrderId) ??
+                    throw new PaymentServiceException($"No order found for given order id: {makePayment.OrderId}.");
 
         try
         {

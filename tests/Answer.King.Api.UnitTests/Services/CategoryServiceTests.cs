@@ -355,6 +355,50 @@ public class CategoryServiceTests
 
     #endregion
 
+    #region Unretire
+
+    [Fact]
+    public async Task UnretireCategory_InvalidCategoryIdReceived_ReturnsNull()
+    {
+        // Arrange
+        this.categoryRepository.GetOne(Arg.Any<long>()).Returns(null as Category);
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        Assert.Null(await sut.UnretireCategory(1));
+    }
+
+    [Fact]
+    public async Task UnretireCategory_NotRetired_ThrowsException()
+    {
+        // Arrange
+        var category = new Category("category", "desc", new List<ProductId>());
+        this.categoryRepository.GetOne(category.Id).Returns(category);
+
+        // Act / Assert
+        var sut = this.GetServiceUnderTest();
+        await Assert.ThrowsAsync<CategoryServiceException>(() =>
+            sut.UnretireCategory(category.Id));
+    }
+
+    [Fact]
+    public async Task UnretireCategory_ValidCategoryId_ReturnsUnretiredCategory()
+    {
+        // Arrange
+        var category = new Category("category", "desc", new List<ProductId>());
+        category.RetireCategory();
+        this.categoryRepository.GetOne(category.Id).Returns(category);
+
+        // Act
+        var sut = this.GetServiceUnderTest();
+        var retiredCategory = await sut.UnretireCategory(category.Id);
+
+        // Assert
+        Assert.False(retiredCategory!.Retired);
+    }
+
+    #endregion
+
     #region Helpers
 
     private static Category CreateCategory(long id, string name, string description, IList<ProductId> products)
@@ -364,7 +408,7 @@ public class CategoryServiceTests
 
     private static Product CreateProduct(long id, string name, string description, double price, long categoryId = 1)
     {
-        return ProductFactory.CreateProduct(id, name, description, price, new ProductCategory(categoryId, "name", "description"), new List<TagId>(), false);
+        return ProductFactory.CreateProduct(id, name, description, price, DateTime.UtcNow, DateTime.UtcNow, new ProductCategory(categoryId, "name", "description"), new List<TagId>(), false);
     }
 
     #endregion

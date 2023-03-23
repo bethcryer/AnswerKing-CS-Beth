@@ -2,6 +2,6 @@
 
 namespace Answer.King.Domain.Repositories;
 
-public interface IOrderRepository : IAggregateRepository<Order>
+public interface IOrderRepository : IAggregateRepository<Order>, IBaseRepository
 {
 }

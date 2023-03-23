@@ -6,13 +6,12 @@ using LiteDB;
 
 namespace Answer.King.Infrastructure.Repositories;
 
-public class PaymentRepository : IPaymentRepository
+public class PaymentRepository : BaseRepository, IPaymentRepository
 {
     public PaymentRepository(ILiteDbConnectionFactory connections)
+        : base(connections)
     {
-        var db = connections.GetConnection();
-
-        this.Collection = db.GetCollection<Payment>();
+        this.Collection = this.Db.GetCollection<Payment>();
     }
 
     private ILiteCollection<Payment> Collection { get; }

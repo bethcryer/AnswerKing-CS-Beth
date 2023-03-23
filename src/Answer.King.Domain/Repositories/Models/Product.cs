@@ -16,6 +16,7 @@ public class Product
         this.Name = name;
         this.Description = description;
         this.Price = price;
+        this.LastUpdated = this.CreatedOn = DateTime.UtcNow;
         this.Category = category;
         this.tags = new HashSet<TagId>();
     }
@@ -27,6 +28,8 @@ public class Product
         string name,
         string description,
         double price,
+        DateTime createdOn,
+        DateTime lastUpdated,
         ProductCategory category,
         IList<TagId> tags,
         bool retired)
@@ -43,6 +46,8 @@ public class Product
         this.Name = name;
         this.Description = description;
         this.Price = price;
+        this.CreatedOn = createdOn;
+        this.LastUpdated = lastUpdated;
         this.Category = category;
         this.tags = new HashSet<TagId>(tags);
         this.Retired = retired;
@@ -56,6 +61,10 @@ public class Product
 
     public double Price { get; set; }
 
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime LastUpdated { get; set; }
+
     public ProductCategory Category { get; private set; }
 
     public IReadOnlyCollection<TagId> Tags => this.tags;
@@ -64,37 +73,50 @@ public class Product
 
     public void AddTag(TagId tag)
     {
-        if (this.Retired)
+        if (this.Retired && !this.Tags.Contains(tag))
         {
             throw new ProductLifecycleException("Cannot add tag to retired product.");
         }
 
         this.tags.Add(tag);
+
+        this.LastUpdated = DateTime.UtcNow;
     }
 
     public void RemoveTag(TagId tag)
     {
-        if (this.Retired)
+        if (this.Retired && this.Tags.Contains(tag))
         {
             throw new ProductLifecycleException("Cannot remove tag from retired product.");
         }
 
         this.tags.Remove(tag);
+
+        this.LastUpdated = DateTime.UtcNow;
     }
 
     public void Retire()
     {
         this.Retired = true;
+
+        this.LastUpdated = DateTime.UtcNow;
+    }
+
+    public void Unretire()
+    {
+        this.Retired = false;
     }
 
     public void SetCategory(ProductCategory newCategory)
     {
-        if (this.Retired)
+        if (this.Retired && this.Category != newCategory)
         {
             throw new ProductLifecycleException("Can't add product to category. Product is retired");
         }
 
         this.Category = newCategory;
+
+        this.LastUpdated = DateTime.UtcNow;
     }
 }
 

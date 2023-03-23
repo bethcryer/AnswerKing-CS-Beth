@@ -4,6 +4,9 @@
   status: 400,
   traceId: {Scrubbed},
   errors: {
+    Products: [
+      The Products field is required.
+    ],
     Description: [
       The Description field is required.
     ]

@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Answer.King.Domain.Inventory;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories;
@@ -37,22 +37,71 @@ public class TagService : ITagService
 
     public async Task<Tag> CreateTag(RequestModels.Tag createTag)
     {
-        var tag = new Tag(createTag.Name, createTag.Description, new List<ProductId>());
+        var tag = new Tag(
+            createTag.Name,
+            createTag.Description,
+            new List<ProductId>());
 
-        await this.Tags.Save(tag);
+        try
+        {
+            this.Tags.BeginTransaction();
+            await this.Tags.Save(tag);
 
-        return tag;
+            var products = await this.AssociateTagAndProducts(tag, createTag.Products);
+
+            foreach (var product in products)
+            {
+                await this.Products.AddOrUpdate(product);
+            }
+
+            await this.Tags.Save(tag);
+            this.Tags.CommitTransaction();
+
+            return tag;
+        }
+        catch
+        {
+            this.Tags.RollbackTransaction();
+            throw;
+        }
     }
 
     public async Task<Tag?> UpdateTag(long tagId, RequestModels.Tag updateTag)
     {
         var tag = await this.Tags.GetOne(tagId);
+
         if (tag == null)
         {
             return null;
         }
 
         tag.Rename(updateTag.Name, updateTag.Description);
+        var tagProductIdsToRemove = tag.Products.Where(x => !updateTag.Products.Contains(x));
+        var updatedProducts = new List<Product>();
+
+        foreach (var productIdToRemove in tagProductIdsToRemove)
+        {
+            var product = await this.Products.GetOne(productIdToRemove);
+
+            try
+            {
+                tag.RemoveProduct(productIdToRemove);
+                product!.RemoveTag(new TagId(tag.Id));
+            }
+            catch (Exception ex) when (ex is TagLifecycleException or ProductLifecycleException)
+            {
+                throw new TagServiceException(ex.Message, ex);
+            }
+
+            updatedProducts.Add(product);
+        }
+
+        updatedProducts.AddRange(await this.AssociateTagAndProducts(tag, updateTag.Products));
+
+        foreach (var product in updatedProducts)
+        {
+            await this.Products.AddOrUpdate(product);
+        }
 
         await this.Tags.Save(tag);
 
@@ -81,7 +130,7 @@ public class TagService : ITagService
         }
     }
 
-    public async Task<Tag?> AddProducts(long tagId, RequestModels.TagProducts addProducts)
+    public async Task<Tag?> UnretireTag(long tagId)
     {
         var tag = await this.Tags.GetOne(tagId);
         if (tag == null)
@@ -89,52 +138,43 @@ public class TagService : ITagService
             return null;
         }
 
-        foreach (var productId in addProducts.Products)
+        try
         {
-            var product = await this.Products.GetOne(productId);
+            tag.UnretireTag();
 
-            if (product == null)
-            {
-                throw new TagServiceException("The provided product id is not valid.");
-            }
+            await this.Tags.Save(tag);
 
-            tag.AddProduct(new(product.Id));
-
-            product.AddTag(new TagId(tag.Id));
-            await this.Products.AddOrUpdate(product);
+            return tag;
         }
-
-        await this.Tags.Save(tag);
-
-        return tag;
+        catch (TagLifecycleException ex)
+        {
+            throw new TagServiceException(ex.Message, ex);
+        }
     }
 
-    public async Task<Tag?> RemoveProducts(long tagId, RequestModels.TagProducts removeProducts)
+    private async Task<List<Product>> AssociateTagAndProducts(Tag tag, List<long> products)
     {
-        var tag = await this.Tags.GetOne(tagId);
-        if (tag == null)
-        {
-            return null;
-        }
+        var updatedProducts = new List<Product>();
 
-        foreach (var productId in removeProducts.Products)
+        foreach (var productId in products)
         {
-            var product = await this.Products.GetOne(productId);
+            var product = await this.Products.GetOne(productId) ??
+                          throw new TagServiceException($"The provided product id is not valid: {productId}");
 
-            if (product == null)
+            try
             {
-                throw new TagServiceException("The provided product id is not valid.");
+                tag.AddProduct(new ProductId(product.Id));
+                product.AddTag(new TagId(tag.Id));
+            }
+            catch (Exception ex) when (ex is TagLifecycleException or ProductLifecycleException)
+            {
+                throw new TagServiceException(ex.Message, ex);
             }
 
-            tag.RemoveProduct(new(product.Id));
-
-            product.RemoveTag(new TagId(tag.Id));
-            await this.Products.AddOrUpdate(product);
+            updatedProducts.Add(product);
         }
 
-        await this.Tags.Save(tag);
-
-        return tag;
+        return updatedProducts;
     }
 }
 

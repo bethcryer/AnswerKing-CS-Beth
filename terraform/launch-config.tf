@@ -10,6 +10,11 @@ data "aws_ami" "ecs_ami" {
   }
 }
 
+resource "aws_iam_instance_profile" "ecs_instance_profile" {
+  name = "${var.project_name}-iam-instance-profile"
+  role = aws_iam_role.ecs_task_role.name
+}
+
 # user_data script
 
 data "template_file" "user_data" {
@@ -20,17 +25,27 @@ data "template_file" "user_data" {
 }
 
 resource "aws_launch_configuration" "ecs_launch_config" {
+    #checkov:skip=CKV_AWS_79:TODO: Disable the Instance Metadata Service or enable it with proper configuration (v2)
+    #checkov:skip=CKV_AWS_8:TODO: Encrypt volume in future security ticket
     image_id             = data.aws_ami.ecs_ami.id
     iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
     security_groups      = [aws_security_group.ecs_sg.id]
     user_data            = data.template_file.user_data.rendered
     instance_type        = var.ec2_type
+
+    lifecycle { 
+      create_before_destroy = true
+      ignore_changes = [name]
+    }
 }
 
 resource "aws_autoscaling_group" "failure_analysis_ecs_asg" {
     name                      = "${var.project_name}-auto-scaling-group"
-    vpc_zone_identifier       = [module.vpc_subnet.public_subnet_ids[0]]
     launch_configuration      = aws_launch_configuration.ecs_launch_config.name
+    vpc_zone_identifier       = [
+      module.vpc_subnet.public_subnet_ids[0],
+      module.vpc_subnet.public_subnet_ids[1]
+    ]
 
     desired_capacity          = 1
     min_size                  = 1

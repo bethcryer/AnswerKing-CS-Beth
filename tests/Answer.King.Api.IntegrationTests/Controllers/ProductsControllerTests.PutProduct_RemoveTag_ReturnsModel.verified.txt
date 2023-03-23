@@ -1,0 +1,12 @@
+﻿{
+  Id: 25,
+  Name: BBQ Burger,
+  Description: Juicy,
+  Price: 1.5,
+  Category: {
+    Id: 2,
+    Name: Sundries,
+    Description: Sides
+  },
+  Retired: false
+}

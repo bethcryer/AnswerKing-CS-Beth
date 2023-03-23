@@ -116,6 +116,18 @@ public class Tag : IAggregateRoot
 
         this.LastUpdated = DateTime.UtcNow;
     }
+
+    public void UnretireTag()
+    {
+        if (!this.Retired)
+        {
+            throw new TagLifecycleException("The tag is not retired.");
+        }
+
+        this.Retired = false;
+
+        this.LastUpdated = DateTime.UtcNow;
+    }
 }
 
 [Serializable]

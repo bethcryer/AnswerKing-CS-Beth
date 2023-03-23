@@ -77,7 +77,7 @@ public class CategoriesController : ControllerBase
         if (namedCategory != null)
         {
             this.ModelState.AddModelError("category", "A category with this name already exists");
-            return this.BadRequest();
+            return this.ValidationProblem();
         }
 
         try
@@ -123,7 +123,7 @@ public class CategoriesController : ControllerBase
             if (namedCategory != null && namedCategory.Id != id)
             {
                 this.ModelState.AddModelError("category", "A category with this name already exists");
-                return this.BadRequest();
+                return this.ValidationProblem();
             }
 
             return this.Ok(category);
@@ -177,6 +177,37 @@ public class CategoriesController : ControllerBase
                 statusCode: StatusCodes.Status410Gone,
                 title: "Gone",
                 type: "https://www.rfc-editor.org/rfc/rfc7231#section-6.5.9");
+        }
+    }
+
+    /// <summary>
+    /// Unretire category.
+    /// </summary>
+    /// <param name="id">Category identifier.</param>
+    /// <response code="200">When the category has been unretired.</response>
+    /// <response code="400">When invalid parameters are provided.</response>
+    /// <returns>Unretired Category.</returns>
+    // POST api/categories
+    [HttpPost("{id}")]
+    [ProducesResponseType(typeof(Domain.Inventory.Category), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Inventory" })]
+    public async Task<IActionResult> Unretire(long id)
+    {
+        try
+        {
+            var category = await this.Categories.UnretireCategory(id);
+            if (category == null)
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok(category);
+        }
+        catch (CategoryServiceException ex)
+        {
+            this.ModelState.AddModelError("products", ex.Message);
+            return this.ValidationProblem();
         }
     }
 

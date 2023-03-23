@@ -79,5 +79,48 @@
       }
     ],
     Retired: false
+  },
+  {
+    Id: 4,
+    Name: Gluten-Free,
+    Description: Products without gluten,
+    CreatedOn: DateTime_5,
+    LastUpdated: DateTime_4,
+    Products: [
+      {
+        Value: 4
+      },
+      {
+        Value: 5
+      },
+      {
+        Value: 6
+      },
+      {
+        Value: 7
+      },
+      {
+        Value: 8
+      },
+      {
+        Value: 9
+      },
+      {
+        Value: 10
+      },
+      {
+        Value: 11
+      },
+      {
+        Value: 12
+      },
+      {
+        Value: 15
+      },
+      {
+        Value: 18
+      }
+    ],
+    Retired: true
   }
 ]

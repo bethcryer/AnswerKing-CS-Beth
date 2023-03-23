@@ -9,4 +9,6 @@ public record Product
     public double Price { get; init; }
 
     public CategoryId CategoryId { get; set; } = null!;
+
+    public List<long> Tags { get; set; } = null!;
 }

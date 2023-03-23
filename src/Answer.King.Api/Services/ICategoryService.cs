@@ -1,4 +1,4 @@
-﻿using Answer.King.Domain.Inventory;
+using Answer.King.Domain.Inventory;
 
 namespace Answer.King.Api.Services;
 
@@ -13,6 +13,8 @@ public interface ICategoryService
     Task<Category?> GetCategoryByName(string name);
 
     Task<Category?> RetireCategory(long categoryId);
+
+    Task<Category?> UnretireCategory(long categoryId);
 
     Task<Category?> UpdateCategory(long categoryId, RequestModels.Category updateCategory);
 }

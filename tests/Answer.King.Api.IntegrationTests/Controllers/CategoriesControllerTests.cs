@@ -395,4 +395,54 @@ public class CategoriesControllerTests : WebFixtures
         return await VerifyJson(secondDeleteResult.ReadAsTextAsync(), this.verifySettings);
     }
     #endregion
+
+    #region Unretire
+    [Fact]
+    public async Task<VerifyResult> UnretireCategory_InvalidId_ReturnsNotFound()
+    {
+        var putResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Url("/api/categories/50");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NotFound);
+        });
+
+        return await VerifyJson(putResult.ReadAsTextAsync(), this.verifySettings);
+    }
+
+    [Fact]
+    public async Task<VerifyResult> UnretireCategory_ValidId_ReturnsCategory()
+    {
+        var postResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Json(new
+                {
+                    Name = "Test Category",
+                    Description = "Food from the oceans",
+                    Products = new List<long>(),
+                })
+                .ToUrl("/api/categories");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.Created);
+        });
+
+        var category = postResult.ReadAsJson<Category>();
+
+        await this.AlbaHost.Scenario(_ =>
+        {
+            _.Delete
+                .Url($"/api/categories/{category?.Id}");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.NoContent);
+        });
+
+        var unretireResult = await this.AlbaHost.Scenario(_ =>
+        {
+            _.Post
+                .Url($"/api/categories/{category?.Id}");
+            _.StatusCodeShouldBe(System.Net.HttpStatusCode.OK);
+        });
+
+        return await VerifyJson(unretireResult.ReadAsTextAsync(), this.verifySettings);
+    }
+    #endregion
 }

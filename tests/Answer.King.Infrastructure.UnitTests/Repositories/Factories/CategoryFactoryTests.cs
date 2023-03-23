@@ -2,6 +2,7 @@ using System.Reflection;
 using Answer.King.Domain.Inventory.Models;
 using Answer.King.Domain.Repositories.Models;
 using Answer.King.Infrastructure.Repositories.Mappings;
+using Answer.King.Infrastructure.UnitTests.TestObjects;
 using Answer.King.Test.Common.CustomTraits;
 using Category = Answer.King.Domain.Inventory.Category;
 
@@ -34,7 +35,7 @@ public class CategoryFactoryTests
 
         var constructor = categoryFactoryConstructorPropertyInfo?.GetValue(CategoryFactory);
 
-        var wrongConstructor = typeof(Product).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+        var wrongConstructor = typeof(WrongConstructor).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
             .SingleOrDefault(c => c.IsPrivate && c.GetParameters().Length > 0);
 
         categoryFactoryConstructorPropertyInfo?.SetValue(CategoryFactory, wrongConstructor);

@@ -2,7 +2,7 @@ using Answer.King.Domain.Repositories.Models;
 
 namespace Answer.King.Domain.Repositories;
 
-public interface IProductRepository
+public interface IProductRepository : IBaseRepository
 {
     Task<Product?> GetOne(long id);
 

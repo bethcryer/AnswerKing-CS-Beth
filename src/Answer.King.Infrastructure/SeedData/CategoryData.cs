@@ -10,14 +10,16 @@ public static class CategoryData
 {
     private static readonly CategoryFactory CategoryFactory = new();
 
+    private static readonly DateTime Now = DateTime.UtcNow;
+
     public static IList<Category> Categories { get; } = new List<Category>
     {
         CategoryFactory.CreateCategory(
             1,
             "Seafood",
             "Food from the oceans",
-            DateTime.UtcNow.AddDays(-1),
-            DateTime.UtcNow.AddHours(-10),
+            Now.AddDays(-1),
+            Now.AddHours(-10),
             new List<ProductId>
             {
                 new(1),
@@ -28,8 +30,8 @@ public static class CategoryData
             2,
             "Sundries",
             "Sides",
-            DateTime.UtcNow.AddDays(-2),
-            DateTime.UtcNow.AddHours(-30),
+            Now.AddDays(-2),
+            Now.AddHours(-30),
             new List<ProductId>
             {
                 new(2),
@@ -43,8 +45,8 @@ public static class CategoryData
             3,
             "Burgers",
             "Patty served in a sliced bun.",
-            DateTime.UtcNow.AddDays(-3),
-            DateTime.UtcNow.AddHours(-45),
+            Now.AddDays(-3),
+            Now.AddHours(-45),
             new List<ProductId>
             {
                 new(4),
@@ -58,8 +60,8 @@ public static class CategoryData
             4,
             "Pizza",
             "Stone baked flat bread with toppings.",
-            DateTime.UtcNow.AddDays(-3),
-            DateTime.UtcNow.AddHours(-35),
+            Now.AddDays(-3),
+            Now.AddHours(-35),
             new List<ProductId>
             {
                 new(9),
@@ -72,8 +74,8 @@ public static class CategoryData
             5,
             "Grills",
             "Flame grilled options.",
-            DateTime.UtcNow.AddDays(-3),
-            DateTime.UtcNow.AddHours(-25),
+            Now.AddDays(-3),
+            Now.AddHours(-25),
             new List<ProductId>
             {
                 new(16),
@@ -84,8 +86,8 @@ public static class CategoryData
             6,
             "Desserts",
             "Sweet treats.",
-            DateTime.UtcNow.AddDays(-3),
-            DateTime.UtcNow.AddHours(-50),
+            Now.AddDays(-3),
+            Now.AddHours(-50),
             new List<ProductId>
             {
                 new(19),
@@ -97,8 +99,8 @@ public static class CategoryData
             7,
             "Drinks",
             "Alcoholic and non-alcoholic beverages",
-            DateTime.UtcNow.AddDays(-4),
-            DateTime.UtcNow.AddHours(-15),
+            Now.AddDays(-4),
+            Now.AddHours(-15),
             new List<ProductId>
             {
                 new(22),
